@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "85884838589",
+    "project_id": "vocal-cast",
+    "storage_bucket": "vocal-cast.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85884838589:android:a210a40b2e4a415b5fcdd4",
+        "android_client_info": {
+          "package_name": "com.u1morecode.vocal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85884838589-gufkbvkvdnihvttq6191nh1lgu11bn5d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.u1morecode.vocal",
+            "certificate_hash": "9456f1935e4c7f0264923b670170fbc3c92c1878"
+          }
+        },
+        {
+          "client_id": "85884838589-0g8gmt8c58vcg2ho5suif6h2chcqrtn4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC3GJ0n-B2rB4lHna2i7WA1F-5wEPbaBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85884838589-0g8gmt8c58vcg2ho5suif6h2chcqrtn4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
