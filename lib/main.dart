@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/libraries/new/camera_page.dart';
 import 'package:vocal/main/main_page.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
@@ -20,12 +22,19 @@ Future main() async {
   timeDilation = 1.0;
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    cameras = await availableCameras();
+    // qrCameras = await qr.availableCameras();
+  } on CameraException catch (e) {
+    print(e.code+'\n'+ e.description);
+  }
+
   await Firebase.initializeApp();
   var firebaseAuth = FirebaseAuth.instance;
 
   if(firebaseAuth.currentUser != null){
     isLoggedIn = true;
-    print("CURRENT USER ${firebaseAuth.currentUser.displayName}");
+    print("CURRENT USER ${firebaseAuth.currentUser.metadata}");
     //x-auth-token
   }else{
     isLoggedIn = false;

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/libraries/new/camera_page.dart';
+import 'package:vocal/libraries/new/text_status_page.dart';
 
 class NewStoryButton extends StatefulWidget {
   @override
@@ -28,13 +30,14 @@ class _NewStoryButtonState extends State<NewStoryButton> {
           child: Column(
             children: <Widget>[
               new Container(
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                     color: colorScheme.onPrimary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: colorScheme.onPrimary, width: 5)),
+                    border: Border.all(color: colorScheme.primary, width: 2)),
                 child: CircleAvatar(
                     radius: 32,
-                    backgroundColor: Colors.white,
+                    backgroundColor: colorScheme.onPrimary,
                     backgroundImage: NetworkImage(
                         "https://media.istockphoto.com/vectors/colorful-camera-symbol-in-gradient-color-on-dark-background-camera-vector-id1134816336?k=6&m=1134816336&s=612x612&w=0&h=kNLu88vbYiMbC2M1DExgdEcYgUkksK7-Q3MzqigJLDU=")),
               ),
@@ -60,7 +63,7 @@ class _NewStoryButtonState extends State<NewStoryButton> {
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
             title: Text(
-              "Select Type",
+              "Select Story Type",
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -81,7 +84,10 @@ class _NewStoryButtonState extends State<NewStoryButton> {
                     )
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => TextStatusPage(),));
+                },
               ),
               CupertinoDialogAction(
                 child: Column(
@@ -97,7 +103,10 @@ class _NewStoryButtonState extends State<NewStoryButton> {
                     )
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CameraScreen(),));
+                },
               ),
             ],
           );

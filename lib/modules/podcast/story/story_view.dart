@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vocal/libraries/stories/Stories_for_Flutter.dart';
-import 'package:vocal/main/story/widget/new_story_widget.dart';
 
 class StoriesView extends StatefulWidget {
   @override

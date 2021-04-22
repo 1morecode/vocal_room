@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:vocal/main/banner/model/banner_model.dart';
+import 'package:vocal/modules/podcast/model/banner_model.dart';
 
 class TopBannerView extends StatelessWidget {
   final List<BannerModel> bannerList = [
@@ -33,7 +33,7 @@ class TopBannerView extends StatelessWidget {
           padding: EdgeInsets.all(0),
           onPressed: () {},
           child: new Card(
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 0,

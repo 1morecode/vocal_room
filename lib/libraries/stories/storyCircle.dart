@@ -104,13 +104,14 @@ class StoryCircle extends StatelessWidget {
           child: Column(
             children: <Widget>[
               new Container(
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                     color: colorScheme.onPrimary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: colorScheme.onPrimary, width: 5)),
+                    border: Border.all(color: colorScheme.secondary, width: 2)),
                 child: CircleAvatar(
                     radius: altRadius,
-                    backgroundColor: Colors.white,
+                    backgroundColor: colorScheme.onPrimary,
                     backgroundImage: story[selectedIndex].thumbnail),
               ),
 

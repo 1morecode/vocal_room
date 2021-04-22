@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocal/libraries/stories/storyCircle.dart';
-import 'package:vocal/main/story/widget/new_story_widget.dart';
+import 'package:vocal/modules/podcast/story/widget/new_story_widget.dart';
 
 class Stories extends StatelessWidget {
   /// Recieves the list of stories to display
