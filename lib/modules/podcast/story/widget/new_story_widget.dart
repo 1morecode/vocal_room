@@ -23,7 +23,7 @@ class _NewStoryButtonState extends State<NewStoryButton> {
       child: CupertinoButton(
         padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
         onPressed: () {
-          displayDialog(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CameraScreen(),));
         },
         child: new Container(
           width: 80,
@@ -57,59 +57,4 @@ class _NewStoryButtonState extends State<NewStoryButton> {
     );
   }
 
-  Future<void> displayDialog(context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Text(
-              "Select Story Type",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(context).colorScheme.secondaryVariant),
-            ),
-            actions: [
-              CupertinoDialogAction(
-                child: Column(
-                  children: [
-                    Icon(
-                      CupertinoIcons.t_bubble_fill,
-                      size: 60.0,
-                    ),
-                    Text(
-                      "Text",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => TextStatusPage(),));
-                },
-              ),
-              CupertinoDialogAction(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.image,
-                      size: 60.0,
-                    ),
-                    Text(
-                      "Image",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CameraScreen(),));
-                },
-              ),
-            ],
-          );
-        });
-  }
 }

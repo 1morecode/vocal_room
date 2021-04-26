@@ -1,11 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vocal/main/drawer/drawer_page.dart';
 import 'package:vocal/modules/channel/channel_page.dart';
 import 'package:vocal/modules/dashboard/dashboard_page.dart';
 import 'package:vocal/modules/podcast/podcast_page.dart';
 import 'package:vocal/res/global_data.dart';
+import 'package:vocal/res/user_token.dart';
+import 'package:vocal/theme/app_state.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -20,12 +25,21 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    UserToken.updateToken();
+    FirebaseMessaging.instance.onTokenRefresh.listen(UserToken.saveTokenToDatabase);
   }
 
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
+    // var themeProvider = Provider.of<ThemeState>(context, listen: true);
+    var systemUiOverlayStyle = SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: colorScheme.onPrimary,
+        // statusBarIconBrightness: Brightness.light
+    );
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     return Scaffold(
       key: GlobalData.scaffoldKey,
       appBar: AppBar(

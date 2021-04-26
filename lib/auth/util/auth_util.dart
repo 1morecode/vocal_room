@@ -1,3 +1,4 @@
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/res/api_data.dart';
+import 'package:http/http.dart' as http;
 
-class AuthUtil{
+class AuthUtil {
   static var firebaseAuth = FirebaseAuth.instance;
   static GoogleSignIn googleLogin = GoogleSignIn();
   static FacebookLogin facebookLogin = FacebookLogin();
@@ -32,7 +35,6 @@ class AuthUtil{
     return googleSignInAccount;
   }
 
-
   static Future<int> facebookSignIn() async {
     try {
       FacebookLoginResult facebookLoginResult = await _handleFBSignIn();
@@ -53,7 +55,7 @@ class AuthUtil{
   static Future<FacebookLoginResult> _handleFBSignIn() async {
     FacebookLogin facebookLogin = FacebookLogin();
     FacebookLoginResult facebookLoginResult =
-    await facebookLogin.logIn(['email']);
+        await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.cancelledByUser:
         print("Cancelled");
@@ -68,14 +70,19 @@ class AuthUtil{
     return facebookLoginResult;
   }
 
-  static logout(context){
+  static logout(context) {
     firebaseAuth.signOut();
     googleLogin.signOut();
     facebookLogin.logOut();
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage(),), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+        (route) => false);
   }
 
-  static logoutWarningAlert(context, colorScheme){
+  static logoutWarningAlert(context, colorScheme) {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
@@ -83,8 +90,7 @@ class AuthUtil{
           "Warning!",
           style: TextStyle(color: colorScheme.primary),
         ),
-        message: new Text(
-            "You really want to logout from this device?"),
+        message: new Text("You really want to logout from this device?"),
         actions: [
           CupertinoActionSheetAction(
             child: new Text("Yes"),

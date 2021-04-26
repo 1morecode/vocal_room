@@ -1,11 +1,12 @@
+
 import 'package:flutter/material.dart';
 
-class GlobalData{
-
+class GlobalData {
   static final GlobalObjectKey<ScaffoldState> scaffoldKey =
-  GlobalObjectKey(ScaffoldState);
+      GlobalObjectKey(ScaffoldState);
 
   static String mobilePattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+
   // static String googleApiKey = "AIzaSyBQ-AWcWaBtDbDMVoPjEBfLSNr6kHL3oG4";
   static String googleApiKey = "AIzaSyC5m-C32piW2yiT3kevVbvLfHXsLsPTWik";
   static String emailPattern =
@@ -25,4 +26,5 @@ class GlobalData{
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }
+
 }

@@ -35,6 +35,7 @@ class _TextStatusPageState extends State<TextStatusPage> {
       return pngBytes;
     } catch (e) {
       print(e);
+      return null;
     }
   }
 
@@ -43,26 +44,7 @@ class _TextStatusPageState extends State<TextStatusPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: new CupertinoNavigationBar(
-        automaticallyImplyLeading: true,
-        trailing: new Row(
-          children: [
-            Spacer(),
-            new CupertinoButton(
-              padding: EdgeInsets.all(0),
-              child: Icon(
-                CupertinoIcons.color_filter,
-                size: 32,
-              ),
-              onPressed: () {
-                FocusScope.of(context).unfocus();
-                displayColorDialog(context);
-              },
-            ),
-            new SizedBox(width: 10,),
-          ],
-        ),
-      ),
+      resizeToAvoidBottomInset: false,
       floatingActionButton: _textController.text.isEmpty ? null : FloatingActionButton(
         backgroundColor: colorScheme.onPrimary,
         child: new Icon(CupertinoIcons.arrow_right),
@@ -88,33 +70,52 @@ class _TextStatusPageState extends State<TextStatusPage> {
         child: Container(
           alignment: Alignment.center,
           color: _tempMainColor,
-          child: RepaintBoundary(
-            key: _globalKey,
-            child: Container(
-              width: size.width,
-              height: size.height * 0.8,
-              color: _tempMainColor,
-              alignment: Alignment.center,
-              child: Center(
-                child: AutoSizeTextField(
-                  textAlign: TextAlign.center,
-                  fullwidth: false,
-                  autofocus: true,
-                  decoration: new InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                  ),
-                  maxLines: 12,
-                  minLines: 1,
-                  controller: _textController,
-                  minFontSize: 24,
-                  style: TextStyle(fontSize: 64),
+          child: new Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    new CupertinoButton(child: Icon(CupertinoIcons.back, color: colorScheme.primary,), onPressed: (){
+                      Navigator.of(context).pop();
+                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,),
+                    new CupertinoButton(child: Icon(CupertinoIcons.color_filter, color: colorScheme.primary,), onPressed: (){
+                      FocusScope.of(context).unfocus();
+                      displayColorDialog(context);
+                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,)
+                  ],
                 ),
               ),
-            ),
+              RepaintBoundary(
+                key: _globalKey,
+                child: Container(
+                  width: size.width,
+                  height: size.height * 0.8,
+                  color: _tempMainColor,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: AutoSizeTextField(
+                      textAlign: TextAlign.center,
+                      fullwidth: false,
+                      autofocus: true,
+                      decoration: new InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                      maxLines: 15,
+                      minLines: 1,
+                      controller: _textController,
+                      minFontSize: 12,
+                      style: TextStyle(fontSize: 64),
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
       ),

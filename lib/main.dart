@@ -8,8 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/auth/util/auth_util.dart';
 import 'package:vocal/libraries/new/camera_page.dart';
 import 'package:vocal/main/main_page.dart';
+import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
+import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
 import 'intro_slider/app_intro.dart';
@@ -34,7 +37,14 @@ Future main() async {
 
   if(firebaseAuth.currentUser != null){
     isLoggedIn = true;
-    print("CURRENT USER ${firebaseAuth.currentUser.metadata}");
+    print("CURRENT USER ${await firebaseAuth.currentUser.getIdToken(true)}");
+    IdTokenResult ss =  await firebaseAuth.currentUser.getIdTokenResult(true);
+    print("Token ${ss.token}");
+    // final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+    // pattern.allMatches("CURRENT ${await firebaseAuth.currentUser.getIdTokenResult(true)}").forEach((match) async{
+    //   print(match.group(0));
+    //   await AuthUtil.updateToken();
+    // });
     //x-auth-token
   }else{
     isLoggedIn = false;
@@ -54,22 +64,29 @@ Future main() async {
         ListenableProvider(
           create: (_) => ThemeState(),
         ),
+        ListenableProvider(
+          create: (_) => PlaylistState(),
+        ),
+        ListenableProvider(
+          create: (_) => EpisodeState(),
+        ),
       ],
       child: MyApp(),
     ),
   );
-  var systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent);
-  SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
+
+
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeState>(builder: (context, themeState, child) => FeatureDiscovery(
+
         child: MaterialApp(
             themeMode: themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,

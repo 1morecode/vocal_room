@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:vocal/libraries/new/edit_image_screen.dart';
+import 'package:vocal/libraries/new/text_status_page.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -201,7 +202,10 @@ class _CameraHomeState extends State<CameraHome> {
                   appBar: CupertinoNavigationBar(
                     backgroundColor: colorScheme.onPrimary,
                     automaticallyImplyLeading: false,
-                    middle: new Icon(CupertinoIcons.minus, color: colorScheme.onSecondary,),
+                    middle: new Icon(
+                      CupertinoIcons.minus,
+                      color: colorScheme.onSecondary,
+                    ),
                   ),
                   body: Container(
                     color: colorScheme.onSurface,
@@ -267,7 +271,7 @@ class _CameraHomeState extends State<CameraHome> {
                                                     id: "itemPanel-$index",
                                                     resource:
                                                         "${snapshot.data[index]}",
-                                                        isPath: true,
+                                                    isPath: true,
                                                   ),
                                                 ));
                                             print("${snapshot.data[index]}");
@@ -299,7 +303,7 @@ class _CameraHomeState extends State<CameraHome> {
                   children: [
                     Expanded(child: _cameraPreviewWidget()),
                     new Container(
-                      height: size.height*0.2,
+                      height: size.height * 0.2,
                       color: colorScheme.onPrimary,
                     )
                   ],
@@ -311,16 +315,28 @@ class _CameraHomeState extends State<CameraHome> {
                 });
               },
             ),
-            Positioned(
-              bottom: 8.0,
-              child: Opacity(
-                  opacity: 1 - _opacity,
-                  child: Column(
-                    children: <Widget>[
-                      _buildCameraControls(),
-                    ],
-                  )),
-            )
+            Opacity(
+                opacity: 1 - _opacity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          new CupertinoButton(child: Icon(CupertinoIcons.back, color: colorScheme.primary,), onPressed: (){
+                            Navigator.of(context).pop();
+                          }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,),
+                          new CupertinoButton(child: Icon(CupertinoIcons.textbox, color: colorScheme.primary,), onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => TextStatusPage(),));
+                          }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,)
+                        ],
+                      ),
+                    ),
+                    _buildCameraControls(),
+                  ],
+                )),
           ],
         ),
       ),
@@ -390,13 +406,11 @@ class _CameraHomeState extends State<CameraHome> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    EditImageScreen(
-                      id: "item-0",
-                      resource:
-                      "$filePath",
-                      isPath: true,
-                    ),
+                builder: (context) => EditImageScreen(
+                  id: "item-0",
+                  resource: "$filePath",
+                  isPath: true,
+                ),
               ));
         }
       }
@@ -406,6 +420,7 @@ class _CameraHomeState extends State<CameraHome> {
   Widget _buildCameraControls() {
     return Container(
       width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.all(15),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
