@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/main/navigation/my_drawer_button.dart';
 
 class AboutUs extends StatelessWidget {
   @override
@@ -8,7 +9,7 @@ class AboutUs extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CupertinoNavigationBar(
-        automaticallyImplyLeading: true,
+        leading: MyDrawerButton(),
         middle: Text(
           "About Us",
           style: TextStyle(color: colorScheme.primary),

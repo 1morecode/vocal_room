@@ -11,6 +11,7 @@ import 'package:vocal/auth/login_page.dart';
 import 'package:vocal/auth/util/auth_util.dart';
 import 'package:vocal/libraries/new/camera_page.dart';
 import 'package:vocal/main/main_page.dart';
+import 'package:vocal/main/navigation/navigation_home_screen.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/theme/app_state.dart';
@@ -96,6 +97,6 @@ class MyApp extends StatelessWidget {
             color: Colors.blue,
             home: !intro
                 ? SlideIntro()
-                : isLoggedIn ? MainPage() : LoginPage())),);
+                : isLoggedIn ? NavigationHomeScreen() : LoginPage())),);
   }
 }

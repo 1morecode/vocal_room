@@ -3,8 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:vocal/main/drawer/drawer_page.dart';
+import 'package:vocal/main/navigation/my_drawer_button.dart';
 import 'package:vocal/modules/channel/channel_page.dart';
 import 'package:vocal/modules/dashboard/dashboard_page.dart';
 import 'package:vocal/modules/podcast/podcast_page.dart';
@@ -53,16 +52,7 @@ class _MainPageState extends State<MainPage> {
           height: 45,
           child: new Row(
             children: [
-              IconButton(
-                color: colorScheme.primary,
-                icon: Icon(
-                  CupertinoIcons.equal_circle,
-                  size: 28,
-                ),
-                onPressed: () {
-                  GlobalData.scaffoldKey.currentState.openDrawer();
-                },
-              ),
+              MyDrawerButton(),
               new SizedBox(width: 15,),
               Expanded(
                   child: new CupertinoButton(
@@ -121,9 +111,6 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
         elevation: 1,
       ),
-      drawer: new Drawer(
-        child: DrawerPage(),
-      ),
       body: getPages(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
@@ -158,6 +145,7 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
 
   getPages() {
     switch (selectedIndex) {

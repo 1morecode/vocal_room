@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/main/drawer/inside_drawer/notification/modal/notification_modal.dart';
+import 'package:vocal/main/inside_drawer/notification/modal/notification_modal.dart';
+import 'package:vocal/main/navigation/my_drawer_button.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _NotificationPageState extends State<NotificationPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CupertinoNavigationBar(
-        automaticallyImplyLeading: true,
+        leading: MyDrawerButton(),
         middle: Text(
           "Notification",
           style: TextStyle(color: colorScheme.primary),

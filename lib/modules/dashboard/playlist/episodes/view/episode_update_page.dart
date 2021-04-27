@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_page.dart';
+import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/widget/select_update_episode_image.dart';
 import 'package:vocal/modules/dashboard/playlist/model/episode_model.dart';
 import 'package:vocal/res/global_data.dart';
@@ -26,6 +26,7 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
   void initState() {
     UpdateEpisodeUtil.episodeNameController.text = "${widget.episodeModel.title}";
     UpdateEpisodeUtil.episodeDescController.text = "${widget.episodeModel.desc}";
+    UpdateEpisodeUtil.episodeFile.text = "${widget.episodeModel.audio[0]['path']}";
     super.initState();
   }
 
@@ -235,29 +236,20 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
   }
 
   onEpisodeUpdate(_context, context) async {
-    if (UpdateEpisodeUtil.file != null) {
-      if (UpdateEpisodeUtil.episodeNameController.text.isNotEmpty &&
-          UpdateEpisodeUtil.episodeDescController.text.isNotEmpty) {
-        bool status = await UpdateEpisodeUtil.updateEpisode(context, widget.episodeModel.id);
-        if (status) {
-          _btnController.success();
-          GlobalData.showSnackBar(
-              "Episode created successfully!", _context, Colors.black);
-          await EpisodeUtil.fetchAllEpisodeModel(context);
-          Navigator.of(context).pop();
-          _btnController.reset();
-        } else {
-          _btnController.error();
-          GlobalData.showSnackBar(
-              "Failed to created category!", _context, Colors.red);
-          Timer(Duration(seconds: 2), () {
-            _btnController.reset();
-          });
-        }
+    if (UpdateEpisodeUtil.episodeNameController.text.isNotEmpty &&
+        UpdateEpisodeUtil.episodeDescController.text.isNotEmpty) {
+      bool status = await UpdateEpisodeUtil.updateEpisode(context, widget.episodeModel.id);
+      if (status) {
+        _btnController.success();
+        GlobalData.showSnackBar(
+            "Episode updated successfully!", _context, Colors.black);
+        await EpisodeUtil.fetchAllEpisodeModel(context);
+        Navigator.of(context).pop();
+        _btnController.reset();
       } else {
         _btnController.error();
         GlobalData.showSnackBar(
-            "All fields are mandatory!", _context, Colors.red);
+            "Failed to update episode!", _context, Colors.red);
         Timer(Duration(seconds: 2), () {
           _btnController.reset();
         });
@@ -265,7 +257,7 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
     } else {
       _btnController.error();
       GlobalData.showSnackBar(
-          "Please select playlist banner!", _context, Colors.red);
+          "All fields are mandatory!", _context, Colors.red);
       Timer(Duration(seconds: 2), () {
         _btnController.reset();
       });

@@ -111,6 +111,7 @@ class AppTheme {
     cupertinoOverrideTheme: CupertinoThemeData(
         barBackgroundColor: _darkOnPrimaryColor,
         brightness: Brightness.dark,
+        primaryContrastingColor: _darkOnPrimaryColor,
         textTheme: CupertinoTextThemeData(primaryColor: _darkPrimaryColor),
         primaryColor: _darkPrimaryColor),
     colorScheme: ColorScheme.light(

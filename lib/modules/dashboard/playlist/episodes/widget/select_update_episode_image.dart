@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/new_episode_util.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_page.dart';
+import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_util.dart';
 
 class SelectUpdateEpisodeImage extends StatefulWidget {
   final String url;

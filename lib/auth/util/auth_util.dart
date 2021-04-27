@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vocal/auth/login_page.dart';
-import 'package:vocal/res/api_data.dart';
-import 'package:http/http.dart' as http;
 
 class AuthUtil {
   static var firebaseAuth = FirebaseAuth.instance;

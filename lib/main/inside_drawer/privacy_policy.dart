@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/main/navigation/my_drawer_button.dart';
 
 class PrivacyPolicy extends StatelessWidget {
   @override
@@ -8,6 +9,7 @@ class PrivacyPolicy extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CupertinoNavigationBar(
+        leading: MyDrawerButton(),
         middle: Text("Privacy Policy",
             style: TextStyle(color: colorScheme.primary)),
       ),

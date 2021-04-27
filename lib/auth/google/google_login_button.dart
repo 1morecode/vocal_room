@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vocal/auth/util/auth_util.dart';
-import 'package:vocal/main/main_page.dart';
+import 'package:vocal/main/navigation/navigation_home_screen.dart';
 import 'package:vocal/res/global_data.dart';
 
 class GoogleSignInButton extends StatefulWidget {
@@ -44,7 +44,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           if (ii == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainPage()),
+              MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
             );
           } else {
             GlobalData.showSnackBar(

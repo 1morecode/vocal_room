@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:vocal/res/api_data.dart';
-import 'package:vocal/res/global_data.dart';
 import 'package:vocal/res/user_token.dart';
 
 class UpdateEpisodeUtil {
@@ -24,15 +23,20 @@ class UpdateEpisodeUtil {
     try {
       var headers = {'x-token': "$token"};
 
-      var request = http.MultipartRequest('POST', Uri.parse('${APIData.baseUrl}${APIData.updateEpisodeAPI}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${APIData.baseUrl}${APIData.updateEpisodeAPI}/$id/update'));
       request.fields.addAll({
         '_id': '$id',
         'episode_title': '${episodeNameController.text}',
         'episode_desc': '${episodeDescController.text}',
         'tag': 'Tag First'
       });
-      request.files.add(await http.MultipartFile.fromPath('audio', '${media.path}'));
-      request.files.add(await http.MultipartFile.fromPath('graphic', '${file.path}'));
+      if(file != null){
+        request.files.add(await http.MultipartFile.fromPath('graphic', '${file.path}'));
+      }
+      if(media != null){
+        request.files.add(await http.MultipartFile.fromPath('audio', '${media.path}'));
+      }
+
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();

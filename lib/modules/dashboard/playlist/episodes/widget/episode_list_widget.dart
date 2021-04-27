@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart';
@@ -101,6 +102,10 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                 ),
                 Builder(
                   builder: (_context) => PopupMenuButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                            color: colorScheme.secondaryVariant, width: 1)),
                     onSelected: (value) {
                       print(value);
                       if (value == "Delete") {
@@ -140,13 +145,14 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                             ));
                       }
                     },
-                    padding: EdgeInsets.all(10),
-                    color: colorScheme.onPrimary,
+                    padding: EdgeInsets.all(0),
+                    color: colorScheme.onSurface,
+                    offset: Offset(-20, 10),
                     itemBuilder: (BuildContext context) {
                       return ll.map((link) {
                         return PopupMenuItem(
                           textStyle: TextStyle(color: colorScheme.primary),
-                          height: 35,
+                          height: 40,
                           value: link,
                           child: Text(link),
                         );

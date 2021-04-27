@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/main/navigation/my_drawer_button.dart';
 
 class TermsOfUse extends StatelessWidget {
   @override
@@ -8,6 +9,7 @@ class TermsOfUse extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CupertinoNavigationBar(
+        leading: MyDrawerButton(),
         // trailing: IconButton(onPressed: (){
         //         GlobalData.scaffoldKey.currentState.dispose();
         //         Navigator.of(context).pop();

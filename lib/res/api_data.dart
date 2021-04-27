@@ -17,5 +17,5 @@ class APIData{
   static String fetchPlaylistEpisodeAPI = "/media/list";
   static String createNewEpisodeAPI = "/playlist/media";
   static String deleteEpisodeAPI = "/media/delete";
-  static String updateEpisodeAPI = "/playlist/media/_id/update";
+  static String updateEpisodeAPI = "/playlist/media";
 }
