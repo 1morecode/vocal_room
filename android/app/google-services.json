@@ -1,10 +1,40 @@
 {
   "project_info": {
     "project_number": "85884838589",
+    "firebase_url": "https://vocal-cast-default-rtdb.firebaseio.com",
     "project_id": "vocal-cast",
     "storage_bucket": "vocal-cast.appspot.com"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85884838589:android:86c77a34ef03d8a95fcdd4",
+        "android_client_info": {
+          "package_name": "com.example.clubhouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85884838589-0g8gmt8c58vcg2ho5suif6h2chcqrtn4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC3GJ0n-B2rB4lHna2i7WA1F-5wEPbaBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85884838589-0g8gmt8c58vcg2ho5suif6h2chcqrtn4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:85884838589:android:a210a40b2e4a415b5fcdd4",

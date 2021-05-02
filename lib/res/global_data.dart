@@ -27,23 +27,5 @@ class GlobalData {
       ..showSnackBar(snackBar);
   }
 
-  static ScrollController scrollController;
-
-  static void onDrawerClick() {
-    //if scrollcontroller.offset != 0.0 then we set to closed the drawer(with animation to offset zero position) if is not 1 then open the drawer
-    if (GlobalData.scrollController.offset != 0.0) {
-      GlobalData.scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.fastOutSlowIn,
-      );
-    } else {
-      GlobalData.scrollController.animateTo(
-        250,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.fastOutSlowIn,
-      );
-    }
-  }
 
 }

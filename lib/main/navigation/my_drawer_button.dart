@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/main/navigation/custom_drawer/drawer_user_controller.dart';
 import 'package:vocal/res/global_data.dart';
 
 class MyDrawerButton extends StatefulWidget {
@@ -20,7 +21,7 @@ class _MyDrawerButtonState extends State<MyDrawerButton> {
       ),
       onPressed: () {
         FocusScope.of(context).requestFocus(FocusNode());
-        GlobalData.onDrawerClick();
+        MyDrawerButtonUtil.onDrawerClick();
         // GlobalData.scaffoldKey.currentState.openDrawer();
       },
     );

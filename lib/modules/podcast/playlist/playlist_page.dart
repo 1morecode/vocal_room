@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocal/modules/podcast/model/episode_model.dart';
 import 'package:vocal/modules/podcast/playlist/widget/episode_card_widget.dart';
+import 'package:vocal/modules/podcast/state/current_player_state.dart';
 import 'package:vocal/res/widgets/circular_tab_indicator.dart';
+import 'package:vocal/state/audio_state.dart';
 
 class PlayListPage extends StatefulWidget {
+
   @override
   _PlayListPageState createState() => _PlayListPageState();
 }
@@ -16,6 +20,7 @@ class _PlayListPageState extends State<PlayListPage> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
+    var currentPlayerState = Provider.of<CurrentPlayerState>(context, listen: true);
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
       body: SafeArea(
@@ -67,7 +72,7 @@ class _PlayListPageState extends State<PlayListPage> {
                       height: size.width * 0.4,
                       width: size.width * 0.4,
                       decoration: BoxDecoration(
-                        color: colorScheme.secondary,
+                        color: colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(5),
                         image: DecorationImage(
                             image: NetworkImage(
@@ -163,7 +168,10 @@ class _PlayListPageState extends State<PlayListPage> {
                                         )
                                       ],
                                     ),
-                                    onPressed: () {}),
+                                    onPressed: () {
+                                      currentPlayerState.updateCurrentPlayingState(null, EpisodeModel.episodesList,EpisodeModel.episodesList[0]);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => AudioPlayerPage(),));
+                                    }),
                               ),
                             ],
                           ),

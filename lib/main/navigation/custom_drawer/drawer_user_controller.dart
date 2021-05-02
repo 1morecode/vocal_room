@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:vocal/main/navigation/custom_drawer/home_drawer.dart';
-import 'package:vocal/res/global_data.dart';
 
 class DrawerUserController extends StatefulWidget {
   const DrawerUserController({
@@ -39,10 +38,10 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
     animationController = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
     iconAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 0));
     iconAnimationController..animateTo(1.0, duration: const Duration(milliseconds: 0), curve: Curves.fastOutSlowIn);
-    GlobalData.scrollController = ScrollController(initialScrollOffset: widget.drawerWidth);
-    GlobalData.scrollController
+    MyDrawerButtonUtil.scrollController = ScrollController(initialScrollOffset: widget.drawerWidth);
+    MyDrawerButtonUtil.scrollController
       ..addListener(() {
-        if (GlobalData.scrollController.offset <= 0) {
+        if (MyDrawerButtonUtil.scrollController.offset <= 0) {
           if (scrolloffset != 1.0) {
             setState(() {
               scrolloffset = 1.0;
@@ -52,8 +51,8 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
             });
           }
           iconAnimationController.animateTo(0.0, duration: const Duration(milliseconds: 0), curve: Curves.fastOutSlowIn);
-        } else if (GlobalData.scrollController.offset > 0 && GlobalData.scrollController.offset < widget.drawerWidth.floor()) {
-          iconAnimationController.animateTo((GlobalData.scrollController.offset * 100 / (widget.drawerWidth)) / 100,
+        } else if (MyDrawerButtonUtil.scrollController.offset > 0 && MyDrawerButtonUtil.scrollController.offset < widget.drawerWidth.floor()) {
+          iconAnimationController.animateTo((MyDrawerButtonUtil.scrollController.offset * 100 / (widget.drawerWidth)) / 100,
               duration: const Duration(milliseconds: 0), curve: Curves.fastOutSlowIn);
         } else {
           if (scrolloffset != 0.0) {
@@ -72,7 +71,7 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
   }
 
   Future<bool> getInitState() async {
-    GlobalData.scrollController.jumpTo(
+    MyDrawerButtonUtil.scrollController.jumpTo(
       widget.drawerWidth,
     );
     return true;
@@ -84,7 +83,7 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
       body: SingleChildScrollView(
-        controller: GlobalData.scrollController,
+        controller: MyDrawerButtonUtil.scrollController,
         scrollDirection: Axis.horizontal,
         physics: const PageScrollPhysics(parent: ClampingScrollPhysics()),
         child: SizedBox(
@@ -102,12 +101,12 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
                   builder: (BuildContext context, Widget child) {
                     return Transform(
                       //transform we use for the stable drawer  we, not need to move with scroll view
-                      transform: Matrix4.translationValues(GlobalData.scrollController.offset, 0.0, 0.0),
+                      transform: Matrix4.translationValues(MyDrawerButtonUtil.scrollController.offset, 0.0, 0.0),
                       child: HomeDrawer(
                         screenIndex: widget.screenIndex == null ? DrawerIndex.HOME : widget.screenIndex,
                         iconAnimationController: iconAnimationController,
                         callBackIndex: (DrawerIndex indexType) {
-                          GlobalData.onDrawerClick();
+                          MyDrawerButtonUtil.onDrawerClick();
                           try {
                             widget.onDrawerCall(indexType);
                           } catch (e) {}
@@ -139,7 +138,7 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
                       if (scrolloffset == 1.0)
                         InkWell(
                           onTap: () {
-                            GlobalData.onDrawerClick();
+                            MyDrawerButtonUtil.onDrawerClick();
                           },
                         ),
                       // this just menu and arrow icon animation
@@ -176,5 +175,26 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
         ),
       ),
     );
+  }
+}
+
+class MyDrawerButtonUtil{
+  static ScrollController scrollController;
+
+  static void onDrawerClick() {
+    //if scrollcontroller.offset != 0.0 then we set to closed the drawer(with animation to offset zero position) if is not 1 then open the drawer
+    if (MyDrawerButtonUtil.scrollController.offset != 0.0) {
+      MyDrawerButtonUtil.scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.fastOutSlowIn,
+      );
+    } else {
+      MyDrawerButtonUtil.scrollController.animateTo(
+        250,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
   }
 }

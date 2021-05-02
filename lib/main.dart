@@ -8,12 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
-import 'package:vocal/auth/util/auth_util.dart';
 import 'package:vocal/libraries/new/camera_page.dart';
-import 'package:vocal/main/main_page.dart';
 import 'package:vocal/main/navigation/navigation_home_screen.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
+import 'package:vocal/modules/podcast/state/current_player_state.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
 import 'intro_slider/app_intro.dart';
@@ -70,6 +69,9 @@ Future main() async {
         ),
         ListenableProvider(
           create: (_) => EpisodeState(),
+        ),
+        ListenableProvider(
+          create: (_) => CurrentPlayerState(),
         ),
       ],
       child: MyApp(),

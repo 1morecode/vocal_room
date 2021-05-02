@@ -36,7 +36,7 @@ class UserToken{
     var firebaseAuth = FirebaseAuth.instance;
     IdTokenResult ss = await firebaseAuth.currentUser.getIdTokenResult(true);
     Map payload = {
-      "token": "${ss.token}",
+      "x-token": "${ss.token}",
     };
     try {
       var url = '${APIData.tokenAPI}';

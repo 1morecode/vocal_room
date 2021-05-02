@@ -31,6 +31,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
     episodeFuture = EpisodeUtil.fetchAllEpisodeModel(context);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -40,350 +41,406 @@ class _EpisodesPageState extends State<EpisodesPage> {
     var playlistModel = playlistState.playlistModelList
         .where((element) => element.id == widget.id);
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-        middle:
-            new Text("${playlistModel.first.title}"),
-      ),
+      backgroundColor: colorScheme.onPrimary,
       body: SafeArea(
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          shrinkWrap: true,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        margin: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: colorScheme.onPrimary,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Image.network(
-                          '${playlistModel.first.image}',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${playlistModel.first.title}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              '${playlistModel.first.desc}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16,
-                                  color: colorScheme.secondaryVariant),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            new Row(
-                              children: [
-                                Chip(
-                                  label: new Text("Episodes : 5"),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  backgroundColor: colorScheme.onPrimary,
-                                  labelStyle:
-                                      TextStyle(color: colorScheme.primary),
-                                  elevation: 0,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Chip(
-                                  label: new Text("Followers : 74"),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  backgroundColor: colorScheme.onPrimary,
-                                  labelStyle:
-                                      TextStyle(color: colorScheme.primary),
-                                  elevation: 0,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(5),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 130,
-                  ),
-                  new CupertinoButton(
-                    child: new Container(
-                      height: 45,
-                      width: 45,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorScheme.onPrimary,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.pencil,
-                        color: colorScheme.primary,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlaylistUpdatePage(
-                                playlistModel.first),
-                          ));
-                    },
-                    padding: EdgeInsets.all(0),
-                  ),
-                  Spacer(),
-                  Builder(
-                    builder: (_context) => new CupertinoButton(
-                      child: new Container(
-                        height: 45,
-                        width: 45,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: colorScheme.onPrimary,
-                        ),
-                        child: Icon(
-                          CupertinoIcons.delete,
-                          color: colorScheme.primary,
-                          size: 24,
-                        ),
-                      ),
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) => CupertinoActionSheet(
-                            title: new Text(
-                              "Warning!",
-                              style: TextStyle(color: colorScheme.primary),
-                            ),
-                            message: new Text(
-                                "You really want to delete this playlist?"),
-                            actions: [
-                              CupertinoActionSheetAction(
-                                child: new Text("Yes"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  onDeleteTap(
-                                      playlistModel.first.id,
-                                      context,
-                                      _context);
-                                },
-                              )
-                            ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: new Text("No"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      padding: EdgeInsets.all(0),
-                    ),
-                  ),
-                  Spacer(),
-                  new CupertinoButton(
-                    child: new Container(
-                      height: 45,
-                      width: 45,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorScheme.onPrimary,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.info_circle,
-                        color: colorScheme.primary,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) => CupertinoActionSheet(
-                          title: new Text(
-                            "About",
-                            style: TextStyle(color: colorScheme.primary),
-                          ),
-                          message: new Text(
-                              "${playlistModel.first.desc}", textAlign: TextAlign.start, style: TextStyle(color: colorScheme.secondaryVariant, fontSize: 18, fontWeight: FontWeight.w400),),
-                          cancelButton: CupertinoActionSheetAction(
-                            child: new Text("Dismiss"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    padding: EdgeInsets.all(0),
-                  ),
-                  Spacer(),
-                ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.topLeft,
-              width: size.width,
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: Text(
-                "All Episodes",
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20,
-                    color: colorScheme.onSecondary),
-              ),
-            ),
-            FutureBuilder(
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      snapshot.data == true &&
-                      episodeState.episodeModelList.length != 0) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: episodeState.episodeModelList.length,
-                      padding: EdgeInsets.only(top: 5, bottom: 65),
-                      itemBuilder: (context, index) {
-                        return new EpisodeListWidget(
-                            episodeState.episodeModelList[index].id);
-                      },
-                    );
-                  } else if (snapshot.hasData &&
-                      snapshot.data == true &&
-                      episodeState.episodeModelList.length == 0) {
-                    return Center(
-                        child: new Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.video_collection_outlined,
-                              size: 100,
-                              color: colorScheme.secondaryVariant,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              "Episodes Not Available",
-                              style: TextStyle(
-                                  color: colorScheme.secondaryVariant,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CupertinoButton(
-                              color: colorScheme.secondaryVariant,
-                              borderRadius: BorderRadius.circular(25),
-                              child: Shimmer.fromColors(
-                                child: new Text(
-                                  "Add new episode",
-                                  style: TextStyle(color: colorScheme.onPrimary),
-                                ),
-                                baseColor: colorScheme.onPrimary,
-                                highlightColor: colorScheme.primary,
-                              ),
-                              onPressed: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (context) => NewPlaylistPage(),
-                                //     ));
-                              },
-                            )
-                          ],
-                        ));
-                  } else if (snapshot.hasData && snapshot.data != true) {
-                    return Center(
-                        child: new Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 100,
-                              color: colorScheme.secondaryVariant,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              "Something went wrong!",
-                              style: TextStyle(
-                                  color: colorScheme.secondaryVariant,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CupertinoButton(
-                              color: colorScheme.secondaryVariant,
-                              borderRadius: BorderRadius.circular(25),
-                              child: Shimmer.fromColors(
-                                child: new Text(
-                                  "Try again",
-                                  style: TextStyle(color: colorScheme.onPrimary),
-                                ),
-                                baseColor: colorScheme.onPrimary,
-                                highlightColor: colorScheme.primary,
-                              ),
-                              onPressed: () {
-                                episodeFuture = EpisodeUtil.fetchAllEpisodeModel(context);
-                              },
-                            )
-                          ],
-                        ));
-                  } else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return EpisodeShimmer();
-                      },
-                    );
-                  }
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: colorScheme.onSurface,
+              elevation: 1,
+              leading: CupertinoButton(
+                child: Icon(
+                  CupertinoIcons.back,
+                  size: 28,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
-                future: episodeFuture)
+              ),
+              floating: false,
+              pinned: true,
+              expandedHeight: size.width * 0.6,
+              actions: [
+                CupertinoButton(
+                  child: new Icon(
+                    CupertinoIcons.arrowshape_turn_up_right_circle,
+                    size: 28,
+                  ),
+                  onPressed: () {},
+                  padding: EdgeInsets.all(5),
+                )
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                titlePadding: EdgeInsets.all(15),
+                title: new Column(
+                  children: [
+                    Text('${playlistModel.first.title}',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                background: new Column(
+                  children: [
+                    new SizedBox(
+                      height: size.width * 0.15,
+                    ),
+                    new Container(
+                      height: size.width * 0.4,
+                      width: size.width * 0.4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(5),
+                        image: DecorationImage(
+                            image: NetworkImage(
+                              'https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/172107537/original/3ac68a0d8c213e56d4a27db3fe0b1b5fd6a4eb6c/make-a-playlist-banner-or-artwork.jpg',
+                            ),
+                            fit: BoxFit.cover),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            new SliverList(
+              delegate: new SliverChildListDelegate(
+                [
+                  new Container(
+                    width: size.width,
+                    decoration: BoxDecoration(
+                      gradient: new LinearGradient(
+                          colors: [
+                            colorScheme.onSurface,
+                            colorScheme.onPrimary
+                          ],
+                          begin: const FractionalOffset(0.0, 0.0),
+                          end: const FractionalOffset(0.0, 1.0),
+                          stops: [0.0, 1.0],
+                          tileMode: TileMode.clamp),
+                    ),
+                    child: new Column(
+                      children: [
+                        new Text(
+                          "${playlistModel.first.title}",
+                          style: TextStyle(
+                              color: colorScheme.onSecondary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24),
+                        ),
+                        new Text(
+                          "Auther Name",
+                          style: TextStyle(
+                              color: colorScheme.secondaryVariant,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              new Text("5 Episodes -||- 74 Followers", style: TextStyle(
+                                color: colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 16
+                              ),),
+                            ],
+                          ),
+                        ),
+                        Container(
+                            padding: EdgeInsets.all(5),
+                            child: Builder(
+                              builder: (_context) => new Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Expanded(
+                                    child: new CupertinoButton(
+                                      minSize: 35,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: new Row(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.pencil,
+                                            color: colorScheme.onSecondary,
+                                            size: 24,
+                                          ),
+                                          SizedBox(width: 10,),
+                                          new Text(
+                                            "Edit",
+                                            style: TextStyle(
+                                                color: colorScheme.onSecondary),
+                                          )
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PlaylistUpdatePage(
+                                                      playlistModel.first),
+                                            ));
+                                      },
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      color: colorScheme.primary,
+                                    ),
+                                    flex: 1,
+                                  ),
+                                  SizedBox(width: 15,),
+                                  Expanded(
+                                    child: new CupertinoButton(
+                                      minSize: 35,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: new Row(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.delete,
+                                            color: colorScheme.onSecondary,
+                                            size: 24,
+                                          ),
+                                          SizedBox(width: 10,),
+                                          new Text(
+                                            "Delete",
+                                            style: TextStyle(
+                                                color: colorScheme.onSecondary),
+                                          )
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        showCupertinoModalPopup(
+                                          context: context,
+                                          builder: (context) =>
+                                              CupertinoActionSheet(
+                                            title: new Text(
+                                              "Warning!",
+                                              style: TextStyle(
+                                                  color: colorScheme.primary),
+                                            ),
+                                            message: new Text(
+                                                "You really want to delete this playlist?"),
+                                            actions: [
+                                              CupertinoActionSheetAction(
+                                                child: new Text("Yes"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  onDeleteTap(
+                                                      playlistModel.first.id,
+                                                      context,
+                                                      _context);
+                                                },
+                                              )
+                                            ],
+                                            cancelButton:
+                                                CupertinoActionSheetAction(
+                                              child: new Text("No"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      color: colorScheme.secondary,
+                                    ),
+                                    flex: 1,
+                                  ),
+                                  SizedBox(width: 15,),
+                                  Expanded(
+                                    child: new CupertinoButton(
+                                      minSize: 35,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: new Row(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.info,
+                                            color: colorScheme.onSecondary,
+                                            size: 24,
+                                          ),
+                                          SizedBox(width: 10,),
+                                          new Text(
+                                            "Info",
+                                            style: TextStyle(
+                                                color: colorScheme.onSecondary),
+                                          )
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        showCupertinoModalPopup(
+                                          context: context,
+                                          builder: (context) =>
+                                              CupertinoActionSheet(
+                                            title: new Text(
+                                              "About",
+                                              style: TextStyle(
+                                                  color: colorScheme.primary),
+                                            ),
+                                            message: new Text(
+                                              "${playlistModel.first.desc}",
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  color: colorScheme
+                                                      .secondaryVariant,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                            cancelButton:
+                                                CupertinoActionSheetAction(
+                                              child: new Text("Dismiss"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      color: colorScheme.primary,
+                                    ),
+                                    flex: 1,
+                                  ),
+                                  SizedBox(width: 15,),
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                  ConstrainedBox(
+                    constraints: new BoxConstraints(minHeight: size.height-70),
+                    child: new Container(
+                      color: colorScheme.onPrimary,
+                      child: FutureBuilder(
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.data == true &&
+                                episodeState.episodeModelList.length != 0) {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: episodeState.episodeModelList.length,
+                                padding: EdgeInsets.only(top: 5, bottom: 65),
+                                itemBuilder: (context, index) {
+                                  return new EpisodeListWidget(
+                                      episodeState.episodeModelList[index].id);
+                                },
+                              );
+                            } else if (snapshot.hasData &&
+                                snapshot.data == true &&
+                                episodeState.episodeModelList.length == 0) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 25),
+                                  child: new Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.video_collection_outlined,
+                                    size: 70,
+                                    color: colorScheme.secondaryVariant,
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    "Episodes Not Available",
+                                    style: TextStyle(
+                                        color: colorScheme.secondaryVariant,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  CupertinoButton(
+                                    color: colorScheme.secondaryVariant,
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: Shimmer.fromColors(
+                                      child: new Text(
+                                        "Add new episode",
+                                        style: TextStyle(
+                                            color: colorScheme.onPrimary),
+                                      ),
+                                      baseColor: colorScheme.onPrimary,
+                                      highlightColor: colorScheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) => NewPlaylistPage(),
+                                      //     ));
+                                    },
+                                  )
+                                ],
+                              ));
+                            } else if (snapshot.hasData &&
+                                snapshot.data != true) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 25),
+                                  child: new Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 80,
+                                    color: colorScheme.secondaryVariant,
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    "Something went wrong!",
+                                    style: TextStyle(
+                                        color: colorScheme.secondaryVariant,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  CupertinoButton(
+                                    color: colorScheme.secondaryVariant,
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: Shimmer.fromColors(
+                                      child: new Text(
+                                        "Try again",
+                                        style: TextStyle(
+                                            color: colorScheme.onPrimary),
+                                      ),
+                                      baseColor: colorScheme.onPrimary,
+                                      highlightColor: colorScheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      episodeFuture =
+                                          EpisodeUtil.fetchAllEpisodeModel(
+                                              context);
+                                    },
+                                  )
+                                ],
+                              ));
+                            } else {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return EpisodeShimmer();
+                                },
+                              );
+                            }
+                          },
+                          future: episodeFuture),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -405,8 +462,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NewEpisodePage(
-                    playlistModel.first),
+                builder: (context) => NewEpisodePage(playlistModel.first),
               ));
         },
       ),
