@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/libraries/new/camera_page.dart';
-import 'package:vocal/libraries/new/text_status_page.dart';
+import 'package:vocal/stories/newStory/camera_page.dart';
 
 class NewStoryButton extends StatefulWidget {
   @override

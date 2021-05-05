@@ -41,7 +41,7 @@ class CategoryWidget extends StatelessWidget {
                   colors: [colorScheme.onPrimary, colorScheme.primary.withOpacity(0.2)],
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
+                  stops: [0.6, 1.0],
                   tileMode: TileMode.clamp),
             ),
             child: new Row(

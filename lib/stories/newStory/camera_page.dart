@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vocal/libraries/new/edit_image_screen.dart';
-import 'package:vocal/libraries/new/text_status_page.dart';
+import 'package:vocal/stories/newStory/test.dart';
+// import 'package:vocal/stories/newStory/edit_image_screen.dart';
+import 'package:vocal/stories/newStory/text_status_page.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -267,7 +267,7 @@ class _CameraHomeState extends State<CameraHome> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      EditImageScreen(
+                                                      CropImageScreen(
                                                     id: "itemPanel-$index",
                                                     resource:
                                                         "${snapshot.data[index]}",
@@ -406,7 +406,7 @@ class _CameraHomeState extends State<CameraHome> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => EditImageScreen(
+                builder: (context) => CropImageScreen(
                   id: "item-0",
                   resource: "$filePath",
                   isPath: true,
@@ -507,7 +507,7 @@ class _CameraHomeState extends State<CameraHome> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditImageScreen(
+                              builder: (context) => CropImageScreen(
                                 id: "item-$i",
                                 resource: "${displayedData[i]}",
                                 isPath: true,

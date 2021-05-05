@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vocal/libraries/stories/storyCircle.dart';
+import 'package:vocal/stories/model/story_item.dart';
+import 'package:vocal/stories/library/story_circle_widget.dart';
 import 'package:vocal/modules/podcast/story/widget/new_story_widget.dart';
 
 class Stories extends StatelessWidget {
@@ -111,19 +112,4 @@ class Stories extends StatelessWidget {
       ),
     );
   }
-}
-
-class StoryItem {
-  /// Name of the story circle
-  String name;
-
-  /// Image to display on the circle of the image
-  ImageProvider thumbnail;
-
-  /// List of pages to display as stories under this story
-  List<Scaffold> stories;
-
-  /// Add a story
-  StoryItem(
-      {@required this.name, @required this.thumbnail, @required this.stories});
 }

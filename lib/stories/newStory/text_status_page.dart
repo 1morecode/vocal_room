@@ -7,7 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:vocal/libraries/new/edit_image_screen.dart';
+import 'package:vocal/stories/newStory/edit_image_screen.dart';
+import 'package:vocal/stories/newStory/test.dart';
 
 class TextStatusPage extends StatefulWidget {
   @override
@@ -56,10 +57,9 @@ class _TextStatusPageState extends State<TextStatusPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      EditImageScreen(
+                      CropImageScreen(
                         id: "itemPanel-0",
-                        uint:
-                        base,
+                        uint: base,
                         isPath: false,
                       ),
                 ));

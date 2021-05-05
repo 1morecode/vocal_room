@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/libraries/stories/Stories_for_Flutter.dart';
+import 'package:vocal/stories/model/story_item.dart';
 
 class FullPageView extends StatefulWidget {
   final List<StoryItem> storiesMapList;
@@ -26,6 +27,7 @@ class FullPageView extends StatefulWidget {
 
   /// Status bar color in full view of story
   final Color storyStatusBarColor;
+
 
   FullPageView({
     Key key,
@@ -154,7 +156,7 @@ class FullPageViewState extends State<FullPageView> {
           Column(
             children: <Widget>[
               Container(
-                color: storyStatusBarColor ?? Colors.black,
+                color: storyStatusBarColor ?? Colors.transparent,
                 child: SafeArea(
                   child: Center(),
                 ),
@@ -205,37 +207,35 @@ class FullPageViewState extends State<FullPageView> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: (showThumbnailOnFullPage == null ||
                             showThumbnailOnFullPage)
-                        ? Image(
-                            width: fullpageThumbnailSize ?? 25,
-                            height: fullpageThumbnailSize ?? 25,
-                            image: storiesMapList[
-                                    getStoryIndex(listLengths, selectedIndex)]
-                                .thumbnail,
-                          )
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                          child: Image(
+                              width: fullpageThumbnailSize ?? 25,
+                              height: fullpageThumbnailSize ?? 25,
+                              image: storiesMapList[
+                                      getStoryIndex(listLengths, selectedIndex)]
+                                  .thumbnail,
+                            ),
+                        )
                         : Center(),
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          showStoryNameOnFullPage
-                              ? storiesMapList[
-                                      getStoryIndex(listLengths, selectedIndex)]
-                                  .name
-                              : "",
-                          style: widget.fullPagetitleStyle ??
-                              TextStyle(
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(blurRadius: 10, color: Colors.black)
-                                ],
-                                fontSize: 13,
-                              ),
+                  Text(
+                    showStoryNameOnFullPage
+                        ? storiesMapList[
+                    getStoryIndex(listLengths, selectedIndex)]
+                        .name
+                        : "",
+                    style: widget.fullPagetitleStyle ??
+                        TextStyle(
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(blurRadius: 10, color: Colors.black)
+                          ],
+                          fontSize: 13,
                         ),
-                      ],
-                    ),
                   ),
+                  Spacer(),
+                  new IconButton(icon: Icon(Icons.cancel_outlined), onPressed: (){Navigator.of(context).pop();})
                 ],
               ),
             ],

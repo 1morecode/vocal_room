@@ -484,16 +484,16 @@ class _AudioMainScreenState extends State<AudioMainScreen> {
         () {
           AudioService.start(
             backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
-            androidNotificationChannelName: 'Audio Service Demo',
+            androidNotificationChannelName: 'Vocal Cast',
             // Enable this if you want the Android service to exit the foreground state on pause.
-            //androidStopForegroundOnPause: true,
+            androidStopForegroundOnPause: true,
             androidNotificationColor: 0xFF2196f3,
             androidNotificationIcon: 'mipmap/ic_launcher',
             androidEnableQueue: true,
           );
-          AudioService.playFromMediaId(EpisodeModel.episodesList[widget.index].id);
+          // AudioService.playFromMediaId(EpisodeModel.episodesList[widget.index].id);
           AudioService.play();
-          AudioService.customAction('setVolume', 0.8);
+          // AudioService.customAction('setVolume', 0.8);
         },
       );
 

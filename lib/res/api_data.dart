@@ -18,4 +18,10 @@ class APIData{
   static String createNewEpisodeAPI = "/playlist/media";
   static String deleteEpisodeAPI = "/media/delete";
   static String updateEpisodeAPI = "/playlist/media";
+
+
+  // Status API's
+  static String createNewStatusAPI = "/user/status/upload";
+  static String fetchAllStatusAPI = "/user/list?collection=status";
+  static String updateStatusViewAPI = "/user/list?collection=status";
 }

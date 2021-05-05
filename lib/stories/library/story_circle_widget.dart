@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/libraries/stories/Stories_for_Flutter.dart';
-import 'package:vocal/libraries/stories/fullPageView.dart';
+import 'package:vocal/stories/model/story_item.dart';
+import 'package:vocal/stories/library/full_page_story_view.dart';
 
 class StoryCircle extends StatelessWidget {
   final List<StoryItem> story;

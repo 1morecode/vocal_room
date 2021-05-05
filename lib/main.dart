@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:camera/camera.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
-import 'package:vocal/libraries/new/camera_page.dart';
+import 'package:vocal/stories/newStory/camera_page.dart';
 import 'package:vocal/main/navigation/navigation_home_screen.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';

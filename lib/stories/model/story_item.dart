@@ -1,0 +1,16 @@
+import 'package:flutter/material.dart';
+
+class StoryItem {
+  /// Name of the story circle
+  String name;
+
+  /// Image to display on the circle of the image
+  ImageProvider thumbnail;
+
+  /// List of pages to display as stories under this story
+  List<Scaffold> stories;
+
+  /// Add a story
+  StoryItem(
+      {@required this.name, @required this.thumbnail, @required this.stories});
+}
