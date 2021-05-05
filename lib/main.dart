@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:camera/camera.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,8 +70,7 @@ Future main() async {
         ),
         ListenableProvider(
           create: (_) => EpisodeState(),
-        ),
-        ListenableProvider(
+        ),ListenableProvider(
           create: (_) => CurrentPlayerState(),
         ),
       ],
@@ -82,14 +82,11 @@ Future main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
-
-
 class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeState>(builder: (context, themeState, child) => FeatureDiscovery(
-
         child: MaterialApp(
             themeMode: themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,

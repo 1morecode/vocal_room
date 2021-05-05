@@ -6,6 +6,7 @@ import 'package:vocal/modules/podcast/playlist/widget/episode_card_widget.dart';
 import 'package:vocal/modules/podcast/state/current_player_state.dart';
 import 'package:vocal/res/widgets/circular_tab_indicator.dart';
 import 'package:vocal/state/audio_state.dart';
+import 'package:vocal/state/test.dart';
 
 class PlayListPage extends StatefulWidget {
 
@@ -170,7 +171,7 @@ class _PlayListPageState extends State<PlayListPage> {
                                     ),
                                     onPressed: () {
                                       currentPlayerState.updateCurrentPlayingState(null, EpisodeModel.episodesList,EpisodeModel.episodesList[0]);
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => AudioPlayerPage(),));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => AudioMainScreen(0),));
                                     }),
                               ),
                             ],
@@ -238,7 +239,7 @@ class _PlayListPageState extends State<PlayListPage> {
           shrinkWrap: true,
           itemCount: EpisodeModel.episodesList.length,
           itemBuilder: (context, index) {
-            return EpisodeCardWidget(EpisodeModel.episodesList[index]);
+            return EpisodeCardWidget(EpisodeModel.episodesList[index], index);
           },
         );
       },

@@ -1,6 +1,7 @@
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vocal/auth/facebook/facebook_login_button.dart';
 import 'package:vocal/auth/google/google_login_button.dart';
 
@@ -10,9 +11,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: colorScheme.onPrimary,
+      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+    ));
     return Scaffold(
       body: Container(
         height: size.height,

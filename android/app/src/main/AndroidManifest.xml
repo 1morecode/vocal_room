@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
    <application
         android:label="vocal"
@@ -43,6 +45,18 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+       <service android:name="com.ryanheise.audioservice.AudioService">
+           <intent-filter>
+               <action android:name="android.media.browse.MediaBrowserService" />
+           </intent-filter>
+       </service>
+
+       <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver" >
+           <intent-filter>
+               <action android:name="android.intent.action.MEDIA_BUTTON" />
+           </intent-filter>
+       </receiver>
 
        <meta-data android:name="com.facebook.sdk.ApplicationId"
            android:value="@string/facebook_app_id"/>

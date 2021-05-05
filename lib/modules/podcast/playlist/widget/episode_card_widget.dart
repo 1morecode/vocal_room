@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocal/modules/podcast/model/episode_model.dart';
+import 'package:vocal/modules/podcast/state/current_player_state.dart';
 import 'package:vocal/res/widgets/custom_list_tile.dart';
+import 'package:vocal/state/audio_state.dart';
+import 'package:vocal/state/test.dart';
 
 class EpisodeCardWidget extends StatefulWidget {
   final EpisodeModel episodeModel;
+  final int index;
 
-  EpisodeCardWidget(this.episodeModel);
+  EpisodeCardWidget(this.episodeModel, this.index);
 
   @override
   _EpisodeCardWidgetState createState() => _EpisodeCardWidgetState();
@@ -15,6 +20,7 @@ class EpisodeCardWidget extends StatefulWidget {
 class _EpisodeCardWidgetState extends State<EpisodeCardWidget> {
   @override
   Widget build(BuildContext context) {
+    var currentPlayerState = Provider.of<CurrentPlayerState>(context, listen: true);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return SizedBox(
@@ -54,7 +60,10 @@ class _EpisodeCardWidgetState extends State<EpisodeCardWidget> {
                       ),
                     )
                   ],
-                ), onPressed: (){})),
+                ), onPressed: (){
+                  currentPlayerState.updateCurrentPlayingState(null, EpisodeModel.episodesList,EpisodeModel.episodesList[widget.index]);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AudioMainScreen(widget.index),));
+                })),
             PopupMenuButton(
               color: colorScheme.onSurface,
               padding: EdgeInsets.all(0),

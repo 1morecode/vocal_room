@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,10 @@ import 'package:vocal/modules/podcast/state/current_player_state.dart';
 // void main() => runApp(MyApp());
 
 class AudioPlayerPage extends StatefulWidget {
+  final int index;
+
+  AudioPlayerPage(this.index);
+
   @override
   _AudioPlayerPageState createState() => _AudioPlayerPageState();
 }
@@ -22,51 +27,6 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   var _playlist;
   int _addedCount = 0;
 
-  createPlaylist() {
-    // _playlist = ConcatenatingAudioSource(children: [
-    //   AudioSource.uri(
-    //     Uri.parse(
-    //         "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"),
-    //     tag: AudioMetadata(
-    //       album: "Science Friday",
-    //       title: "A Salute To Head-Scratching Science",
-    //       artwork:
-    //       "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    //     ),
-    //   ),
-    //   ClippingAudioSource(
-    //     start: Duration(seconds: 60),
-    //     end: Duration(seconds: 90),
-    //     child: AudioSource.uri(Uri.parse(
-    //         "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")),
-    //     tag: AudioMetadata(
-    //       album: "Science Friday",
-    //       title: "A Salute To Head-Scratching Science (30 seconds)",
-    //       artwork:
-    //       "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    //     ),
-    //   ),
-    //   AudioSource.uri(
-    //     Uri.parse("https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3"),
-    //     tag: AudioMetadata(
-    //       album: "Science Friday",
-    //       title: "From Cat Rheology To Operatic Incompetence",
-    //       artwork:
-    //       "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    //     ),
-    //   ),
-    //   AudioSource.uri(
-    //     Uri.parse("asset:///audio/nature.mp3"),
-    //     tag: AudioMetadata(
-    //       album: "Public Domain",
-    //       title: "Nature Sounds",
-    //       artwork:
-    //       "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    //     ),
-    //   ),
-    // ]);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -74,7 +34,6 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-    createPlaylist();
     _init();
   }
 
@@ -88,6 +47,8 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     });
     try {
       await _player.setAudioSource(_playlist);
+      _player.seek(Duration.zero, index: widget.index);
+      _player.play();
     } catch (e) {
       // Catch load errors: 404, invalid url ...
       print("Error loading playlist: $e");
@@ -105,25 +66,43 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     var currentPlayer = Provider.of<CurrentPlayerState>(context, listen: false);
     _playlist = ConcatenatingAudioSource(
-        children: List.generate(
-      currentPlayer.currentEpisodeModelList.length,
-      (index) => AudioSource.uri(
-        Uri.parse("${currentPlayer.currentEpisodeModelList[index].url}"),
-        tag: AudioMetadata(
-          album: "${currentPlayer.currentEpisodeModelList[index].title}",
-          title: "A Salute To Head-Scratching Science",
-          artwork: "${currentPlayer.currentEpisodeModelList[index].banner}",
+      children: List.generate(
+        currentPlayer.currentEpisodeModelList.length,
+        (index) => AudioSource.uri(
+          Uri.parse("${currentPlayer.currentEpisodeModelList[index].url}"),
+          tag: AudioMetadata(
+            album: "${currentPlayer.currentEpisodeModelList[index].title}",
+            title: "A Salute To Head-Scratching Science",
+            artwork: "${currentPlayer.currentEpisodeModelList[index].banner}",
+          ),
         ),
       ),
-    ));
+    );
     return Scaffold(
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
+          physics: ScrollPhysics(),
           children: [
+            new SizedBox(
+              height: 1,
+            ),
             SizedBox(
               height: 60,
+              width: MediaQuery.of(context).size.width,
+              child: new Row(
+                children: [
+                  new IconButton(
+                      icon: Icon(
+                        CupertinoIcons.back,
+                        color: colorScheme.primary,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  Spacer()
+                ],
+              ),
             ),
             StreamBuilder<SequenceState>(
               stream: _player.sequenceStateStream,
@@ -137,13 +116,27 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: NetworkImage("${metadata.artwork}"))),
-                          height: MediaQuery.of(context).size.width * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.4,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: NetworkImage("${metadata.artwork}")),
+                              ),
+                              height: MediaQuery.of(context).size.width * 0.53,
+                              width: MediaQuery.of(context).size.width * 0.53,
+                            ),
+                            new Container(
+                              height: MediaQuery.of(context).size.width * 0.6,
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              child: Image.asset(
+                                "assets/circle_wave.gif",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -209,13 +202,21 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
             ),
             ControlButtons(_player),
             SizedBox(height: 8.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                    colors: [colorScheme.onSurface, colorScheme.onPrimary],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
-                      "Episodes",
+                      " Episodes",
                       style: TextStyle(
                           color: colorScheme.onSecondary,
                           fontSize: 16,
@@ -238,8 +239,9 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                         LoopMode.one,
                       ];
                       final index = cycleModes.indexOf(loopMode);
-                      return IconButton(
-                        icon: icons[index],
+                      return CupertinoButton(
+                        padding: EdgeInsets.all(5),
+                        child: icons[index],
                         onPressed: () {
                           _player.setLoopMode(cycleModes[
                               (cycleModes.indexOf(loopMode) + 1) %
@@ -252,8 +254,9 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                     stream: _player.shuffleModeEnabledStream,
                     builder: (context, snapshot) {
                       final shuffleModeEnabled = snapshot.data ?? false;
-                      return IconButton(
-                        icon: shuffleModeEnabled
+                      return CupertinoButton(
+                        padding: EdgeInsets.all(5),
+                        child: shuffleModeEnabled
                             ? Icon(Icons.shuffle, color: colorScheme.primary)
                             : Icon(Icons.shuffle,
                                 color: colorScheme.secondaryVariant),
@@ -287,20 +290,20 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                         borderRadius: BorderRadius.circular(0),
                         padding:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        color: i == state.currentIndex
-                            ? colorScheme.secondary
-                            : colorScheme.onPrimary,
+                        color: colorScheme.onPrimary,
                         child: new Row(
                           children: [
                             Container(
-                              margin: EdgeInsets.symmetric(horizontal: 15),
+                              margin: EdgeInsets.all(10),
                               decoration: BoxDecoration(
+                                  color: colorScheme.onSurface,
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                       image: NetworkImage(
-                                          "${sequence[i].tag.artwork}"))),
-                              height: 45,
-                              width: 45,
+                                          "${sequence[i].tag.artwork}"),
+                                      fit: BoxFit.cover)),
+                              height: 50,
+                              width: 50,
                             ),
                             new Expanded(
                                 child: Text(
@@ -310,11 +313,21 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             )),
-                            new Image.asset("assets/playing.gif")
+                            i == state.currentIndex
+                                ? new Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                    alignment: Alignment.center,
+                                    height: 15,
+                                    child:
+                                        new Image.asset("assets/playing.gif"),
+                                  )
+                                : new Container()
                           ],
                         ),
                         onPressed: () {
                           _player.seek(Duration.zero, index: i);
+                          _player.play();
                         },
                       ),
                     ),
@@ -322,57 +335,12 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                 );
               },
             ),
-            // ConstrainedBox(
-            //   constraints: new BoxConstraints(minHeight: 300, maxHeight: 400),
-            //   child: StreamBuilder<SequenceState>(
-            //     stream: _player.sequenceStateStream,
-            //     builder: (context, snapshot) {
-            //       final state = snapshot.data;
-            //       final sequence = state?.sequence ?? [];
-            //       return ReorderableListView(
-            //         shrinkWrap: true,
-            //         onReorder: (int oldIndex, int newIndex) {
-            //           if (oldIndex < newIndex) newIndex--;
-            //           _playlist.move(oldIndex, newIndex);
-            //         },
-            //         children: [
-            //           for (var i = 0; i < sequence.length; i++)
-            //             Dismissible(
-            //               key: ValueKey(sequence[i]),
-            //               background: Container(
-            //                 color: Colors.redAccent,
-            //                 alignment: Alignment.centerRight,
-            //                 child: Padding(
-            //                   padding: const EdgeInsets.only(right: 8.0),
-            //                   child: Icon(Icons.delete, color: Colors.white),
-            //                 ),
-            //               ),
-            //               onDismissed: (dismissDirection) {
-            //                 _playlist.removeAt(i);
-            //               },
-            //               child: Material(
-            //                 color: i == state.currentIndex
-            //                     ? Colors.grey.shade300
-            //                     : null,
-            //                 child: ListTile(
-            //                   title: Text(sequence[i].tag.title as String),
-            //                   onTap: () {
-            //                     _player.seek(Duration.zero, index: i);
-            //                   },
-            //                 ),
-            //               ),
-            //             ),
-            //         ],
-            //       );
-            //     },
-            //   ),
-            // ),
           ],
         ),
       ),
       bottomNavigationBar: new Container(
         height: 60,
-        color: Colors.green,
+        color: colorScheme.onSurface,
         child: StreamBuilder<SequenceState>(
           stream: _player.sequenceStateStream,
           builder: (context, snapshot) {
@@ -400,8 +368,15 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(metadata.album,
-                        style: Theme.of(context).textTheme.headline6),
-                    Text(metadata.title),
+                        style: TextStyle(
+                            color: colorScheme.onSecondary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16)),
+                    Text(metadata.title,
+                        style: TextStyle(
+                            color: colorScheme.secondaryVariant,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14)),
                   ],
                 )),
                 Container(
@@ -463,6 +438,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
       ),
     );
   }
+
 }
 
 class ControlButtons extends StatelessWidget {
@@ -498,7 +474,12 @@ class ControlButtons extends StatelessWidget {
             stream: player.sequenceStateStream,
             builder: (context, snapshot) => IconButton(
               icon: Icon(Icons.skip_previous_rounded),
-              onPressed: player.hasPrevious ? player.seekToPrevious : null,
+              onPressed: (){
+                if(player.hasPrevious){
+                  player.seekToPrevious();
+                  player.play();
+                }
+              },
               disabledColor: colorScheme.secondaryVariant,
               color: colorScheme.primary,
               iconSize: 32,
@@ -544,7 +525,12 @@ class ControlButtons extends StatelessWidget {
             stream: player.sequenceStateStream,
             builder: (context, snapshot) => IconButton(
               icon: Icon(Icons.skip_next_rounded),
-              onPressed: player.hasNext ? player.seekToNext : null,
+              onPressed: (){
+                if(player.hasPrevious){
+                  player.seekToNext();
+                  player.play();
+                }
+              },
               iconSize: 32,
               disabledColor: colorScheme.secondaryVariant,
               color: colorScheme.primary,
@@ -599,6 +585,15 @@ class SeekBar extends StatefulWidget {
 class _SeekBarState extends State<SeekBar> {
   double _dragValue;
   SliderThemeData _sliderThemeData;
+
+  @override
+  void initState() {
+    print("Duration ${widget.duration}");
+    print("Position ${widget.duration}");
+    print("Buffered ${widget.duration}");
+    print("Duration ${widget.duration}");
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -684,7 +679,7 @@ class _SeekBarState extends State<SeekBar> {
           )),
           Text(
               RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("${widget.duration}")
+                      .firstMatch("${widget.duration - _remaining}")
                       ?.group(1) ??
                   '$_remaining',
               style: Theme.of(context).textTheme.caption),

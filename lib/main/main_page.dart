@@ -33,12 +33,12 @@ class _MainPageState extends State<MainPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     // var themeProvider = Provider.of<ThemeState>(context, listen: true);
-    var systemUiOverlayStyle = SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: colorScheme.onPrimary,
-        // statusBarIconBrightness: Brightness.light
-    );
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: colorScheme.onPrimary,
+      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+    ));
     return Scaffold(
       key: GlobalData.scaffoldKey,
       appBar: AppBar(
