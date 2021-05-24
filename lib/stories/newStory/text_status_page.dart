@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:auto_size_text_field/auto_size_text_field.dart';
@@ -7,8 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:vocal/stories/newStory/edit_image_screen.dart';
-import 'package:vocal/stories/newStory/test.dart';
+import 'package:path_provider/path_provider.dart';
 
 class TextStatusPage extends StatefulWidget {
   @override
@@ -18,7 +20,7 @@ class TextStatusPage extends StatefulWidget {
 class _TextStatusPageState extends State<TextStatusPage> {
   TextEditingController _textController = new TextEditingController();
   GlobalKey _globalKey = new GlobalKey();
-  ColorSwatch _tempMainColor = Colors.redAccent;
+  ColorSwatch _tempMainColor = Colors.cyan;
 
   Future<Uint8List> _captureImage() async {
     try {
@@ -53,14 +55,14 @@ class _TextStatusPageState extends State<TextStatusPage> {
           FocusScope.of(context).unfocus();
           Timer(Duration(seconds: 1), () async{
             Uint8List base = await _captureImage();
+            String path = await _createFileFromString(base);
             Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
                       CropImageScreen(
                         id: "itemPanel-0",
-                        uint: base,
-                        isPath: false,
+                        resource: path,
                       ),
                 ));
           });
@@ -73,7 +75,7 @@ class _TextStatusPageState extends State<TextStatusPage> {
           child: new Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -153,5 +155,21 @@ class _TextStatusPageState extends State<TextStatusPage> {
             ),
           );
         });
+  }
+
+  Future<String> _createFileFromString(Uint8List bytes) async {
+    // final encodedStr = "...";
+    // Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String fullPath = '$dir/${DateTime.now().toString()}.png';
+    print("local file full path $fullPath");
+    File file = File(fullPath);
+    await file.writeAsBytes(bytes);
+    print(file.path);
+
+    final result = await ImageGallerySaver.saveImage(bytes);
+    print(result);
+
+    return file.path;
   }
 }

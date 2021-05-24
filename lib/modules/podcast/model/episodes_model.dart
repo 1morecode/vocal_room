@@ -23,6 +23,7 @@ class EpisodeBrief extends Equatable {
   final int skipSecondsEnd;
   final String episodeImage;
   final String chapterLink;
+
   EpisodeBrief(
       this.title,
       this.enclosureUrl,

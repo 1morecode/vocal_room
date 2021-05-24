@@ -7,6 +7,7 @@ import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/view/new_playlist_page.dart';
 import 'package:vocal/modules/dashboard/playlist/widget/playlist_list_widget.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 
 class PlaylistPage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  Future<bool> playlistFuture;
+  Future<List<PodCastPlaylistModel>> playlistFuture;
 
   @override
   void initState() {
@@ -52,10 +53,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ),
       body: SafeArea(
         child: FutureBuilder(
+          initialData: playlistState.playlistModelList,
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.data == true &&
-                  playlistState.playlistModelList.length != 0) {
+              if (snapshot.hasData && playlistState.playlistModelList.length != 0) {
                 return ListView.builder(
                   physics: BouncingScrollPhysics(),
                   itemCount: playlistState.playlistModelList.length,
@@ -64,9 +64,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     return new PlaylistWidget(playlistState.playlistModelList[index].id);
                   },
                 );
-              } else if (snapshot.hasData &&
-                  snapshot.data == true &&
-                  playlistState.playlistModelList.length == 0) {
+              } else if (snapshot.hasData && playlistState.playlistModelList.length == 0) {
                 return Center(
                     child: new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +108,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     )
                   ],
                 ));
-              } else if (snapshot.hasData && snapshot.data != true) {
+              } else if (snapshot.hasError) {
                 return Center(
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,

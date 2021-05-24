@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/view/episode_update_page.dart';
-import 'package:vocal/modules/dashboard/playlist/model/episode_model.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/global_data.dart';
 
 class EpisodeListWidget extends StatefulWidget {
@@ -19,12 +20,12 @@ class EpisodeListWidget extends StatefulWidget {
 }
 
 class _EpisodeListWidgetState extends State<EpisodeListWidget> {
-  List<String> ll = ["Delete", "Update"];
+  List<String> ll = ["Delete", "Edit"];
 
   @override
   Widget build(BuildContext context) {
-    final episodeState = Provider.of<EpisodeState>(context, listen: true);
-    Iterable<EpisodeModel> episodeModel = episodeState.episodeModelList
+    final episodeState = Provider.of<PodCastState>(context, listen: true);
+    Iterable<PodCastEpisodeModel> episodeModel = episodeState.episodeModelList
         .where((element) => element.id == widget.id);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
@@ -52,7 +53,7 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Image.network(
-                            '${episodeModel.first.graphic[0]['path']}',
+                            '${APIData.imageBaseUrl}${episodeModel.first.graphic[0]['path']}',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -73,6 +74,7 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 18,
+                                      color: colorScheme.onSecondary
                                     ),
                                   ),
                                 ],
@@ -102,6 +104,9 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                 ),
                 Builder(
                   builder: (_context) => PopupMenuButton(
+                    padding: EdgeInsets.all(0),
+                    color: colorScheme.onSurface,
+                    offset: Offset(-20, 10),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(
@@ -145,9 +150,6 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
                             ));
                       }
                     },
-                    padding: EdgeInsets.all(0),
-                    color: colorScheme.onSurface,
-                    offset: Offset(-20, 10),
                     itemBuilder: (BuildContext context) {
                       return ll.map((link) {
                         return PopupMenuItem(

@@ -8,10 +8,11 @@ import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart
 import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/widget/select_update_episode_image.dart';
 import 'package:vocal/modules/dashboard/playlist/model/episode_model.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
 import 'package:vocal/res/global_data.dart';
 
 class UpdateEpisodePage extends StatefulWidget {
-  final EpisodeModel episodeModel;
+  final PodCastEpisodeModel episodeModel;
 
   UpdateEpisodePage(this.episodeModel);
   @override

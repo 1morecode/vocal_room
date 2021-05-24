@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vocal/modules/dashboard/playlist/view/playlist_page.dart';
+import 'package:vocal/modules/dashboard/savedPlaylist/saved_playlist_page.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Text('Playlists'),
                   ),
                   Tab(
-                    child: Text('New Episode'),
+                    child: Text('Saved'),
                   ),
                 ],
               ),
@@ -47,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 dragStartBehavior: DragStartBehavior.start,
                 children: [
                   PlaylistPage(),
-                  new Container(),
+                  SavedPlaylistPage(),
                 ],
               ),
             )

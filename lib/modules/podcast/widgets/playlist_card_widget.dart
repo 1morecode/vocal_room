@@ -1,14 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/modules/podcast/playlist/playlist_page.dart';
+import 'package:provider/provider.dart';
+import 'package:vocal/modules/podcast/playlist/pod_cast_playlist_page.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 
-class PlayListCardWidget extends StatelessWidget {
+class PlayListCardWidget extends StatefulWidget {
+  final int index;
+
+  PlayListCardWidget(this.index);
+
+  @override
+  _PlayListCardWidgetState createState() => _PlayListCardWidgetState();
+}
+
+class _PlayListCardWidgetState extends State<PlayListCardWidget> {
+
   @override
   Widget build(BuildContext context) {
+    var playlistState = Provider.of<PodCastState>(context, listen: true);
     Size size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return new CupertinoButton(child: Container(
       margin: EdgeInsets.all(10),
+      width: size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: colorScheme.onPrimary,
@@ -32,12 +46,13 @@ class PlayListCardWidget extends StatelessWidget {
               tileMode: TileMode.clamp),
         ),
         child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Spacer(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: new Text(
-                "This is a playlists, title and description goes here",
+                "${playlistState.podCastPlaylistList[widget.index].title}",
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
                 style: TextStyle(
@@ -50,7 +65,7 @@ class PlayListCardWidget extends StatelessWidget {
         ),
       ),
     ), onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(),));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, false),));
     }, padding: EdgeInsets.all(0),);
   }
 }

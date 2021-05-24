@@ -1,87 +1,104 @@
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:vocal/modules/podcast/model/episode_model.dart';
-import 'package:vocal/modules/podcast/state/current_player_state.dart';
-import 'package:vocal/res/widgets/custom_list_tile.dart';
-import 'package:vocal/state/audio_state.dart';
-import 'package:vocal/state/test.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/res/api_data.dart';
 
-class EpisodeCardWidget extends StatefulWidget {
-  final EpisodeModel episodeModel;
-  final int index;
+class EpisodeListWidget extends StatefulWidget {
+  final String id;
 
-  EpisodeCardWidget(this.episodeModel, this.index);
+  EpisodeListWidget(this.id);
 
   @override
-  _EpisodeCardWidgetState createState() => _EpisodeCardWidgetState();
+  _EpisodeListWidgetState createState() => _EpisodeListWidgetState();
 }
 
-class _EpisodeCardWidgetState extends State<EpisodeCardWidget> {
+class _EpisodeListWidgetState extends State<EpisodeListWidget> {
+
   @override
   Widget build(BuildContext context) {
-    var currentPlayerState = Provider.of<CurrentPlayerState>(context, listen: true);
+    final episodeState = Provider.of<PodCastState>(context, listen: true);
+    Iterable<PodCastEpisodeModel> episodeModel = episodeState.episodeModelList
+        .where((element) => element.id == widget.id);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
-    return SizedBox(
-      width: size.width,
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-        elevation: 1,
-        shadowColor: colorScheme.secondaryVariant.withOpacity(0.5),
-        color: colorScheme.onPrimary,
-        child: new Row(
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      elevation: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        child: Column(
           children: [
-            new Expanded(
-                child: new CupertinoButton(
-                  padding: EdgeInsets.all(0),
+            Row(
+              children: [
+                Expanded(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.all(0),
                     child: new Row(
-                  children: [
-                    new Container(
-                      height: 60,
-                      width: 60,
-                      margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: colorScheme.onSurface,
-                          borderRadius: BorderRadius.circular(5),
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/172107537/original/3ac68a0d8c213e56d4a27db3fe0b1b5fd6a4eb6c/make-a-playlist-banner-or-artwork.jpg"),
-                              fit: BoxFit.cover)),
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          margin: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Image.network(
+                            '${APIData.imageBaseUrl}${episodeModel.first.graphic[0]['path']}',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${episodeModel.first.title}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
+                                        color: colorScheme.onSecondary
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                '${episodeModel.first.desc}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: colorScheme.secondaryVariant),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    new SizedBox(width: 10,),
-                    new Expanded(
-                      child: new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          new Text("${widget.episodeModel.title}", style: TextStyle(color: colorScheme.onSecondary, fontWeight: FontWeight.w600, fontSize: 18),),
-                          new Text("${widget.episodeModel.description}", style: TextStyle(color: colorScheme.secondaryVariant, fontWeight: FontWeight.w400, fontSize: 14),),
-                        ],
-                      ),
-                    )
-                  ],
-                ), onPressed: (){
-                  currentPlayerState.updateCurrentPlayingState(null, EpisodeModel.episodesList,EpisodeModel.episodesList[widget.index]);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AudioMainScreen(widget.index),));
-                })),
-            PopupMenuButton(
-              color: colorScheme.onSurface,
-              padding: EdgeInsets.all(0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              itemBuilder: (context) {
-                return List.generate(5, (index) {
-                  return PopupMenuItem(
-                    value: index,
-                    enabled: false,
-                    child: CustomListTile(
-                      padding: EdgeInsets.symmetric(horizontal: 100),
-                      onPressed: () {},
-                      title: "Title",
-                    ),
-                  );
-                });
-              },
+                    onPressed: () {},
+                  ),
+                ),
+              ],
             ),
           ],
         ),

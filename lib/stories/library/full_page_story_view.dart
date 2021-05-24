@@ -125,28 +125,31 @@ class FullPageViewState extends State<FullPageView> {
                     body: combinedList[index],
                   ),
                   // Overlay to detect taps for next page & previous page
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            prevPage(index);
-                          },
-                          child: Center(),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 80),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              prevPage(index);
+                            },
+                            child: Center(),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 3,
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            nextPage(index);
-                          },
-                          child: Center(),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 3,
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              nextPage(index);
+                            },
+                            child: Center(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

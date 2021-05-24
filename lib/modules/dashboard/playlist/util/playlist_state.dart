@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
-import 'package:vocal/modules/dashboard/playlist/model/playlist_model.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 
 class PlaylistState extends ChangeNotifier {
-  List<PlaylistModel> playlistModelList = [];
+  List<PodCastPlaylistModel> playlistModelList = [];
 
-  void updatePlaylistModalList(List<PlaylistModel> list) {
+  void updatePlaylistModalList(List<PodCastPlaylistModel> list) {
     this.playlistModelList = list;
     notifyListeners();
   }
 
-  void addPlaylistModal(PlaylistModel playlistModel) {
+  void addPlaylistModal(PodCastPlaylistModel playlistModel) {
     this.playlistModelList.add(playlistModel);
     notifyListeners();
   }
 
-  void removePlaylistModal(PlaylistModel playlistModel) {
+  void removePlaylistModal(PodCastPlaylistModel playlistModel) {
     this.playlistModelList.remove(playlistModel);
     notifyListeners();
   }

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/view/new_episode_page.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/widget/episode_list_widget.dart';
@@ -12,6 +11,7 @@ import 'package:vocal/modules/dashboard/playlist/shimmer/episode_shimmer.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/view/playlist_update_page.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/res/global_data.dart';
 
 class EpisodesPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
-    final episodeState = Provider.of<EpisodeState>(context, listen: true);
+    final episodeState = Provider.of<PodCastState>(context, listen: true);
     final playlistState = Provider.of<PlaylistState>(context, listen: true);
     var playlistModel = playlistState.playlistModelList
         .where((element) => element.id == widget.id);
@@ -92,7 +92,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                       height: size.width * 0.4,
                       width: size.width * 0.4,
                       decoration: BoxDecoration(
-                        color: colorScheme.secondary,
+                        color: colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(5),
                         image: DecorationImage(
                             image: NetworkImage(
@@ -121,42 +121,53 @@ class _EpisodesPageState extends State<EpisodesPage> {
                           stops: [0.0, 1.0],
                           tileMode: TileMode.clamp),
                     ),
-                    child: new Column(
-                      children: [
-                        new Text(
-                          "${playlistModel.first.title}",
-                          style: TextStyle(
-                              color: colorScheme.onSecondary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24),
-                        ),
-                        new Text(
-                          "Auther Name",
-                          style: TextStyle(
-                              color: colorScheme.secondaryVariant,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              new Text("5 Episodes -||- 74 Followers", style: TextStyle(
-                                color: colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 16
-                              ),),
-                            ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: new Text(
+                              "${playlistModel.first.title}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24),
+                            ),
                           ),
-                        ),
-                        Container(
-                            padding: EdgeInsets.all(5),
-                            child: Builder(
-                              builder: (_context) => new Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Expanded(
-                                    child: new CupertinoButton(
+                          new Text(
+                            "Auther Name",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: colorScheme.secondaryVariant,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                          ),
+                          new SizedBox(height: 10,),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(15.0),
+                          //   child: new Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       new Text("5 Episodes -||- 74 Followers", style: TextStyle(
+                          //         color: colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 16
+                          //       ),),
+                          //     ],
+                          //   ),
+                          // ),
+                          Container(
+                              padding: EdgeInsets.all(5),
+                              child: Builder(
+                                builder: (_context) => new Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    SizedBox(width: 5,),
+                                    new CupertinoButton(
                                       minSize: 35,
                                       borderRadius: BorderRadius.circular(20),
                                       child: new Row(
@@ -164,7 +175,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                           Icon(
                                             CupertinoIcons.pencil,
                                             color: colorScheme.onSecondary,
-                                            size: 24,
+                                            size: 20,
                                           ),
                                           SizedBox(width: 10,),
                                           new Text(
@@ -184,14 +195,11 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                             ));
                                       },
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 5),
+                                          horizontal: 10, vertical: 5),
                                       color: colorScheme.primary,
                                     ),
-                                    flex: 1,
-                                  ),
-                                  SizedBox(width: 15,),
-                                  Expanded(
-                                    child: new CupertinoButton(
+                                    SizedBox(width: 5,),
+                                    new CupertinoButton(
                                       minSize: 35,
                                       borderRadius: BorderRadius.circular(20),
                                       child: new Row(
@@ -199,7 +207,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                           Icon(
                                             CupertinoIcons.delete,
                                             color: colorScheme.onSecondary,
-                                            size: 24,
+                                            size: 20,
                                           ),
                                           SizedBox(width: 10,),
                                           new Text(
@@ -244,14 +252,11 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                         );
                                       },
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 5),
-                                      color: colorScheme.secondary,
+                                          horizontal: 10, vertical: 5),
+                                      color: Colors.red,
                                     ),
-                                    flex: 1,
-                                  ),
-                                  SizedBox(width: 15,),
-                                  Expanded(
-                                    child: new CupertinoButton(
+                                    SizedBox(width: 5,),
+                                    new CupertinoButton(
                                       minSize: 35,
                                       borderRadius: BorderRadius.circular(20),
                                       child: new Row(
@@ -259,7 +264,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                           Icon(
                                             CupertinoIcons.info,
                                             color: colorScheme.onSecondary,
-                                            size: 24,
+                                            size: 20,
                                           ),
                                           SizedBox(width: 10,),
                                           new Text(
@@ -299,16 +304,41 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                         );
                                       },
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 5),
-                                      color: colorScheme.primary,
+                                          horizontal: 10, vertical: 5),
+                                      color: colorScheme.secondaryVariant,
                                     ),
-                                    flex: 1,
-                                  ),
-                                  SizedBox(width: 15,),
-                                ],
-                              ),
-                            )),
-                      ],
+                                    SizedBox(width: 5,),
+                                    new CupertinoButton(
+                                      minSize: 35,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: new Row(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.play_fill,
+                                            color: colorScheme.onSecondary,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 10,),
+                                          new Text(
+                                            "Play",
+                                            style: TextStyle(
+                                                color: colorScheme.onSecondary),
+                                          )
+                                        ],
+                                      ),
+                                      onPressed: () {
+
+                                      },
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      color: colorScheme.secondary,
+                                    ),
+                                    SizedBox(width: 5,),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
                     ),
                   ),
                   ConstrainedBox(

@@ -4,26 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/view/episodes_page.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
+import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
 import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
+import 'package:vocal/modules/podcast/playlist/pod_cast_playlist_page.dart';
 import 'package:vocal/res/api_data.dart';
 
-class PlaylistWidget extends StatefulWidget {
-  final String id;
+class SavedPlaylistWidget extends StatefulWidget {
+  final int index;
 
-  PlaylistWidget(this.id);
+  SavedPlaylistWidget(this.index);
   @override
-  _PlaylistWidgetState createState() => _PlaylistWidgetState();
+  _SavedPlaylistWidgetState createState() => _SavedPlaylistWidgetState();
 }
 
-class _PlaylistWidgetState extends State<PlaylistWidget> {
+class _SavedPlaylistWidgetState extends State<SavedPlaylistWidget> {
   List<String> ll = ["Delete", "Share"];
 
   @override
   Widget build(BuildContext context) {
     final playlistState =
-        Provider.of<PlaylistState>(context, listen: true);
-    Iterable<PodCastPlaylistModel> playlistModel = playlistState.playlistModelList
-        .where((element) => element.id == widget.id);
+    Provider.of<SavedPlaylistState>(context, listen: true);
+    // Iterable<PodCastPlaylistModel> playlistModel = playlistState.playlists
+    //     .where((element) => element.id == widget.id);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return CupertinoButton(child: Card(
@@ -45,7 +47,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Image.network(
-                    '${APIData.imageBaseUrl}${playlistModel.first.image}',
+                    '${APIData.imageBaseUrl}${playlistState.playlists[widget.index].image}',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -58,7 +60,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        '${playlistModel.first.title}',
+                        '${playlistState.playlists[widget.index].title}',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -114,14 +116,14 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
         ),
       ),
     ), onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => EpisodesPage(widget.id),));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, true),));
     }, padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),);
   }
 
   static void showDeleteSnackBar(
       BuildContext context, PodCastPlaylistModel playlistModel) {
     final playlistState =
-        Provider.of<PlaylistState>(context, listen: true);
+    Provider.of<PlaylistState>(context, listen: true);
     final snackBar = SnackBar(
       duration: const Duration(seconds: 3),
       behavior: SnackBarBehavior.floating,

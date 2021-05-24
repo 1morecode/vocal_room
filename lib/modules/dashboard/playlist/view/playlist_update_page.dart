@@ -6,10 +6,11 @@ import 'package:vocal/modules/dashboard/playlist/model/playlist_model.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/util/update_paylist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/widget/update_select_image.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 import 'package:vocal/res/global_data.dart';
 
 class PlaylistUpdatePage extends StatefulWidget {
-  final PlaylistModel playlistModel;
+  final PodCastPlaylistModel playlistModel;
 
   PlaylistUpdatePage(this.playlistModel);
 
@@ -77,7 +78,7 @@ class _PlaylistUpdatePageState extends State<PlaylistUpdatePage> {
                   height: 10,
                 ),
                 Center(
-                  child: UpdateSelectPlaylistImage(widget.playlistModel.image),
+                  child: UpdateSelectPlaylistImage("${widget.playlistModel.image}"),
                 ),
                 new SizedBox(
                   height: 25,

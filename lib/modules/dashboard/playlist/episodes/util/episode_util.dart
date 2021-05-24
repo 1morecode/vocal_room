@@ -1,17 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
-import 'package:vocal/modules/dashboard/playlist/model/episode_model.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/res/api_data.dart';
-import 'package:vocal/res/global_data.dart';
 import 'package:vocal/res/user_token.dart';
 
 class EpisodeUtil {
   static var status = false;
 
   static Future<bool> fetchAllEpisodeModel(context) async {
-    final episodeState = Provider.of<EpisodeState>(context, listen: false);
+    final episodeState = Provider.of<PodCastState>(context, listen: false);
 
     String token = await UserToken.getToken();
 
@@ -28,12 +27,12 @@ class EpisodeUtil {
       var data = jsonDecode(await response.stream.bytesToString());
       print("DATA $data");
       if (response.statusCode == 200) {
-        List<EpisodeModel> episodeModelList = [];
+        List<PodCastEpisodeModel> episodeModelList = [];
         var list = data['resp']['data']
-            .map((result) => new EpisodeModel.fromJson(result))
+            .map((result) => new PodCastEpisodeModel.fromJson(result))
             .toList();
         for (int b = 0; b < list.length; b++) {
-          EpisodeModel episodeModel = list[b] as EpisodeModel;
+          PodCastEpisodeModel episodeModel = list[b] as PodCastEpisodeModel;
           episodeModelList.add(episodeModel);
         }
         episodeState.updateEpisodeModalList(episodeModelList);

@@ -8,11 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/stories/newStory/camera_page.dart';
 import 'package:vocal/main/navigation/navigation_home_screen.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
-import 'package:vocal/modules/podcast/state/current_player_state.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
 import 'intro_slider/app_intro.dart';
@@ -66,11 +66,10 @@ Future main() async {
         ),
         ListenableProvider(
           create: (_) => PlaylistState(),
-        ),
-        ListenableProvider(
-          create: (_) => EpisodeState(),
         ),ListenableProvider(
-          create: (_) => CurrentPlayerState(),
+          create: (_) => SavedPlaylistState(),
+        ),ListenableProvider(
+          create: (_) => PodCastState(),
         ),
       ],
       child: MyApp(),

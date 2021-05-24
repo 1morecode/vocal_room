@@ -34,13 +34,15 @@ class Status {
   String sId;
   String assetsUrl;
   String createdAt;
+  int views;
 
-  Status({this.sId, this.assetsUrl, this.createdAt});
+  Status({this.sId, this.assetsUrl, this.createdAt, this.views});
 
   Status.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     assetsUrl = json['assets_url'];
     createdAt = json['createdAt'];
+    views = json['views'];
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +50,7 @@ class Status {
     data['_id'] = this.sId;
     data['assets_url'] = this.assetsUrl;
     data['createdAt'] = this.createdAt;
+    data['views'] = this.views;
     return data;
   }
 }

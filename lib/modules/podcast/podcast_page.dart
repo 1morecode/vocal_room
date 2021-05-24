@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocal/modules/podcast/banner/banner_view.dart';
 import 'package:vocal/modules/podcast/category/category_view.dart';
-import 'package:vocal/modules/podcast/playlistGrid/playlist_grid_view.dart';
+import 'package:vocal/modules/podcast/playlist/playlist_grid_view.dart';
 import 'package:vocal/modules/podcast/story/story_view.dart';
 
 class PodCastPage extends StatefulWidget {

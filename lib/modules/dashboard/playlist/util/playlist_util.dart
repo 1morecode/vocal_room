@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:vocal/modules/dashboard/playlist/model/playlist_model.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/global_data.dart';
 import 'package:vocal/res/user_token.dart';
@@ -10,7 +11,7 @@ import 'package:vocal/res/user_token.dart';
 class PlaylistUtil {
   static var status = false;
 
-  static Future<bool> fetchAllPlaylistModel(context) async {
+  static Future<List<PodCastPlaylistModel>> fetchAllPlaylistModel(context) async {
     final playlistState = Provider.of<PlaylistState>(context, listen: false);
 
     String token = await UserToken.getToken();
@@ -28,25 +29,23 @@ class PlaylistUtil {
       var data = jsonDecode(await response.stream.bytesToString());
       print("DATA $data");
       if (response.statusCode == 200) {
-        List<PlaylistModel> playlistModelList = [];
+        List<PodCastPlaylistModel> playlistModelList = [];
         var list = data['resp']['data']
-            .map((result) => new PlaylistModel.fromJson(result))
+            .map((result) => new PodCastPlaylistModel.fromJson(result))
             .toList();
         for (int b = 0; b < list.length; b++) {
-          PlaylistModel playlistModel = list[b] as PlaylistModel;
+          PodCastPlaylistModel playlistModel = list[b] as PodCastPlaylistModel;
           playlistModelList.add(playlistModel);
         }
         playlistState.updatePlaylistModalList(playlistModelList);
         print("All Media Model_______$playlistModelList");
-        return data["resp"]["success"];
       } else {
         print(response.reasonPhrase);
-        return false;
       }
     } catch (e) {
       print("Exception $e");
-      return false;
     }
+    return playlistState.playlistModelList;
   }
 
   static Future<bool> deletePlaylistModel(context, id) async {

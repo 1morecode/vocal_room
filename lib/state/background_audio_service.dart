@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
+import 'package:vocal/modules/podcast/playlist/util/pod_cast_playlist_util.dart';
 import 'package:vocal/state/test.dart';
 
 /// This task defines logic for playing a list of podcast episodes.
@@ -23,6 +25,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     // We configure the audio session for speech since we're playing a podcast.
     // You can also put this in your app's initialisation if your app doesn't
     // switch between two types of audio as this example does.
+    print("DSDSDSDSDS${PodCastEpisodeModel.episodesList.length}");
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
     // Broadcast media item changes.

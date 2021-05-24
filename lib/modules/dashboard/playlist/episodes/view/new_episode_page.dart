@@ -9,10 +9,11 @@ import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart
 import 'package:vocal/modules/dashboard/playlist/episodes/util/new_episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/widget/select_new_episode_image.dart';
 import 'package:vocal/modules/dashboard/playlist/model/playlist_model.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 import 'package:vocal/res/global_data.dart';
 
 class NewEpisodePage extends StatefulWidget {
-  final PlaylistModel playlistModel;
+  final PodCastPlaylistModel playlistModel;
 
   NewEpisodePage(this.playlistModel);
 

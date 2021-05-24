@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:vocal/modules/podcast/model/episode_model.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
 import 'package:vocal/state/background_audio_service.dart';
 
 class AudioMainScreen extends StatefulWidget {
@@ -482,6 +482,7 @@ class _AudioMainScreenState extends State<AudioMainScreen> {
   ElevatedButton audioPlayerButton() => startButton(
         'AudioPlayer',
         () {
+          print("SASAS ${PodCastEpisodeModel.episodesList.length}");
           AudioService.start(
             backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
             androidNotificationChannelName: 'Vocal Cast',
@@ -625,15 +626,15 @@ void _audioPlayerTaskEntrypoint() async {
 /// from a database or web service.
 class MediaLibrary {
   final _items = List.generate(
-      EpisodeModel.episodesList.length,
+      PodCastEpisodeModel.episodesList.length,
       (index) => MediaItem(
             // This can be any unique id, but we use the audio URL for convenience.
-            id: "${EpisodeModel.episodesList[index].url}",
-            album: "${EpisodeModel.episodesList[index].title}",
-            title: "${EpisodeModel.episodesList[index].title}",
-            artist: "${EpisodeModel.episodesList[index].description}",
+            id: "${PodCastEpisodeModel.episodesList[index].audio}",
+            album: "${PodCastEpisodeModel.episodesList[index].title}",
+            title: "${PodCastEpisodeModel.episodesList[index].title}",
+            artist: "${PodCastEpisodeModel.episodesList[index].desc}",
             // duration: Duration(milliseconds: 5739820),
-            artUri: Uri.parse("${EpisodeModel.episodesList[index].banner}"),
+            artUri: Uri.parse("${PodCastEpisodeModel.episodesList[index].graphic}"),
           ));
 
   List<MediaItem> get items => _items;

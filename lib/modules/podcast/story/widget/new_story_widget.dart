@@ -15,7 +15,7 @@ class _NewStoryButtonState extends State<NewStoryButton> {
     return Container(
       margin: EdgeInsets.fromLTRB(
         5,
-        0,
+        5,
         5,
         10,
       ),
@@ -25,7 +25,8 @@ class _NewStoryButtonState extends State<NewStoryButton> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => CameraScreen(),));
         },
         child: new Container(
-          width: 80,
+          height: 100,
+          alignment: Alignment.center,
           child: Column(
             children: <Widget>[
               new Container(

@@ -5,8 +5,9 @@ import 'package:vocal/res/user_token.dart';
 import 'package:vocal/stories/model/story_model.dart';
 
 class StoryUtil {
+  static List<StoryModel> storiesList = [];
+
   static Future<List<StoryModel>> fetchAllStoriesModel(context) async {
-    List<StoryModel> storiesList = [];
     String token = await UserToken.getToken();
 
     try {
@@ -26,6 +27,7 @@ class StoryUtil {
         var list = data['resp']['response']
             .map((result) => new StoryModel.fromJson(result))
             .toList();
+        storiesList.clear();
         for (int b = 0; b < list.length; b++) {
           StoryModel storyModel = list[b] as StoryModel;
           storiesList.add(storyModel);
@@ -48,7 +50,8 @@ class StoryUtil {
       print("ID $id");
 
       var body = json.encode(payload);
-      var url = '${APIData.baseUrl}${APIData.updateStatusViewAPI}&_id=status._id&update_view=true';
+      var url =
+          '${APIData.baseUrl}${APIData.updateStatusViewAPI}&_id=status._id&update_view=true';
       print("DATA _url_ $url $body");
       var response = await http.post(
         Uri.parse(url),

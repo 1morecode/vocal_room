@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vocal/stories/newStory/test.dart';
-// import 'package:vocal/stories/newStory/edit_image_screen.dart';
+import 'package:vocal/stories/newStory/edit_image_screen.dart';
 import 'package:vocal/stories/newStory/text_status_page.dart';
 
 List<CameraDescription> cameras = [];
@@ -43,9 +42,8 @@ class _CameraHomeState extends State<CameraHome> {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    // SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
-
     initScreen();
     _panelController = new PanelController();
   }
@@ -128,9 +126,9 @@ class _CameraHomeState extends State<CameraHome> {
   }
 
   _initCamera(int index) async {
-    if (controller != null) {
-      await controller.dispose();
-    }
+    // if (controller != null) {
+    //   await controller.dispose();
+    // }
     controller = CameraController(cameras[index], ResolutionPreset.high);
 
     // If the controller is updated then update the UI.
@@ -143,6 +141,7 @@ class _CameraHomeState extends State<CameraHome> {
 
     try {
       await controller.initialize();
+      await controller.lockCaptureOrientation();
     } on CameraException catch (e) {
       print(e);
     }
@@ -271,7 +270,6 @@ class _CameraHomeState extends State<CameraHome> {
                                                     id: "itemPanel-$index",
                                                     resource:
                                                         "${snapshot.data[index]}",
-                                                    isPath: true,
                                                   ),
                                                 ));
                                             print("${snapshot.data[index]}");
@@ -321,7 +319,7 @@ class _CameraHomeState extends State<CameraHome> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -409,7 +407,6 @@ class _CameraHomeState extends State<CameraHome> {
                 builder: (context) => CropImageScreen(
                   id: "item-0",
                   resource: "$filePath",
-                  isPath: true,
                 ),
               ));
         }
@@ -425,11 +422,15 @@ class _CameraHomeState extends State<CameraHome> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.flash_off),
-          //   color: Colors.white,
-          //   onPressed: isPermissionsGranted ? () {} : null,
-          // ),
+          IconButton(
+            icon: Icon(CupertinoIcons.textbox),
+            color: Colors.white,
+            highlightColor: Colors.green,
+            splashColor: Colors.red,
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TextStatusPage(),));
+            },
+          ),
           GestureDetector(
               child: Icon(
                 Icons.panorama_fish_eye,
@@ -441,13 +442,13 @@ class _CameraHomeState extends State<CameraHome> {
                       onTakePictureButtonPressed();
                     }
                   : null),
-          // IconButton(
-          //   icon: Icon(Icons.switch_camera),
-          //   color: Colors.white,
-          //   highlightColor: Colors.green,
-          //   splashColor: Colors.red,
-          //   onPressed: isPermissionsGranted ? _toggleCamera : null,
-          // ),
+          IconButton(
+            icon: Icon(Icons.switch_camera),
+            color: Colors.white,
+            highlightColor: Colors.green,
+            splashColor: Colors.red,
+            onPressed: isPermissionsGranted ? _toggleCamera : null,
+          ),
         ],
       ),
     );
@@ -510,7 +511,6 @@ class _CameraHomeState extends State<CameraHome> {
                               builder: (context) => CropImageScreen(
                                 id: "item-$i",
                                 resource: "${displayedData[i]}",
-                                isPath: true,
                               ),
                             ));
                       },
