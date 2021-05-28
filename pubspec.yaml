@@ -59,6 +59,8 @@ dependencies:
   image_crop: ^0.4.0
   socket_io_client: ^1.0.1
   image_gallery_saver: ^1.6.9
+  hidden_drawer_menu: ^3.0.0
+  emoji_picker: ^0.0.2
 
 dev_dependencies:
   flutter_test:

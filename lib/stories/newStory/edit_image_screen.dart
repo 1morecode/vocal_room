@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
-import 'package:vocal/main/navigation/navigation_home_screen.dart';
+import 'package:vocal/mainDrawer/main_app.dart';
 import 'package:vocal/res/global_data.dart';
 import 'package:vocal/stories/util/new_status_util.dart';
 
@@ -158,7 +156,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationHomeScreen(),
+                builder: (context) => MainAppPage(),
               ),
                   (route) => false);
         });

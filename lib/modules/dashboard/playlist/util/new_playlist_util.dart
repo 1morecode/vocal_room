@@ -4,13 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:vocal/res/api_data.dart';
-import 'package:vocal/res/global_data.dart';
+import 'package:vocal/modules/podcast/model/category_model.dart';
 import 'package:vocal/res/user_token.dart';
 
 class NewPlaylistUtil {
   static TextEditingController playlistNameController = TextEditingController();
   static TextEditingController playlistDescController = TextEditingController();
-
+  static TextEditingController categoryController = TextEditingController();
+  static CategoryModel selectedCategory;
   static var newPlaylistBannerPicker = ImagePicker();
   static File file;
 
@@ -26,6 +27,7 @@ class NewPlaylistUtil {
       request.files.add(await http.MultipartFile.fromPath('file', file.path.toString()));
       request.fields['playlist_title'] = "$title";
       request.fields['playlist_desc'] = "$desc";
+      request.fields['cat_id'] = "${selectedCategory.id}";
 
       request.headers.addAll(headers);
 

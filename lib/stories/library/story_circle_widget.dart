@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/stories/model/story_item.dart';
 import 'package:vocal/stories/library/full_page_story_view.dart';
 
@@ -60,6 +62,7 @@ class StoryCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final podcastState = Provider.of<PodCastState>(context, listen: false);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     double altRadius = 32;
@@ -81,6 +84,7 @@ class StoryCircle extends StatelessWidget {
       child: CupertinoButton(
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         onPressed: () {
+          podcastState.updateSelectedStatusIndex(selectedIndex);
           Navigator.push(
             context,
             MaterialPageRoute(

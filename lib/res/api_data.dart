@@ -2,6 +2,7 @@
 class APIData{
 
   // Base URL
+  static final String serverUrl = 'http://101.53.153.152:7890';
   static String baseUrl = "http://101.53.153.152:7890/api";
   static String imageBaseUrl = "http://101.53.153.152:7890/";
 
@@ -26,8 +27,14 @@ class APIData{
   static String createNewStatusAPI = "/user/status/upload";
   static String fetchAllStatusAPI = "/user/list?collection=status";
   static String updateStatusViewAPI = "/user/list?collection=status";
-  static String deleteStatusAPI = "/user/list?collection=status";
+  static String deleteStatusAPI = "/user/delete";
 
   // Playlist
   static String fetchAllPodCastPlaylistAPI = "/playlist/list?public=1";
+
+  // Category
+  static String fetchAllCategoryListAPI = "/category/list";
+
+  // Chat API
+  static String searchAllUsersAPI = "/user/list?collection=register_devices";
 }

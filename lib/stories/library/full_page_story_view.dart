@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/modules/podcast/story/util/story_util.dart';
 import 'package:vocal/stories/model/story_item.dart';
 
 class FullPageView extends StatefulWidget {
@@ -28,7 +31,6 @@ class FullPageView extends StatefulWidget {
   /// Status bar color in full view of story
   final Color storyStatusBarColor;
 
-
   FullPageView({
     Key key,
     @required this.storiesMapList,
@@ -42,6 +44,7 @@ class FullPageView extends StatefulWidget {
     this.showStoryNameOnFullPage,
     this.storyStatusBarColor,
   }) : super(key: key);
+
   @override
   FullPageViewState createState() => FullPageViewState();
 }
@@ -62,6 +65,7 @@ class FullPageViewState extends State<FullPageView> {
   Color storyStatusBarColor;
 
   nextPage(index) {
+    final podcastState = Provider.of<PodCastState>(context, listen: false);
     if (index == combinedList.length - 1) {
       Navigator.pop(context);
       return;
@@ -69,9 +73,20 @@ class FullPageViewState extends State<FullPageView> {
     setState(() {
       selectedIndex = index + 1;
     });
-
+    StoryUtil.updateStatusView(
+        context,
+        podcastState.storiesList[podcastState.selectedStoryIndex]
+            .status[selectedIndex].sId);
     _pageController.animateToPage(selectedIndex,
         duration: Duration(milliseconds: 100), curve: Curves.easeIn);
+  }
+
+  initialViewsUpdate() {
+    final podcastState = Provider.of<PodCastState>(context, listen: false);
+    StoryUtil.updateStatusView(
+        context,
+        podcastState
+            .storiesList[podcastState.selectedStoryIndex].status[0].sId);
   }
 
   prevPage(index) {
@@ -99,7 +114,7 @@ class FullPageViewState extends State<FullPageView> {
     fullpageThumbnailSize = widget.fullpageThumbnailSize;
     showStoryNameOnFullPage = widget.showStoryNameOnFullPage ?? true;
     storyStatusBarColor = widget.storyStatusBarColor;
-
+    initialViewsUpdate();
     super.initState();
   }
 
@@ -211,22 +226,22 @@ class FullPageViewState extends State<FullPageView> {
                     child: (showThumbnailOnFullPage == null ||
                             showThumbnailOnFullPage)
                         ? ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                          child: Image(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image(
                               width: fullpageThumbnailSize ?? 25,
                               height: fullpageThumbnailSize ?? 25,
                               image: storiesMapList[
                                       getStoryIndex(listLengths, selectedIndex)]
                                   .thumbnail,
                             ),
-                        )
+                          )
                         : Center(),
                   ),
                   Text(
                     showStoryNameOnFullPage
                         ? storiesMapList[
-                    getStoryIndex(listLengths, selectedIndex)]
-                        .name
+                                getStoryIndex(listLengths, selectedIndex)]
+                            .name
                         : "",
                     style: widget.fullPagetitleStyle ??
                         TextStyle(
@@ -238,7 +253,6 @@ class FullPageViewState extends State<FullPageView> {
                         ),
                   ),
                   Spacer(),
-                  new IconButton(icon: Icon(Icons.cancel_outlined), onPressed: (){Navigator.of(context).pop();})
                 ],
               ),
             ],

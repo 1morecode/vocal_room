@@ -9,23 +9,23 @@ import 'package:vocal/res/user_token.dart';
 class EpisodeUtil {
   static var status = false;
 
-  static Future<bool> fetchAllEpisodeModel(context) async {
+  static Future<bool> fetchAllEpisodeModel(context, id) async {
     final episodeState = Provider.of<PodCastState>(context, listen: false);
 
     String token = await UserToken.getToken();
-
+print("id  $id");
     try {
       var headers = {'x-token': "$token"};
 
       var request = http.Request(
-          'GET', Uri.parse('${APIData.baseUrl}${APIData.fetchPlaylistEpisodeAPI}'));
+          'GET', Uri.parse('${APIData.baseUrl}${APIData.fetchPlaylistEpisodeAPI}?playlist_id=$id'));
 
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
 
       var data = jsonDecode(await response.stream.bytesToString());
-      print("DATA $data");
+      print("DATA E $data");
       if (response.statusCode == 200) {
         List<PodCastEpisodeModel> episodeModelList = [];
         var list = data['resp']['data']

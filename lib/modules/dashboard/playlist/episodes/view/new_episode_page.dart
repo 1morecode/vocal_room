@@ -246,7 +246,7 @@ class _NewEpisodePageState extends State<NewEpisodePage> {
           _btnController.success();
           GlobalData.showSnackBar(
               "Episode created successfully!", _context, Colors.black);
-          await EpisodeUtil.fetchAllEpisodeModel(context);
+          await EpisodeUtil.fetchAllEpisodeModel(context, widget.playlistModel.id);
           Navigator.of(context).pop();
           _btnController.reset();
         } else {

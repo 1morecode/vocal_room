@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/user_token.dart';
 import 'package:vocal/stories/model/story_model.dart';
@@ -8,6 +10,7 @@ class StoryUtil {
   static List<StoryModel> storiesList = [];
 
   static Future<List<StoryModel>> fetchAllStoriesModel(context) async {
+    final podcastState = Provider.of<PodCastState>(context, listen: false);
     String token = await UserToken.getToken();
 
     try {
@@ -32,6 +35,7 @@ class StoryUtil {
           StoryModel storyModel = list[b] as StoryModel;
           storiesList.add(storyModel);
         }
+        podcastState.updateStatusModalList(storiesList);
       } else {
         print("ISE ${response.reasonPhrase}");
       }
@@ -45,13 +49,41 @@ class StoryUtil {
     String token = await UserToken.getToken();
 
     try {
+      var url =
+          '${APIData.baseUrl}${APIData.updateStatusViewAPI}&_id=$id&update_view=true';
+      var headers = {'x-token': "$token"};
+      print("STATUS URL ${APIData.baseUrl}${APIData.fetchAllStatusAPI}");
+
+      var request = http.Request(
+          'GET', Uri.parse(url));
+
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+      if (response.statusCode == 200) {
+        var data = await jsonDecode(await response.stream.bytesToString());
+        print("Views Updated $data");
+        return data['resp']['success'];
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("Exception $e");
+      return false;
+    }
+  }
+
+  static Future<bool> deleteStatusView(context, id) async {
+    String token = await UserToken.getToken();
+
+    try {
       Map payload = {"_id": "$id"};
 
       print("ID $id");
 
       var body = json.encode(payload);
       var url =
-          '${APIData.baseUrl}${APIData.updateStatusViewAPI}&_id=status._id&update_view=true';
+          '${APIData.baseUrl}${APIData.deleteStatusAPI}';
       print("DATA _url_ $url $body");
       var response = await http.post(
         Uri.parse(url),
@@ -62,6 +94,8 @@ class StoryUtil {
       print("DATAQ ${response.body}");
       if (response.statusCode == 200) {
         var data = await jsonDecode(response.body);
+        print("DATA $data");
+        fetchAllStoriesModel(context);
         return data['resp']['success'];
       } else {
         return false;

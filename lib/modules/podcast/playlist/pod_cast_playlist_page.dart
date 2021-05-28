@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:vocal/modules/dashboard/playlist/episodes/util/episode_util.dart';
 import 'package:vocal/modules/dashboard/playlist/shimmer/episode_shimmer.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
@@ -9,14 +8,16 @@ import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
 import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
 import 'package:vocal/modules/podcast/playlist/widget/episode_card_widget.dart';
 import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/playerState/audio_service_state.dart';
+import 'package:vocal/playerState/playlist_shared_pref.dart';
 import 'package:vocal/res/widgets/circular_tab_indicator.dart';
-import 'package:vocal/state/test.dart';
 
 class PlayListPage extends StatefulWidget {
   final int index;
+  final String id;
   final bool saved;
 
-  PlayListPage(this.index, this.saved);
+  PlayListPage(this.index, this.saved, this.id);
 
   @override
   _PlayListPageState createState() => _PlayListPageState();
@@ -24,14 +25,15 @@ class PlayListPage extends StatefulWidget {
 
 class _PlayListPageState extends State<PlayListPage> {
   int initialIndex = 0;
-  Future<bool> episodeFuture;
   String isSaved = "Save";
+  Future<bool> episodesFuture;
 
   @override
   void initState() {
-    episodeFuture = EpisodeUtil.fetchAllEpisodeModel(context);
+    episodesFuture = EpisodeUtil.fetchAllEpisodeModel(context, widget.id);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     var playlistState = Provider.of<PodCastState>(context, listen: true);
@@ -168,21 +170,25 @@ class _PlayListPageState extends State<PlayListPage> {
                                         ],
                                       ),
                                       onPressed: () {
-                                        for(var i = 0; i < savedPlaylistState.playlists.length; i++){
-                                          print("$i  ${savedPlaylistState.playlists.length}");
-                                          PodCastPlaylistModel p = savedPlaylistState.playlists[i];
-                                          if(p.id == playlistState.podCastPlaylistList[widget.index].id){
-                                            print("Contains");
-                                            savedPlaylistState.playlists.remove(p);
-                                            savedPlaylistState.removePlaylist();
-                                            break;
-                                          }else if(i+1 == savedPlaylistState.playlists.length){
-                                            print("Not Contains");
-                                            savedPlaylistState.addNewPlaylist(playlistState.podCastPlaylistList[widget.index]);
-                                            break;
-                                          }else{
-                                            print('Nothing');
+                                        if(savedPlaylistState.playlists.length != 0){
+                                          for(var i = 0; i < savedPlaylistState.playlists.length; i++){
+                                            print("$i  ${savedPlaylistState.playlists.length}");
+                                            PodCastPlaylistModel p = savedPlaylistState.playlists[i];
+                                            if(p.id == playlistState.podCastPlaylistList[widget.index].id){
+                                              print("Contains");
+                                              savedPlaylistState.playlists.remove(p);
+                                              savedPlaylistState.removePlaylist();
+                                              break;
+                                            }else if(i+1 == savedPlaylistState.playlists.length){
+                                              print("Not Contains");
+                                              savedPlaylistState.addNewPlaylist(playlistState.podCastPlaylistList[widget.index]);
+                                              break;
+                                            }else{
+                                              print('Nothing');
+                                            }
                                           }
+                                        }else{
+                                          savedPlaylistState.addNewPlaylist(playlistState.podCastPlaylistList[widget.index]);
                                         }
                                       }),
                                 ),
@@ -208,10 +214,12 @@ class _PlayListPageState extends State<PlayListPage> {
                                           )
                                         ],
                                       ),
-                                      onPressed: () {
+                                      onPressed: () async{
                                         if(playlistState.episodeModelList.length != 0){
+                                          await PlaylistSharedPref.savePreferences(playlistState.episodeModelList);
                                           setState(() {
-                                            // PodCastEpisodeModel.episodesList = episodeState.episodeModelList;
+                                            PodCastEpisodeModel.episodesList = playlistState.episodeModelList;
+                                            print("PLAYLIST 1 ${playlistState.episodeModelList[0].title}");
                                           });
                                           print("SSSS ${PodCastEpisodeModel.episodesList.length}");
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => AudioMainScreen(0),));
@@ -258,7 +266,7 @@ class _PlayListPageState extends State<PlayListPage> {
                               new BoxConstraints(minHeight: size.height),
                           child: new Container(
                             color: colorScheme.onPrimary,
-                            child: _getEpisodesWidget(context),
+                            child: _getEpisodesWidget(context, playlistState.podCastPlaylistList[widget.index].id),
                           ),
                         )
                       : ConstrainedBox(
@@ -294,7 +302,7 @@ class _PlayListPageState extends State<PlayListPage> {
     return isSaved;
   }
 
-  _getEpisodesWidget(context) {
+  _getEpisodesWidget(context, id) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     final playlistState = Provider.of<PodCastState>(context, listen: true);
     // var currentPlayerState = Provider.of<CurrentPlayerState>(context, listen: true);
@@ -305,9 +313,8 @@ class _PlayListPageState extends State<PlayListPage> {
         color: colorScheme.onPrimary,
         child: FutureBuilder(
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.data == true &&
-                  playlistState.episodeModelList.length != 0) {
+              print("SSS ${snapshot.hasData}");
+              if (snapshot.hasData && playlistState.episodeModelList.length != 0) {
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -327,7 +334,6 @@ class _PlayListPageState extends State<PlayListPage> {
                   },
                 );
               } else if (snapshot.hasData &&
-                  snapshot.data == true &&
                   playlistState.episodeModelList.length == 0) {
                 return Padding(
                     padding: EdgeInsets.symmetric(vertical: 25),
@@ -354,52 +360,7 @@ class _PlayListPageState extends State<PlayListPage> {
                         ),
                       ],
                     ));
-              } else if (snapshot.hasData &&
-                  snapshot.data != true) {
-                return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 25),
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 80,
-                          color: colorScheme.secondaryVariant,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          "Something went wrong!",
-                          style: TextStyle(
-                              color: colorScheme.secondaryVariant,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        CupertinoButton(
-                          color: colorScheme.secondaryVariant,
-                          borderRadius: BorderRadius.circular(25),
-                          child: Shimmer.fromColors(
-                            child: new Text(
-                              "Try again",
-                              style: TextStyle(
-                                  color: colorScheme.onPrimary),
-                            ),
-                            baseColor: colorScheme.onPrimary,
-                            highlightColor: colorScheme.primary,
-                          ),
-                          onPressed: () {
-                            episodeFuture =
-                                EpisodeUtil.fetchAllEpisodeModel(
-                                    context);
-                          },
-                        )
-                      ],
-                    ));
-              } else {
+              }else {
                 return ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.symmetric(vertical: 5),
@@ -411,7 +372,7 @@ class _PlayListPageState extends State<PlayListPage> {
                 );
               }
             },
-            future: episodeFuture),
+            future: episodesFuture),
       ),
     );
   }

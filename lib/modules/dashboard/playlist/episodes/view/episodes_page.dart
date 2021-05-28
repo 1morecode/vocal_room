@@ -28,7 +28,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
 
   @override
   void initState() {
-    episodeFuture = EpisodeUtil.fetchAllEpisodeModel(context);
+    episodeFuture = EpisodeUtil.fetchAllEpisodeModel(context, widget.id);
     super.initState();
   }
 
@@ -448,7 +448,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                     onPressed: () {
                                       episodeFuture =
                                           EpisodeUtil.fetchAllEpisodeModel(
-                                              context);
+                                              context, widget.id);
                                     },
                                   )
                                 ],

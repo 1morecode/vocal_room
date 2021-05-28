@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:vocal/modules/dashboard/playlist/util/new_playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/widget/select_playlist_image.dart';
+import 'package:vocal/modules/podcast/category/util/category_util.dart';
+import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/res/global_data.dart';
 
 class NewPlaylistPage extends StatefulWidget {
@@ -18,6 +21,9 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
 
   @override
   void initState() {
+    CategoryUtil.fetchAllCategoriesModel(context);
+    NewPlaylistUtil.categoryController.clear();
+    NewPlaylistUtil.selectedCategory = null;
     super.initState();
   }
 
@@ -31,8 +37,7 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final vendorState = Provider.of<VendorState>(context, listen: false);
-    // print("VVV ${vendorState.vendorModel.vendorDataId}");
+    final vendorState = Provider.of<PodCastState>(context, listen: false);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -82,6 +87,26 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
                 ),
                 new SizedBox(
                   height: 25,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+                  child: CupertinoTextField(
+                    readOnly: true,
+                    controller: NewPlaylistUtil.categoryController,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    placeholder: "Select Category",
+                    onTap: (){
+                      if(vendorState.categoriesList.length != 0){
+                        _showPicker(context);
+                      }else{
+                        CategoryUtil.fetchAllCategoriesModel(context);
+                      }
+                    },
+                  ),
+                ),
+                new SizedBox(
+                  height: 10,
                 ),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -138,9 +163,37 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
     );
   }
 
+  void _showPicker(BuildContext ctx) async{
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final vendorState = Provider.of<PodCastState>(context, listen: false);
+    showCupertinoModalPopup(
+        context: ctx,
+        builder: (_) => Container(
+          height: MediaQuery.of(context).size.width*0.7,
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: colorScheme.onSurface,
+            borderRadius: BorderRadius.circular(10)
+          ),
+          padding: EdgeInsets.all(10),
+          child: CupertinoPicker(
+            backgroundColor: colorScheme.onSurface,
+            itemExtent: 30,
+            scrollController: FixedExtentScrollController(initialItem: 0),
+            children: List.generate(vendorState.categoriesList.length, (index) => new Text("${vendorState.categoriesList[index].title}")),
+            onSelectedItemChanged: (value) {
+              setState(() {
+                NewPlaylistUtil.selectedCategory = vendorState.categoriesList[value];
+                NewPlaylistUtil.categoryController.text = vendorState.categoriesList[value].title;
+              });
+            },
+          ),
+        ));
+  }
+
   onPlaylistCreate(_context, context) async {
     if(NewPlaylistUtil.file != null){
-      if (NewPlaylistUtil.playlistNameController.text.isNotEmpty && NewPlaylistUtil.playlistDescController.text.isNotEmpty) {
+      if (NewPlaylistUtil.playlistNameController.text.isNotEmpty && NewPlaylistUtil.playlistDescController.text.isNotEmpty && NewPlaylistUtil.categoryController.text.isEmpty) {
         bool status = await NewPlaylistUtil.createNewPlaylist(context, NewPlaylistUtil.playlistNameController.text, NewPlaylistUtil.playlistDescController.text, );
         if (status) {
           _btnController.success();

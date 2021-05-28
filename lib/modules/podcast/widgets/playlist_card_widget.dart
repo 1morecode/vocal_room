@@ -65,7 +65,7 @@ class _PlayListCardWidgetState extends State<PlayListCardWidget> {
         ),
       ),
     ), onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, false),));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, false, "${playlistState.podCastPlaylistList[widget.index].id}"),));
     }, padding: EdgeInsets.all(0),);
   }
 }

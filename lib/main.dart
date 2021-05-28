@@ -8,10 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/mainDrawer/main_app.dart';
+import 'package:vocal/modules/chat/src/data/providers/chats_provider.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
 import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/stories/newStory/camera_page.dart';
-import 'package:vocal/main/navigation/navigation_home_screen.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
@@ -20,7 +21,8 @@ import 'intro_slider/app_intro.dart';
 bool isLoggedIn = false;
 
 ///Initial theme settings
- bool intro = false;
+bool intro = false;
+
 Future main() async {
   timeDilation = 1.0;
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,16 +31,16 @@ Future main() async {
     cameras = await availableCameras();
     // qrCameras = await qr.availableCameras();
   } on CameraException catch (e) {
-    print(e.code+'\n'+ e.description);
+    print(e.code + '\n' + e.description);
   }
 
   await Firebase.initializeApp();
   var firebaseAuth = FirebaseAuth.instance;
 
-  if(firebaseAuth.currentUser != null){
+  if (firebaseAuth.currentUser != null) {
     isLoggedIn = true;
     print("CURRENT USER ${await firebaseAuth.currentUser.getIdToken(true)}");
-    IdTokenResult ss =  await firebaseAuth.currentUser.getIdTokenResult(true);
+    IdTokenResult ss = await firebaseAuth.currentUser.getIdTokenResult(true);
     print("Token ${ss.token}");
     // final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
     // pattern.allMatches("CURRENT ${await firebaseAuth.currentUser.getIdTokenResult(true)}").forEach((match) async{
@@ -46,15 +48,15 @@ Future main() async {
     //   await AuthUtil.updateToken();
     // });
     //x-auth-token
-  }else{
+  } else {
     isLoggedIn = false;
     print("CURRENT USER EMPTY");
   }
 
   final prefs = await SharedPreferences.getInstance();
-  if(prefs.containsKey("intro")){
+  if (prefs.containsKey("intro")) {
     intro = prefs.getBool("intro");
-  }else{
+  } else {
     intro = false;
   }
 
@@ -66,10 +68,15 @@ Future main() async {
         ),
         ListenableProvider(
           create: (_) => PlaylistState(),
-        ),ListenableProvider(
+        ),
+        ListenableProvider(
           create: (_) => SavedPlaylistState(),
-        ),ListenableProvider(
+        ),
+        ListenableProvider(
           create: (_) => PodCastState(),
+        ),
+        ListenableProvider(
+          create: (_) => ChatsProvider(),
         ),
       ],
       child: MyApp(),
@@ -81,19 +88,23 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeState>(builder: (context, themeState, child) => FeatureDiscovery(
-        child: MaterialApp(
-            themeMode: themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
-            debugShowCheckedModeBanner: false,
-            title: 'Vocal Cast',
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            color: Colors.blue,
-            home: !intro
-                ? SlideIntro()
-                : isLoggedIn ? NavigationHomeScreen() : LoginPage())),);
+    return Consumer<ThemeState>(
+      builder: (context, themeState, child) => FeatureDiscovery(
+          child: MaterialApp(
+              themeMode:
+                  themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              title: 'Vocal Cast',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              color: Colors.blue,
+              home: !intro
+                  ? SlideIntro()
+                  : isLoggedIn
+                      ? MainAppPage()
+                      : LoginPage())),
+    );
   }
 }

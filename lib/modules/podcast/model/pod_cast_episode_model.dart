@@ -34,8 +34,25 @@ class PodCastEpisodeModel {
     );
   }
 
+  static Map<String, dynamic> toMap(PodCastEpisodeModel music) => {
+    "_id": music.id,
+    "episode_title": music.title,
+    "episode_desc": music.desc,
+    "tag": music.tag,
+    "collection": music.collection,
+    "playlist_id": music.playlistId,
+    "createdAt": music.createdAt,
+    "uid": music.uId,
+    "audio": music.audio,
+    "graphic": music.graphic,
+    "deleted": music.deleted,
+  };
+
   static List<PodCastEpisodeModel> episodesList = [
     PodCastEpisodeModel("1", "title", "desc", "tag", "collection", "playlistId", "createdAt", "uId", [], [], true),
-    PodCastEpisodeModel("1", "title", "desc", "tag", "collection", "playlistId", "createdAt", "uId", [], [], true),
   ];
+
+  static printList() async{
+    print("List Print ${episodesList.length}");
+  }
 }

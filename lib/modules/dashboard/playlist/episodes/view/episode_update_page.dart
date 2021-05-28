@@ -244,7 +244,7 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
         _btnController.success();
         GlobalData.showSnackBar(
             "Episode updated successfully!", _context, Colors.black);
-        await EpisodeUtil.fetchAllEpisodeModel(context);
+        // await EpisodeUtil.fetchAllEpisodeModel(context, widget.episodeModel.id);
         Navigator.of(context).pop();
         _btnController.reset();
       } else {

@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vocal/modules/dashboard/playlist/episodes/view/episodes_page.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
 import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
@@ -116,7 +115,7 @@ class _SavedPlaylistWidgetState extends State<SavedPlaylistWidget> {
         ),
       ),
     ), onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, true),));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayListPage(widget.index, true, '${playlistState.playlists[widget.index].id}'),));
     }, padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),);
   }
 

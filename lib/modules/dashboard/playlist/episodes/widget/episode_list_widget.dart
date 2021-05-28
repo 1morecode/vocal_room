@@ -175,7 +175,7 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
     if (status) {
       GlobalData.showSnackBar(
           "Episode deleted successfully!", _context, Colors.black);
-      await EpisodeUtil.fetchAllEpisodeModel(context);
+      await EpisodeUtil.fetchAllEpisodeModel(context, widget.id);
       Navigator.of(context).pop();
     } else {
       GlobalData.showSnackBar(
