@@ -31,74 +31,63 @@ class _EpisodeListWidgetState extends State<EpisodeListWidget> {
       elevation: 0,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        child: Column(
+        child:  new Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CupertinoButton(
-                    padding: EdgeInsets.all(0),
-                    child: new Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          margin: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: colorScheme.onSurface,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Image.network(
-                            '${APIData.imageBaseUrl}${episodeModel.first.graphic[0]['path']}',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${episodeModel.first.title}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: colorScheme.onSecondary
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                '${episodeModel.first.desc}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16,
-                                    color: colorScheme.secondaryVariant),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {},
-                  ),
+            Container(
+              width: 60,
+              height: 60,
+              margin: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: colorScheme.onSurface,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.network(
+                  '${APIData.imageBaseUrl}${episodeModel.first.graphic[0]['path']}',
+                  fit: BoxFit.cover,
                 ),
-              ],
+              ),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${episodeModel.first.title}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: colorScheme.onSecondary
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    '${episodeModel.first.desc}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        color: colorScheme.secondaryVariant),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

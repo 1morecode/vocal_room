@@ -29,7 +29,7 @@ class ThemeState extends ChangeNotifier {
     notifyListeners();
   }
 
-  toggleChangeTheme() {
+  toggleChangeTheme(){
     isDarkModeOn = !isDarkModeOn;
     _savePreferences();
     notifyListeners();

@@ -10,7 +10,7 @@ class PodCastPlaylistUtil {
   static var status = false;
 
   static Future<List<PodCastPlaylistModel>> fetchAllPlaylistModel(context) async {
-    print("DSDSDSDSD");
+    print("DSDSDSDSD EE");
     final playlistState = Provider.of<PodCastState>(context, listen: false);
     List<PodCastPlaylistModel> playlistModelList = [];
     String token = await UserToken.getToken();
@@ -26,23 +26,23 @@ class PodCastPlaylistUtil {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(await response.stream.bytesToString());
-        print("DATA Playlist $data");
 
         var list = data['resp']['data']
             .map((result) => new PodCastPlaylistModel.fromJson(result))
             .toList();
         for (int b = 0; b < list.length; b++) {
           PodCastPlaylistModel playlistModel = list[b] as PodCastPlaylistModel;
+          print("All Media Model_______${playlistModel.uId}");
           playlistModelList.add(playlistModel);
         }
-        playlistState.updatePodCastPlaylist(playlistModelList);
         print("All Media Model_______$playlistModelList");
       } else {
         print("ERROR ${response.reasonPhrase}");
       }
     } catch (e) {
-      print("Exception $e");
+      print("Exception Ply $e");
     }
+    playlistState.updatePodCastPlaylist(playlistModelList);
     return playlistModelList;
   }
 }

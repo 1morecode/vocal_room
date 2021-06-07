@@ -32,9 +32,10 @@ class _StoriesViewState extends State<StoriesView> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return FutureBuilder<List<StoryModel>>(
-      initialData: podcastState.storiesList,
+      initialData:
+          podcastState.storiesList != null ? podcastState.storiesList : [],
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && podcastState.storiesList != null) {
           return Stories(
             circlePadding: 2,
             paddingColor: colorScheme.primary,
@@ -49,6 +50,7 @@ class _StoriesViewState extends State<StoriesView> {
                               podcastState.storiesList[index].email
                           ? "Your Story"
                           : "${podcastState.storiesList[index].name}",
+                      uId: "${podcastState.storiesList[index].uid}",
                       thumbnail: NetworkImage(
                         "${podcastState.storiesList[index].picture}",
                       ),
@@ -67,7 +69,7 @@ class _StoriesViewState extends State<StoriesView> {
                                                   image: DecorationImage(
                                                     fit: BoxFit.contain,
                                                     image: NetworkImage(
-                                                      "${APIData.imageBaseUrl}${podcastState.storiesList[index].status[ind].assetsUrl}",
+                                                      "${APIData.imageBaseUrl}${podcastState.storiesList[index].status[ind].assets}",
                                                     ),
                                                   ),
                                                 ),
@@ -78,7 +80,8 @@ class _StoriesViewState extends State<StoriesView> {
                                                 child: new Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: [
                                                     Spacer(),
                                                     new Container(
@@ -102,21 +105,27 @@ class _StoriesViewState extends State<StoriesView> {
                                                                     5),
                                                           ),
                                                           new Row(
-                                                            mainAxisSize: MainAxisSize.min,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: [
                                                               new Text(
-                                                                "${podcastState.storiesList[index].status[ind].views}",
+                                                                "${podcastState.storiesList[index].status[ind].viewsId.length}",
                                                                 style: TextStyle(
-                                                                    color:
-                                                                    colorScheme
+                                                                    color: colorScheme
                                                                         .primary,
-                                                                    fontSize: 16,
+                                                                    fontSize:
+                                                                        16,
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .w400),
+                                                                        FontWeight
+                                                                            .w400),
                                                               ),
-                                                              SizedBox(width: 5,),
-                                                              Icon(CupertinoIcons.eye),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Icon(
+                                                                  CupertinoIcons
+                                                                      .eye),
                                                             ],
                                                           ),
                                                           Builder(
@@ -132,17 +141,17 @@ class _StoriesViewState extends State<StoriesView> {
                                                                           podcastState
                                                                               .storiesList[index]
                                                                               .status[ind]
-                                                                              .sId);
+                                                                              .assetsId);
                                                                       if (status ==
                                                                           true) {
                                                                         GlobalData.showSnackBar(
                                                                             "Status deleted successfully!",
                                                                             _context,
                                                                             Colors.black);
-                                                                        await StoryUtil.fetchAllStoriesModel(
-                                                                            context);
                                                                         Navigator.of(context)
                                                                             .pop();
+                                                                        await StoryUtil.fetchAllStoriesModel(
+                                                                            context);
                                                                       } else {
                                                                         GlobalData.showSnackBar(
                                                                             "Failed to delete status!",
@@ -176,7 +185,7 @@ class _StoriesViewState extends State<StoriesView> {
                                               image: DecorationImage(
                                                 fit: BoxFit.contain,
                                                 image: NetworkImage(
-                                                  "${APIData.imageBaseUrl}${podcastState.storiesList[index].status[ind].assetsUrl}",
+                                                  "${APIData.imageBaseUrl}${podcastState.storiesList[index].status[ind].assets}",
                                                 ),
                                               ),
                                             ),

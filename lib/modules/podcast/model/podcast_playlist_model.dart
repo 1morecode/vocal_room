@@ -12,7 +12,7 @@ class PodCastPlaylistModel {
     return new PodCastPlaylistModel(
       json['_id'],
       json['playlist_title'],
-      json['file_url'],
+      json['assets']['path'],
       json['playlist_desc'],
       json['collection'],
       json['deleted'],
@@ -24,7 +24,9 @@ class PodCastPlaylistModel {
   static Map<String, dynamic> toMap(PodCastPlaylistModel music) => {
         "_id": music.id,
         "playlist_title": music.title,
-        "file_url": music.image,
+        "assets": {
+          "path": music.image
+        },
         "playlist_desc": music.desc,
         "collection": music.collection,
         "deleted": music.deleted,

@@ -31,6 +31,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 indicatorWeight: 2,
                 physics: BouncingScrollPhysics(),
                 indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: colorScheme.primary,
+                labelColor: colorScheme.primary,
                 unselectedLabelColor: colorScheme.secondaryVariant,
                 labelPadding: EdgeInsets.symmetric(horizontal: 25),
                 tabs: [

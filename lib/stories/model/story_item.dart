@@ -4,6 +4,8 @@ class StoryItem {
   /// Name of the story circle
   String name;
 
+  String uId;
+
   /// Image to display on the circle of the image
   ImageProvider thumbnail;
 
@@ -12,5 +14,5 @@ class StoryItem {
 
   /// Add a story
   StoryItem(
-      {@required this.name, @required this.thumbnail, @required this.stories});
+      {@required this.name, @required this.uId, @required this.thumbnail, @required this.stories});
 }

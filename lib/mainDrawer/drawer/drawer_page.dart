@@ -1,14 +1,19 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_drawer_menu/controllers/simple_hidden_drawer_controller.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocal/auth/login_provider.dart';
 import 'package:vocal/mainPage/insideDrawer/about.dart';
 import 'package:vocal/mainPage/insideDrawer/notification/page/notification_page.dart';
 import 'package:vocal/mainPage/insideDrawer/privacy_policy.dart';
+import 'package:vocal/mainPage/insideDrawer/support_page.dart';
 import 'package:vocal/mainPage/insideDrawer/terms_of_use.dart';
+import 'package:vocal/mainPage/profile/my_profile_page.dart';
+import 'package:vocal/mainPage/settings/setting_page.dart';
 import 'package:vocal/theme/app_state.dart';
 
 class DrawerPage extends StatefulWidget {
@@ -25,6 +30,12 @@ class _DrawerPageState extends State<DrawerPage> {
   void didChangeDependencies() {
     controller = SimpleHiddenDrawerController.of(context);
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -108,28 +119,55 @@ class _DrawerPageState extends State<DrawerPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               new Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    height: 100,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                            color: colorScheme.onSurface,
-                                            offset: const Offset(2.0, 4.0),
-                                            blurRadius: 8),
-                                      ],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.all(Radius.circular(60.0)),
-                                      child: Image.network(firebaseAuth.currentUser != null
-                                          ? "${firebaseAuth.currentUser.photoURL}"
-                                          : "https://www.w3schools.com/howto/img_avatar.png", fit: BoxFit.cover,),
-                                    ),
+                                  new Stack(
+                                    alignment: Alignment.bottomCenter,
+                                    children: [
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        margin: EdgeInsets.only(bottom: 10),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                                color: colorScheme.onSurface,
+                                                offset: const Offset(2.0, 4.0),
+                                                blurRadius: 8),
+                                          ],
+                                        ),
+                                        child: CircleAvatar(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(60.0)),
+                                            child: Image.network(
+                                              firebaseAuth.currentUser != null
+                                                  ? "${firebaseAuth.currentUser.photoURL}"
+                                                  : "https://www.w3schools.com/howto/img_avatar.png",
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 110,
+                                        width: 100,
+                                        alignment: Alignment.bottomCenter,
+                                        child: CircleAvatar(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(60.0)),
+                                            child: LoginProviderIcon(15),
+                                          ),
+                                          radius: 10,
+                                          backgroundColor: colorScheme.surface,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   // FlutterSwitch(
                                   //   width: 45.0,
@@ -173,7 +211,10 @@ class _DrawerPageState extends State<DrawerPage> {
                                   firebaseAuth.currentUser != null
                                       ? "${firebaseAuth.currentUser.displayName}"
                                       : "",
-                                  style: TextStyle(color: colorScheme.onSecondary, fontWeight: FontWeight.bold, fontSize: 21),
+                                  style: TextStyle(
+                                      color: colorScheme.onSecondary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 21),
                                 ),
                               )
                             ],
@@ -251,31 +292,64 @@ class _DrawerPageState extends State<DrawerPage> {
             controller.toggle();
           } else if (listData.index == DrawerIndex.AboutUs) {
             controller.toggle();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUs(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AboutUs(),
+                ));
           } else if (listData.index == DrawerIndex.Account) {
             controller.toggle();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => AccountPage(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyProfilePage(),
+                ));
           } else if (listData.index == DrawerIndex.Notification) {
             controller.toggle();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NotificationPage(),
+                ));
           } else if (listData.index == DrawerIndex.Setting) {
             controller.toggle();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingPage(),
+                ));
           } else if (listData.index == DrawerIndex.RateUs) {
             controller.toggle();
+            rateApp();
             // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentsPage(),));
           } else if (listData.index == DrawerIndex.ShareApp) {
             controller.toggle();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryPage(),));
+            // Share.shareFiles(['assets/google.png'],
+            //     text: 'Vocal Cast App',
+            //     subject:
+            //         "Vocal Cast App\nhttps://play.google.com/store/apps/details?id=co.mitwa\nDownload our application");
+            Share.share("Vocal Cast App\nhttps://play.google.com/store/apps/details?id=co.mitwa\nDownload our application");
           } else if (listData.index == DrawerIndex.Support) {
             controller.toggle();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => SupportPage(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SupportPage(),
+                ));
           } else if (listData.index == DrawerIndex.Terms) {
             controller.toggle();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => TermsOfUse(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TermsOfUse(),
+                ));
           } else if (listData.index == DrawerIndex.Privacy) {
             controller.toggle();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicy(),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PrivacyPolicy(),
+                ));
           } else {
             controller.toggle();
           }
@@ -311,24 +385,34 @@ class _DrawerPageState extends State<DrawerPage> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 2, bottom: 2),
-              child: listData.index == DrawerIndex.HOME ? Container(
-                width: MediaQuery.of(context).size.width * 0.75 - 64,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
-                  borderRadius: new BorderRadius.only(
-                    topLeft: Radius.circular(0),
-                    topRight: Radius.circular(28),
-                    bottomLeft: Radius.circular(0),
-                    bottomRight: Radius.circular(28),
-                  ),
-                ),
-              ) : new Container(),
+              child: listData.index == DrawerIndex.HOME
+                  ? Container(
+                      width: MediaQuery.of(context).size.width * 0.75 - 64,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.2),
+                        borderRadius: new BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(28),
+                          bottomLeft: Radius.circular(0),
+                          bottomRight: Radius.circular(28),
+                        ),
+                      ),
+                    )
+                  : new Container(),
             )
           ],
         ),
       ),
     );
+  }
+
+  rateApp() async {
+    final InAppReview inAppReview = InAppReview.instance;
+
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    }
   }
 
 // Future<void> navigationtoScreen(DrawerIndex indexScreen) async {

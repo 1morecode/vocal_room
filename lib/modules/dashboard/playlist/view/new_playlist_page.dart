@@ -49,115 +49,192 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
         automaticallyImplyLeading: true,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: ListView(
           physics: BouncingScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: size.height * 0.02),
-                Container(
-                    alignment: Alignment.centerLeft,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                    child: Text(
-                      "New Playlist",
-                      style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 42,
-                          fontWeight: FontWeight.w800),
-                      textAlign: TextAlign.start,
+          children: [
+            SizedBox(height: size.height * 0.02),
+            Container(
+                alignment: Alignment.centerLeft,
+                padding:
+                EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+                child: Text(
+                  "New Playlist",
+                  style: TextStyle(
+                      color: colorScheme.primary,
+                      fontSize: 42,
+                      fontWeight: FontWeight.w800),
+                  textAlign: TextAlign.start,
+                )),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+              child: Text(
+                  "Create your new playlist for your episodes series!",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: colorScheme.secondaryVariant,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400)),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: SelectPlaylistImage(),
+            ),
+            new SizedBox(
+              height: 25,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+              child: CupertinoTextField(
+                readOnly: true,
+                controller: NewPlaylistUtil.categoryController,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                placeholder: "Select Category",
+                onTap: (){
+                  if(vendorState.categoriesList.length != 0){
+                    _showPicker(context);
+                  }else{
+                    CategoryUtil.fetchAllCategoriesModel(context);
+                  }
+                },
+              ),
+            ),
+            new SizedBox(
+              height: 10,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+              child: SizedBox(
+                height: 55,
+                child: CupertinoTextField(
+                  controller: NewPlaylistUtil.playlistNameController,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  placeholder: "Playlist Name",
+                ),
+              ),
+            ),
+            new SizedBox(
+              height: 10,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+              child: CupertinoTextField(
+                minLines: 3,
+                maxLines: 5,
+                controller: NewPlaylistUtil.playlistDescController,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                placeholder: "About Playlist...",
+              ),
+            ),
+            new Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              child: NewPlaylistUtil.tags.length > 0
+                  ? new Wrap(
+                alignment: WrapAlignment.start,
+                children: List.generate(
+                    NewPlaylistUtil.tags.length,
+                        (index) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 0),
+                      child: new Chip(
+                        label: new Text(
+                            "${NewPlaylistUtil.tags[index]}"),
+                        backgroundColor: colorScheme.onPrimary,
+                        labelStyle: TextStyle(color: colorScheme.primary),
+                        deleteIcon: Icon(Icons.cancel_outlined, color: colorScheme.primary,),
+                        onDeleted: (){
+                          setState(() {
+                            NewPlaylistUtil.tags.removeAt(index);
+                          });
+                        },
+                      ),
                     )),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: Text(
-                      "Create your new playlist for your episodes series!",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: colorScheme.secondaryVariant,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400)),
+              )
+                  : new Center(
+                child: new Text(
+                  "No Tag Added",
+                  style: TextStyle(
+                      color: colorScheme.secondaryVariant,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Center(
-                  child: SelectPlaylistImage(),
-                ),
-                new SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: CupertinoTextField(
-                    readOnly: true,
-                    controller: NewPlaylistUtil.categoryController,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    placeholder: "Select Category",
-                    onTap: (){
-                      if(vendorState.categoriesList.length != 0){
-                        _showPicker(context);
-                      }else{
-                        CategoryUtil.fetchAllCategoriesModel(context);
-                      }
-                    },
-                  ),
-                ),
-                new SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: SizedBox(
-                    height: 55,
-                    child: CupertinoTextField(
-                      controller: NewPlaylistUtil.playlistNameController,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      placeholder: "Playlist Name",
+              ),
+            ),
+            new Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+              child: new Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 55,
+                      child: CupertinoTextField(
+                        placeholder: "Enter New Tag",
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        controller: NewPlaylistUtil.tagController,
+                        onChanged: (text) {
+                          setState(() {});
+                        },
+                      ),
                     ),
                   ),
-                ),
-                new SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: CupertinoTextField(
-                    minLines: 3,
-                    maxLines: 5,
-                    controller: NewPlaylistUtil.playlistDescController,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    placeholder: "About Playlist...",
+                  new SizedBox(
+                    width: 10,
                   ),
-                ),
-                Container(
-                    margin: EdgeInsets.all(25.0),
-                    width: size.width,
-                    child: Builder(
-                      builder: (_context) => RoundedLoadingButton(
-                          controller: _btnController,
-                          color: colorScheme.primary,
-                          height: 45,
-                          child: new Text(
-                            "Create",
-                            style: TextStyle(color: colorScheme.onPrimary),
-                          ),
-                          onPressed: () {
-                            onPlaylistCreate(_context, context);
-                            // _onSendOtpPressed(_context);
-                          }),
-                    )),
-                new SizedBox(
-                  height: 10,
-                ),
-                Spacer(),
-              ],
+                  SizedBox(
+                    height: 55,
+                    width: 55,
+                    child: new CupertinoButton(
+                        color: colorScheme.primary,
+                        padding: EdgeInsets.all(0),
+                        onPressed: NewPlaylistUtil
+                            .tagController.text.isNotEmpty
+                            ? () {
+                          setState(() {
+                            NewPlaylistUtil.tags.add(
+                                NewPlaylistUtil.tagController.text);
+                          });
+                          NewPlaylistUtil.tagController.clear();
+                        }
+                            : null,
+                        child: Icon(
+                          Icons.add_circle_outline,
+                          color:
+                          NewPlaylistUtil.tagController.text.isNotEmpty
+                              ? colorScheme.onPrimary
+                              : colorScheme.secondaryVariant,
+                        )),
+                  ),
+                ],
+              ),
             ),
-          ),
+            Container(
+                margin: EdgeInsets.all(25.0),
+                width: size.width,
+                child: Builder(
+                  builder: (_context) => RoundedLoadingButton(
+                      controller: _btnController,
+                      color: colorScheme.primary,
+                      height: 45,
+                      child: new Text(
+                        "Create",
+                        style: TextStyle(color: colorScheme.onPrimary),
+                      ),
+                      onPressed: () {
+                        onPlaylistCreate(_context, context);
+                        // _onSendOtpPressed(_context);
+                      }),
+                )),
+            new SizedBox(
+              height: 10,
+            ),
+          ],
         ),
       ),
     );
@@ -193,19 +270,19 @@ class _NewPlaylistPageState extends State<NewPlaylistPage> {
 
   onPlaylistCreate(_context, context) async {
     if(NewPlaylistUtil.file != null){
-      if (NewPlaylistUtil.playlistNameController.text.isNotEmpty && NewPlaylistUtil.playlistDescController.text.isNotEmpty && NewPlaylistUtil.categoryController.text.isEmpty) {
+      if (NewPlaylistUtil.playlistNameController.text.isNotEmpty && NewPlaylistUtil.playlistDescController.text.isNotEmpty && NewPlaylistUtil.categoryController.text.isNotEmpty) {
         bool status = await NewPlaylistUtil.createNewPlaylist(context, NewPlaylistUtil.playlistNameController.text, NewPlaylistUtil.playlistDescController.text, );
         if (status) {
           _btnController.success();
           GlobalData.showSnackBar(
-              "Category created successfully!", _context, Colors.black);
+              "Playlist created successfully!", _context, Colors.black);
           await PlaylistUtil.fetchAllPlaylistModel(context);
           Navigator.of(context).pop();
           _btnController.reset();
         } else {
           _btnController.error();
           GlobalData.showSnackBar(
-              "Failed to created category!", _context, Colors.red);
+              "Failed to created playlist!", _context, Colors.red);
           Timer(Duration(seconds: 2), () {
             _btnController.reset();
           });

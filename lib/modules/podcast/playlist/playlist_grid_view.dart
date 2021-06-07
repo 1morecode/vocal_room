@@ -27,10 +27,10 @@ class _PlaylistGridViewState extends State<PlaylistGridView> {
     Size size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return FutureBuilder(
-      initialData: playlistState.podCastPlaylistList,
+      initialData: playlistState.podCastPlaylistList != null ? playlistState.podCastPlaylistList : [],
       future: playlistFuture,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && playlistState.podCastPlaylistList != null) {
           print("DSDSDSDSDSDSDSD");
           if (playlistState.podCastPlaylistList.length > 0) {
             return GridView.count(
@@ -50,21 +50,7 @@ class _PlaylistGridViewState extends State<PlaylistGridView> {
                     child: new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.emoji_emotions,
-                      size: 50,
-                      color: colorScheme.secondaryVariant,
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      "Playlist Not Available",
-                      style: TextStyle(
-                          color: colorScheme.secondaryVariant,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
-                    ),
+                    Image.asset("assets/no_record_found.png", height: 70,),
                     SizedBox(
                       height: 15,
                     ),

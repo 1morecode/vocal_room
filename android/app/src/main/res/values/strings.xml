@@ -10,4 +10,5 @@
       **NOTE**: The scheme needs to start with `fb` and then your ID.
     -->
     <string name="fb_login_protocol_scheme">fb1164555167318818</string>
+    <string name="default_notification_channel_id">com.u1morecode.vocal</string>
 </resources>

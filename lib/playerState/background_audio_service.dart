@@ -5,6 +5,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
 import 'package:vocal/playerState/audio_service_state.dart';
 import 'package:vocal/playerState/playlist_shared_pref.dart';
+import 'package:vocal/res/api_data.dart';
+import 'package:vocal/res/global_data.dart';
 
 /// This task defines logic for playing a list of podcast episodes.
 class AudioPlayerTask extends BackgroundAudioTask {
@@ -20,11 +22,12 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStart(Map<String, dynamic> params) async {
     queue = await PlaylistSharedPref.loadFromPreferences();
-    print("QUEUE $queue");
+    String firstPlay = await PlaylistSharedPref.getFirstPlay();
+    print("QUEUE  1 $queue");
+    print("QUEUE  2 $firstPlay");
     // We configure the audio session for speech since we're playing a podcast.
     // You can also put this in your app's initialisation if your app doesn't
     // switch between two types of audio as this example does.
-    print("DSDSDSDSDS${PodCastEpisodeModel.episodesList.length}");
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
     // Broadcast media item changes.
@@ -53,18 +56,28 @@ class AudioPlayerTask extends BackgroundAudioTask {
     });
 
     // Load and broadcast the queue
-    AudioServiceBackground.setQueue(queue);
+    await AudioServiceBackground.setQueue(queue);
     try {
       await _player.setAudioSource(ConcatenatingAudioSource(
         children:
         queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
       ));
+      await AudioService.skipToQueueItem(firstPlay);
       // In this example, we automatically start playing on start.
       onPlay();
     } catch (e) {
       print("Error: $e");
       onStop();
     }
+  }
+
+
+  Future<void> onUpdateQueue(List<MediaItem> _queue) async {
+    AudioServiceBackground.setQueue(queue = _queue);
+    await _player.setAudioSource(ConcatenatingAudioSource(
+      children:
+      queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+    ));
   }
 
   @override

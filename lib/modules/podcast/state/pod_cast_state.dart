@@ -7,18 +7,19 @@ import 'package:vocal/stories/model/story_model.dart';
 class PodCastState extends ChangeNotifier {
 
   // Playlist
-  List<PodCastPlaylistModel> podCastPlaylistList = [];
+  List<PodCastPlaylistModel> podCastPlaylistList;
 
   void updatePodCastPlaylist(List<PodCastPlaylistModel> playlist) {
-    this.podCastPlaylistList.clear();
+    this.podCastPlaylistList = [];
     this.podCastPlaylistList = playlist;
     notifyListeners();
   }
 
   // Episodes
-  List<PodCastEpisodeModel> episodeModelList = [];
+  List<PodCastEpisodeModel> episodeModelList;
 
   void updateEpisodeModalList(List<PodCastEpisodeModel> list) {
+    episodeModelList = [];
     this.episodeModelList = list;
     notifyListeners();
   }
@@ -34,7 +35,7 @@ class PodCastState extends ChangeNotifier {
   }
 
   // Stories
-   List<StoryModel> storiesList = [];
+   List<StoryModel> storiesList;
    int selectedStoryIndex;
 
   void updateSelectedStatusIndex(int i) {
@@ -43,14 +44,16 @@ class PodCastState extends ChangeNotifier {
   }
 
   void updateStatusModalList(List<StoryModel> list) {
+    storiesList = [];
     this.storiesList = list;
     notifyListeners();
   }
 
   // Categories
-  List<CategoryModel> categoriesList = [];
+  List<CategoryModel> categoriesList;
 
   void updateCategoryModalList(List<CategoryModel> list) {
+    categoriesList = [];
     this.categoriesList = list;
     notifyListeners();
   }

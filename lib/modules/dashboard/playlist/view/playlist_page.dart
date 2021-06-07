@@ -69,43 +69,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.video_collection_outlined,
-                      size: 100,
-                      color: colorScheme.secondaryVariant,
-                    ),
                     SizedBox(
-                      height: 15,
+                      height: 50,
                     ),
-                    Text(
-                      "Playlist Not Available",
-                      style: TextStyle(
-                          color: colorScheme.secondaryVariant,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
+                    Image.asset(
+                      "assets/no_record_found.png",
+                      height: 70,
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    CupertinoButton(
-                      color: colorScheme.secondaryVariant,
-                      borderRadius: BorderRadius.circular(25),
-                      child: Shimmer.fromColors(
-                        child: new Text(
-                          "Create Playlist",
-                          style: TextStyle(color: colorScheme.onPrimary),
-                        ),
-                        baseColor: colorScheme.onPrimary,
-                        highlightColor: colorScheme.primary,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewPlaylistPage(),
-                            ));
-                      },
-                    )
                   ],
                 ));
               } else if (snapshot.hasError) {
@@ -113,24 +83,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 100,
-                        color: colorScheme.secondaryVariant,
+                      new SizedBox(height: 50,),
+                      Image.asset(
+                        "assets/no_record_found.png",
+                        height: 70,
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Something went wrong!",
-                        style: TextStyle(
-                            color: colorScheme.secondaryVariant,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
+                      new SizedBox(height: 10,),
                       CupertinoButton(
                         color: colorScheme.secondaryVariant,
                         borderRadius: BorderRadius.circular(25),

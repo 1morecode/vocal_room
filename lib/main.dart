@@ -5,11 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
 import 'package:vocal/mainDrawer/main_app.dart';
-import 'package:vocal/modules/chat/src/data/providers/chats_provider.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
 import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
 import 'package:vocal/stories/newStory/camera_page.dart';
@@ -26,6 +26,7 @@ bool intro = false;
 Future main() async {
   timeDilation = 1.0;
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   try {
     cameras = await availableCameras();
@@ -75,11 +76,9 @@ Future main() async {
         ListenableProvider(
           create: (_) => PodCastState(),
         ),
-        ListenableProvider(
-          create: (_) => ChatsProvider(),
-        ),
+        // ChangeNotifierProvider(create: (_) => ChatsProvider()),
       ],
-      child: MyApp(),
+      child: OverlaySupport.global(child: MyApp(),),
     ),
   );
 
@@ -90,6 +89,7 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return Consumer<ThemeState>(
       builder: (context, themeState, child) => FeatureDiscovery(
           child: MaterialApp(

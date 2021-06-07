@@ -35,13 +35,13 @@ class StoryUtil {
           StoryModel storyModel = list[b] as StoryModel;
           storiesList.add(storyModel);
         }
-        podcastState.updateStatusModalList(storiesList);
       } else {
         print("ISE ${response.reasonPhrase}");
       }
     } catch (e) {
       print("Exception $e");
     }
+    podcastState.updateStatusModalList(storiesList);
     return storiesList;
   }
 

@@ -3,9 +3,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:vocal/mainDrawer/my_drawer_button.dart';
+import 'package:vocal/mainPage/profile/my_profile_page.dart';
 import 'package:vocal/modules/channel/channel_page.dart';
-import 'package:vocal/modules/chat/src/screens/home/home_view.dart';
+import 'package:vocal/modules/chat/all_conversations.dart';
 import 'package:vocal/modules/dashboard/dashboard_page.dart';
 import 'package:vocal/modules/podcast/podcast_page.dart';
 import 'package:vocal/modules/podcast/search/search_page.dart';
@@ -20,19 +22,32 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int selectedIndex = 0;
   var firebaseAuth = FirebaseAuth.instance;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
-    // TODO: implement initState
+    // FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    //
+    // });
+    // FirebaseMessaging.onMessage.listen((event) {
+    //
+    // });
+    // FirebaseMessaging.onBackgroundMessage((message) => null);
+    // FirebaseMessaging.onMessageOpenedApp.listen((event) {});
     super.initState();
     UserToken.updateToken();
-    FirebaseMessaging.instance.onTokenRefresh.listen(UserToken.saveTokenToDatabase);
+    FirebaseMessaging.instance.onTokenRefresh.listen(
+        UserToken.saveTokenToDatabase);
   }
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    Size size = MediaQuery.of(context).size;
+    ColorScheme colorScheme = Theme
+        .of(context)
+        .colorScheme;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     // var themeProvider = Provider.of<ThemeState>(context, listen: true);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: colorScheme.onPrimary,
@@ -44,6 +59,7 @@ class _MainPageState extends State<MainPage> {
       key: GlobalData.scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        titleSpacing: 5.0,
         // brightness: Brightness.dark,
         title: new Container(
           width: size.width,
@@ -56,32 +72,33 @@ class _MainPageState extends State<MainPage> {
               MyDrawerButton(colorScheme.primary),
               new SizedBox(width: 15,),
               Expanded(
-                  child: new CupertinoButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(),));
+                  child: selectedIndex == 0 || selectedIndex == 1 ? new CupertinoButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => SearchPage(),));
                     },
-                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                child: new Row(
-                  children: [
-                    new Icon(
-                      CupertinoIcons.search,
-                      color: colorScheme.secondaryVariant,
-                      size: 18,
-                    ),
-                    new SizedBox(
-                      width: 5,
-                    ),
-                    new Expanded(child: new Text(
-                      "Search playlist, episodes, etc.",
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    child: new Row(
+                      children: [
+                        new Icon(
+                          CupertinoIcons.search,
                           color: colorScheme.secondaryVariant,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16),
-                    ))
-                  ],
-                ),
-              )),
+                          size: 18,
+                        ),
+                        new SizedBox(
+                          width: 5,
+                        ),
+                        new Expanded(child: new Text(
+                          "Search playlist, episodes, etc.",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: colorScheme.secondaryVariant,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16),
+                        ))
+                      ],
+                    ),
+                  ) : new Container()),
               new SizedBox(width: 15,),
               IconButton(
                 color: colorScheme.primary,
@@ -89,7 +106,38 @@ class _MainPageState extends State<MainPage> {
                   CupertinoIcons.bell_circle,
                   size: 28,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  showSimpleNotification(
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: colorScheme.primary, width: 1,),
+                          borderRadius: BorderRadius.circular(100)
+                      ),
+                      color: colorScheme.onPrimary,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            new Icon(Icons.notifications_active, color: colorScheme.primary, size: 32,),
+                            new SizedBox(width: 15,),
+                            new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                new Text("Notification", style: TextStyle(color: colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold),),
+                                new Text("Notification description", style: TextStyle(color: colorScheme.onSecondary, fontSize: 16, fontWeight: FontWeight.w400),),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    position: NotificationPosition.top,
+                    slideDismissDirection: DismissDirection.horizontal,
+                    duration: Duration(milliseconds: 4000),
+                    background: Colors.transparent,
+                  );
+                },
               ),
               IconButton(
                 color: colorScheme.primary,
@@ -102,11 +150,14 @@ class _MainPageState extends State<MainPage> {
                   child: ClipRRect(
                     child: Image.network(firebaseAuth.currentUser != null
                         ? "${firebaseAuth.currentUser.photoURL}"
-                        : "https://www.w3schools.com/howto/img_avatar.png", fit: BoxFit.cover,),
+                        : "https://www.w3schools.com/howto/img_avatar.png",
+                      fit: BoxFit.cover,),
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfilePage(),));
+                },
               ),
             ],
           ),

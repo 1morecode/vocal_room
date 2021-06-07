@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/modules/podcast/playlist/pod_cast_playlist_page.dart';
 import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/res/api_data.dart';
 
 class PlayListCardWidget extends StatefulWidget {
   final int index;
@@ -28,7 +29,7 @@ class _PlayListCardWidgetState extends State<PlayListCardWidget> {
         color: colorScheme.onPrimary,
         image: DecorationImage(
           image: NetworkImage(
-              "https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/172107537/original/3ac68a0d8c213e56d4a27db3fe0b1b5fd6a4eb6c/make-a-playlist-banner-or-artwork.jpg"),
+              "${APIData.imageBaseUrl}${playlistState.podCastPlaylistList[widget.index].image}"),
           fit: BoxFit.cover,
         ),
       ),

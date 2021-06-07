@@ -47,6 +47,9 @@ class _TextStatusPageState extends State<TextStatusPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: new AppBar(
+        toolbarHeight: 1,
+      ),
       resizeToAvoidBottomInset: false,
       floatingActionButton: _textController.text.isEmpty ? null : FloatingActionButton(
         backgroundColor: colorScheme.onPrimary,
@@ -75,17 +78,17 @@ class _TextStatusPageState extends State<TextStatusPage> {
           child: new Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    new CupertinoButton(child: Icon(CupertinoIcons.back, color: colorScheme.primary,), onPressed: (){
+                    new CupertinoButton(child: Icon(Icons.close, color: colorScheme.primary,), onPressed: (){
                       Navigator.of(context).pop();
-                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,),
+                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface.withOpacity(0.5),),
                     new CupertinoButton(child: Icon(CupertinoIcons.color_filter, color: colorScheme.primary,), onPressed: (){
                       FocusScope.of(context).unfocus();
                       displayColorDialog(context);
-                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,)
+                    }, padding: EdgeInsets.all(5), color: colorScheme.onSurface.withOpacity(0.5),)
                   ],
                 ),
               ),

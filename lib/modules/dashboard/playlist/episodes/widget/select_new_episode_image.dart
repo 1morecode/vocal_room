@@ -76,9 +76,10 @@ class _SelectNewEpisodeImageState extends State<SelectNewEpisodeImage> {
     Size size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return new CupertinoButton(
+      minSize: 30,
       child: new Container(
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         alignment: Alignment.center,
         decoration: BoxDecoration(
             color: colorScheme.onSurface,

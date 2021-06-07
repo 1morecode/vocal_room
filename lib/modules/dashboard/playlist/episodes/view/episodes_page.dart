@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,11 @@ import 'package:vocal/modules/dashboard/playlist/shimmer/episode_shimmer.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
 import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/view/playlist_update_page.dart';
+import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
 import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
+import 'package:vocal/playerState/audio_service_state.dart';
+import 'package:vocal/playerState/playlist_shared_pref.dart';
+import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/global_data.dart';
 
 class EpisodesPage extends StatefulWidget {
@@ -96,8 +101,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                         borderRadius: BorderRadius.circular(5),
                         image: DecorationImage(
                             image: NetworkImage(
-                              'https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/172107537/original/3ac68a0d8c213e56d4a27db3fe0b1b5fd6a4eb6c/make-a-playlist-banner-or-artwork.jpg',
-                            ),
+                                "${APIData.imageBaseUrl}${playlistModel.first.image}"),
                             fit: BoxFit.cover),
                       ),
                     )
@@ -148,7 +152,9 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14),
                           ),
-                          new SizedBox(height: 10,),
+                          new SizedBox(
+                            height: 10,
+                          ),
                           // Padding(
                           //   padding: const EdgeInsets.all(15.0),
                           //   child: new Row(
@@ -162,187 +168,193 @@ class _EpisodesPageState extends State<EpisodesPage> {
                           // ),
                           Container(
                               padding: EdgeInsets.all(5),
-                              child: Builder(
-                                builder: (_context) => new Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(width: 5,),
-                                    new CupertinoButton(
-                                      minSize: 35,
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: new Row(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons.pencil,
-                                            color: colorScheme.onSecondary,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          new Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                                color: colorScheme.onSecondary),
-                                          )
-                                        ],
-                                      ),
-                                      onPressed: () {
+                              child: new Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  new CupertinoButton(
+                                    minSize: 35,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: new Row(
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.pencil,
+                                          color: colorScheme.onSecondary,
+                                          size: 20,
+                                        ),
+
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PlaylistUpdatePage(
+                                                    playlistModel.first),
+                                          ));
+                                    },
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 5),
+                                    color: colorScheme.primary,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  new CupertinoButton(
+                                    minSize: 35,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: new Row(
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.delete,
+                                          color: colorScheme.onSecondary,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (ctx) =>
+                                            CupertinoActionSheet(
+                                              title: new Text(
+                                                "Warning!",
+                                                style: TextStyle(
+                                                    color: colorScheme.primary),
+                                              ),
+                                              message: new Text(
+                                                  "You really want to delete this playlist?"),
+                                              actions: [
+                                                CupertinoActionSheetAction(
+                                                  child: new Text("Yes"),
+                                                  onPressed: () {
+                                                    onDeleteTap(
+                                                        playlistModel.first.id,
+                                                        context);
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                )
+                                              ],
+                                              cancelButton:
+                                              CupertinoActionSheetAction(
+                                                child: new Text("No"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ),
+                                      );
+                                    },
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 5),
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  new CupertinoButton(
+                                    minSize: 35,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: new Row(
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.info,
+                                          color: colorScheme.onSecondary,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (context) =>
+                                            CupertinoActionSheet(
+                                              title: new Text(
+                                                "About",
+                                                style: TextStyle(
+                                                    color: colorScheme.primary),
+                                              ),
+                                              message: new Text(
+                                                "${playlistModel.first.desc}",
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    color: colorScheme
+                                                        .secondaryVariant,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w400),
+                                              ),
+                                              cancelButton:
+                                              CupertinoActionSheetAction(
+                                                child: new Text("Dismiss"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ),
+                                      );
+                                    },
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 5),
+                                    color: colorScheme.secondaryVariant,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  new CupertinoButton(
+                                    minSize: 35,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: new Row(
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.play_fill,
+                                          color: colorScheme.onSecondary,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if (episodeState
+                                          .episodeModelList.length !=
+                                          0) {
+                                        AudioService.stop();
+                                        await PlaylistSharedPref
+                                            .savePreferences(episodeState
+                                            .episodeModelList);
+                                        await PlaylistSharedPref.saveFirstPlay("${APIData.serverUrl}/${episodeState
+                                            .episodeModelList[0].audio[0]['path']}");
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  PlaylistUpdatePage(
-                                                      playlistModel.first),
+                                                  AudioMainScreen(0),
                                             ));
-                                      },
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      color: colorScheme.primary,
-                                    ),
-                                    SizedBox(width: 5,),
-                                    new CupertinoButton(
-                                      minSize: 35,
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: new Row(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons.delete,
-                                            color: colorScheme.onSecondary,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          new Text(
-                                            "Delete",
-                                            style: TextStyle(
-                                                color: colorScheme.onSecondary),
-                                          )
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        showCupertinoModalPopup(
-                                          context: context,
-                                          builder: (context) =>
-                                              CupertinoActionSheet(
-                                            title: new Text(
-                                              "Warning!",
-                                              style: TextStyle(
-                                                  color: colorScheme.primary),
-                                            ),
-                                            message: new Text(
-                                                "You really want to delete this playlist?"),
-                                            actions: [
-                                              CupertinoActionSheetAction(
-                                                child: new Text("Yes"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  onDeleteTap(
-                                                      playlistModel.first.id,
-                                                      context,
-                                                      _context);
-                                                },
-                                              )
-                                            ],
-                                            cancelButton:
-                                                CupertinoActionSheetAction(
-                                              child: new Text("No"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      color: Colors.red,
-                                    ),
-                                    SizedBox(width: 5,),
-                                    new CupertinoButton(
-                                      minSize: 35,
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: new Row(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons.info,
-                                            color: colorScheme.onSecondary,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          new Text(
-                                            "Info",
-                                            style: TextStyle(
-                                                color: colorScheme.onSecondary),
-                                          )
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        showCupertinoModalPopup(
-                                          context: context,
-                                          builder: (context) =>
-                                              CupertinoActionSheet(
-                                            title: new Text(
-                                              "About",
-                                              style: TextStyle(
-                                                  color: colorScheme.primary),
-                                            ),
-                                            message: new Text(
-                                              "${playlistModel.first.desc}",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                  color: colorScheme
-                                                      .secondaryVariant,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                            cancelButton:
-                                                CupertinoActionSheetAction(
-                                              child: new Text("Dismiss"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      color: colorScheme.secondaryVariant,
-                                    ),
-                                    SizedBox(width: 5,),
-                                    new CupertinoButton(
-                                      minSize: 35,
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: new Row(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons.play_fill,
-                                            color: colorScheme.onSecondary,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          new Text(
-                                            "Play",
-                                            style: TextStyle(
-                                                color: colorScheme.onSecondary),
-                                          )
-                                        ],
-                                      ),
-                                      onPressed: () {
-
-                                      },
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      color: colorScheme.secondary,
-                                    ),
-                                    SizedBox(width: 5,),
-                                  ],
-                                ),
+                                      }
+                                    },
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 5),
+                                    color: colorScheme.secondary,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                ],
                               )),
                         ],
                       ),
                     ),
                   ),
+                  new Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    child: new Text("All Episodes"),
+                  ),
                   ConstrainedBox(
-                    constraints: new BoxConstraints(minHeight: size.height-70),
+                    constraints:
+                        new BoxConstraints(minHeight: size.height - 70),
                     child: new Container(
                       color: colorScheme.onPrimary,
                       child: FutureBuilder(
@@ -356,103 +368,78 @@ class _EpisodesPageState extends State<EpisodesPage> {
                                 itemCount: episodeState.episodeModelList.length,
                                 padding: EdgeInsets.only(top: 5, bottom: 65),
                                 itemBuilder: (context, index) {
-                                  return new EpisodeListWidget(
-                                      episodeState.episodeModelList[index].id);
+                                  return CupertinoButton(
+                                    padding: EdgeInsets.all(0),
+                                    onPressed: () async{
+                                      AudioService.stop();
+                                      await PlaylistSharedPref
+                                          .savePreferences(episodeState
+                                          .episodeModelList);
+                                      await PlaylistSharedPref.saveFirstPlay("${APIData.serverUrl}/${episodeState
+                                          .episodeModelList[index].audio[0]['path']}");
+
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AudioMainScreen(0),
+                                          ));
+                                    },
+                                    child: new EpisodeListWidget(
+                                        episodeState.episodeModelList[index].id, playlistModel.first),
+                                  );
                                 },
                               );
                             } else if (snapshot.hasData &&
                                 snapshot.data == true &&
                                 episodeState.episodeModelList.length == 0) {
                               return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 25),
+                                  padding: EdgeInsets.symmetric(vertical: 25),
                                   child: new Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.video_collection_outlined,
-                                    size: 70,
-                                    color: colorScheme.secondaryVariant,
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Text(
-                                    "Episodes Not Available",
-                                    style: TextStyle(
-                                        color: colorScheme.secondaryVariant,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  CupertinoButton(
-                                    color: colorScheme.secondaryVariant,
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: Shimmer.fromColors(
-                                      child: new Text(
-                                        "Add new episode",
-                                        style: TextStyle(
-                                            color: colorScheme.onPrimary),
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 50,
                                       ),
-                                      baseColor: colorScheme.onPrimary,
-                                      highlightColor: colorScheme.primary,
-                                    ),
-                                    onPressed: () {
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //       builder: (context) => NewPlaylistPage(),
-                                      //     ));
-                                    },
-                                  )
-                                ],
-                              ));
+                                      Image.asset(
+                                        "assets/no_record_found.png",
+                                        height: 70,
+                                      ),
+                                    ],
+                                  ));
                             } else if (snapshot.hasData &&
                                 snapshot.data != true) {
                               return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 25),
+                                  padding: EdgeInsets.symmetric(vertical: 25),
                                   child: new Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    size: 80,
-                                    color: colorScheme.secondaryVariant,
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Text(
-                                    "Something went wrong!",
-                                    style: TextStyle(
-                                        color: colorScheme.secondaryVariant,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  CupertinoButton(
-                                    color: colorScheme.secondaryVariant,
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: Shimmer.fromColors(
-                                      child: new Text(
-                                        "Try again",
-                                        style: TextStyle(
-                                            color: colorScheme.onPrimary),
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      new SizedBox(height: 50,),
+                                      Image.asset(
+                                        "assets/no_record_found.png",
+                                        height: 70,
                                       ),
-                                      baseColor: colorScheme.onPrimary,
-                                      highlightColor: colorScheme.primary,
-                                    ),
-                                    onPressed: () {
-                                      episodeFuture =
-                                          EpisodeUtil.fetchAllEpisodeModel(
-                                              context, widget.id);
-                                    },
-                                  )
-                                ],
-                              ));
+                                      new SizedBox(height: 10,),
+                                      CupertinoButton(
+                                        color: colorScheme.secondaryVariant,
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: Shimmer.fromColors(
+                                          child: new Text(
+                                            "Try again",
+                                            style: TextStyle(
+                                                color: colorScheme.onPrimary),
+                                          ),
+                                          baseColor: colorScheme.onPrimary,
+                                          highlightColor: colorScheme.primary,
+                                        ),
+                                        onPressed: () {
+                                          episodeFuture =
+                                              EpisodeUtil.fetchAllEpisodeModel(
+                                                  context, widget.id);
+                                        },
+                                      )
+                                    ],
+                                  ));
                             } else {
                               return ListView.builder(
                                 shrinkWrap: true,
@@ -499,16 +486,16 @@ class _EpisodesPageState extends State<EpisodesPage> {
     );
   }
 
-  onDeleteTap(String id, context, _context) async {
+  onDeleteTap(String id, context) async {
     bool status = await PlaylistUtil.deletePlaylistModel(context, id);
     if (status) {
       GlobalData.showSnackBar(
-          "Playlist deleted successfully!", _context, Colors.black);
+          "Playlist deleted successfully!", context, Colors.black);
       await PlaylistUtil.fetchAllPlaylistModel(context);
       Navigator.of(context).pop();
     } else {
       GlobalData.showSnackBar(
-          "Failed to delete playlist!", _context, Colors.red);
+          "Failed to delete playlist!", context, Colors.red);
     }
     // Navigator.of(context).pop();
   }

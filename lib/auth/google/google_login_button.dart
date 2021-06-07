@@ -42,10 +42,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           int ii = await AuthUtil.googleSignIn();
           Navigator.of(context).pop();
           if (ii == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MainAppPage()),
-            );
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainAppPage()
+              ,), (route) => false);
           } else {
             GlobalData.showSnackBar(
                 "Authentication Failed!", context, Colors.red);

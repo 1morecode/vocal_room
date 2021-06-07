@@ -1,5 +1,7 @@
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class GlobalData {
   static final GlobalObjectKey<ScaffoldState> scaffoldKey =
@@ -13,19 +15,38 @@ class GlobalData {
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
 
   static void showSnackBar(String message, BuildContext context, Color color) {
-    final snackBar = SnackBar(
-      duration: const Duration(seconds: 3),
-      behavior: SnackBarBehavior.floating,
-      content: Text(
-        '$message',
-        style: TextStyle(color: Colors.white),
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    showSimpleNotification(
+      Card(
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: colorScheme.primary, width: 1,),
+            borderRadius: BorderRadius.circular(100)
+        ),
+        color: color,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              new Icon(Icons.info_outline, color: colorScheme.onSecondary, size: 24,),
+              new SizedBox(width: 15,),
+              new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  new Text("$message", style: TextStyle(color: colorScheme.onSecondary, fontSize: 16, fontWeight: FontWeight.w400),),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
-      backgroundColor: color,
+      position: NotificationPosition.bottom,
+      slideDismissDirection: DismissDirection.horizontal,
+      duration: Duration(milliseconds: 2000),
+      background: Colors.transparent,
     );
-    Scaffold.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
   }
 
+  static int currentEpisodeTapped = 0;
 
 }

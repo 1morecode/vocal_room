@@ -48,7 +48,7 @@ class AppTheme {
       primaryVariant: _lightPrimaryVariantColor,
       secondary: _lightSecondaryColor,
       onPrimary: _lightOnPrimaryColor,
-      onSecondary: _lightBrightColor,
+      onSecondary: _lightTextColor,
       background: _lightPrimaryColor,
       surface: _lightGreyColor,
       onSurface: _lightGreyColor,

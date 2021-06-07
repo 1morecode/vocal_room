@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/modules/podcast/category/view/category_page.dart';
 import 'package:vocal/modules/podcast/model/category_model.dart';
 
 class CategoryWidget extends StatefulWidget {
@@ -84,6 +85,8 @@ class _CategoryWidgetState extends State<CategoryWidget> {
           )
         ],
       ),
-    ), onPressed: (){}, padding: EdgeInsets.all(0),);
+    ), onPressed: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPage(widget.categoryModel),));
+    }, padding: EdgeInsets.all(0),);
   }
 }

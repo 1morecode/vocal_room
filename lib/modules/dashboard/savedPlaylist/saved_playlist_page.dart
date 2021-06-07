@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
 import 'package:vocal/modules/dashboard/savedPlaylist/widget/saved_playlist_widget.dart';
+import 'package:vocal/res/global_data.dart';
 
 class SavedPlaylistPage extends StatefulWidget {
   @override
@@ -40,9 +41,7 @@ class _SavedPlaylistPageState extends State<SavedPlaylistPage> {
                         savedPlaylistState.playlists.remove(savedPlaylistState.playlists[index]);
                         savedPlaylistState.removePlaylist();
 
-                        // Then show a snackbar.
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text('Playlist Removed', ), behavior: SnackBarBehavior.floating,));
+                        GlobalData.showSnackBar("Playlist removed!", context, colorScheme.onPrimary);
                       }, child: new SavedPlaylistWidget(index));
                 },
               )

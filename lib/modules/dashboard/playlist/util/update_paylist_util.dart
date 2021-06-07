@@ -26,17 +26,19 @@ class UpdatePlaylistUtil {
         'playlist_title': '${playlistNameController.text}',
         'playlist_desc': '${playlistDescController.text}'
       });
-      request.files.add(await http.MultipartFile.fromPath('file',  file.path.toString()));
+      if(file != null){
+        print("File ${file.path}");
+        request.files.add(await http.MultipartFile.fromPath('file',  "${file.path}"));
+      }
       request.headers.addAll(headers);
-
       http.StreamedResponse response = await request.send();
 
       var data = jsonDecode(await response.stream.bytesToString());
-      print("DATA ${data["resp"]["success"]}");
+      print("DATA Update ${data["resp"]["success"]}");
       if (response.statusCode == 200 && data["resp"]["success"] == true) {
         return true;
       } else {
-        print(response.reasonPhrase);
+        print("Error Resp ${response.reasonPhrase}");
         return false;
       }
     } catch (e) {

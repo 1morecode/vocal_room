@@ -20,6 +20,7 @@ class _MyDrawerButtonState extends State<MyDrawerButton> {
     controller = SimpleHiddenDrawerController.of(context);
     super.didChangeDependencies();
   }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;

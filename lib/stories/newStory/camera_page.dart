@@ -323,12 +323,10 @@ class _CameraHomeState extends State<CameraHome> {
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          new CupertinoButton(child: Icon(CupertinoIcons.back, color: colorScheme.primary,), onPressed: (){
+                          new CupertinoButton(child: Icon(Icons.close, color: colorScheme.primary,), onPressed: (){
                             Navigator.of(context).pop();
-                          }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,),
-                          new CupertinoButton(child: Icon(CupertinoIcons.textbox, color: colorScheme.primary,), onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => TextStatusPage(),));
-                          }, padding: EdgeInsets.all(5), color: colorScheme.onSurface,)
+                          }, padding: EdgeInsets.all(5), color: colorScheme.onSurface.withOpacity(0.5),),
+                          Spacer()
                         ],
                       ),
                     ),

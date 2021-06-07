@@ -9,12 +9,15 @@ import 'package:vocal/modules/dashboard/playlist/episodes/util/update_episode_ut
 import 'package:vocal/modules/dashboard/playlist/episodes/widget/select_update_episode_image.dart';
 import 'package:vocal/modules/dashboard/playlist/model/episode_model.dart';
 import 'package:vocal/modules/podcast/model/pod_cast_episode_model.dart';
+import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
+import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/global_data.dart';
 
 class UpdateEpisodePage extends StatefulWidget {
   final PodCastEpisodeModel episodeModel;
+  final PodCastPlaylistModel playlistModel;
 
-  UpdateEpisodePage(this.episodeModel);
+  UpdateEpisodePage(this.episodeModel, this.playlistModel);
   @override
   _UpdateEpisodePageState createState() => _UpdateEpisodePageState();
 }
@@ -55,9 +58,9 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: <Widget>[
-                SizedBox(height: size.height * 0.05),
+                SizedBox(height: size.height * 0.1),
                 Center(
-                  child: SelectUpdateEpisodeImage("${widget.episodeModel.graphic[0]['path']}"),
+                  child: SelectUpdateEpisodeImage("${APIData.imageBaseUrl}${widget.episodeModel.graphic[0]['path']}"),
                 ),
                 new SizedBox(
                   height: 25,
@@ -70,7 +73,7 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
                     child: CupertinoTextField(
                       controller: UpdateEpisodeUtil.episodeNameController,
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      placeholder: "Playlist Name",
+                      placeholder: "Episode Name",
                     ),
                   ),
                 ),
@@ -90,89 +93,6 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
                 ),
                 new SizedBox(
                   height: 10,
-                ),
-                new Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: new Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 55,
-                          child: CupertinoTextField(
-                            placeholder: "Enter New Tag",
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                            controller: UpdateEpisodeUtil.tagController,
-                            onChanged: (text) {
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                      new SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        height: 55,
-                        width: 55,
-                        child: new CupertinoButton(
-                            color: colorScheme.primary,
-                            padding: EdgeInsets.all(0),
-                            onPressed: UpdateEpisodeUtil
-                                .tagController.text.isNotEmpty
-                                ? () {
-                              setState(() {
-                                UpdateEpisodeUtil.tags.add(
-                                    UpdateEpisodeUtil.tagController.text);
-                              });
-                              UpdateEpisodeUtil.tagController.clear();
-                            }
-                                : null,
-                            child: Icon(
-                              Icons.add_circle_outline,
-                              color:
-                              UpdateEpisodeUtil.tagController.text.isNotEmpty
-                                  ? colorScheme.onPrimary
-                                  : colorScheme.secondaryVariant,
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-                new Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: UpdateEpisodeUtil.tags.length > 0
-                      ? new Wrap(
-                    alignment: WrapAlignment.start,
-                    children: List.generate(
-                        UpdateEpisodeUtil.tags.length,
-                            (index) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 0),
-                          child: new Chip(
-                            label: new Text(
-                                "${UpdateEpisodeUtil.tags[index]}"),
-                            backgroundColor: colorScheme.onPrimary,
-                            labelStyle: TextStyle(color: colorScheme.primary),
-                            deleteIcon: Icon(Icons.cancel_outlined, color: colorScheme.primary,),
-                            onDeleted: (){
-                              setState(() {
-                                UpdateEpisodeUtil.tags.removeAt(index);
-                              });
-                            },
-                          ),
-                        )),
-                  )
-                      : new Center(
-                    child: new Text(
-                      "No Tag Added",
-                      style: TextStyle(
-                          color: colorScheme.secondaryVariant,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14),
-                    ),
-                  ),
                 ),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -244,7 +164,7 @@ class _UpdateEpisodePageState extends State<UpdateEpisodePage> {
         _btnController.success();
         GlobalData.showSnackBar(
             "Episode updated successfully!", _context, Colors.black);
-        // await EpisodeUtil.fetchAllEpisodeModel(context, widget.episodeModel.id);
+        await EpisodeUtil.fetchAllEpisodeModel(context, widget.playlistModel.id);
         Navigator.of(context).pop();
         _btnController.reset();
       } else {

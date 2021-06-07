@@ -17,7 +17,7 @@ class _SelectUpdateEpisodeImageState extends State<SelectUpdateEpisodeImage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    UpdateEpisodeUtil.file = null;
     super.initState();
   }
 
@@ -83,9 +83,10 @@ class _SelectUpdateEpisodeImageState extends State<SelectUpdateEpisodeImage> {
     Size size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return new CupertinoButton(
+      minSize: 30,
       child: new Container(
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         alignment: Alignment.center,
         decoration: BoxDecoration(
             color: colorScheme.onSurface,
@@ -93,7 +94,7 @@ class _SelectUpdateEpisodeImageState extends State<SelectUpdateEpisodeImage> {
             border: Border.all(color: colorScheme.onPrimary, width: 2)),
         child: new Icon(
           Icons.cloud_upload_outlined,
-          size: 32,
+          size: 28,
         ),
       ),
       onPressed: () {

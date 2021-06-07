@@ -44,10 +44,10 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                     color: colorScheme.onSurface,
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Image.network(
+                  child: ClipRRect(borderRadius: BorderRadius.circular(5), child: Image.network(
                     '${APIData.imageBaseUrl}${playlistModel.first.image}',
-                    fit: BoxFit.contain,
-                  ),
+                    fit: BoxFit.cover,
+                  ),),
                 ),
                 SizedBox(
                   width: 15,
@@ -70,7 +70,9 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                         height: 5,
                       ),
                       Text(
-                        '2 Episodes listed',
+                        '${playlistModel.first.desc}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 16,

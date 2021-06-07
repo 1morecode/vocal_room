@@ -43,7 +43,7 @@ class PlaylistUtil {
         print(response.reasonPhrase);
       }
     } catch (e) {
-      print("Exception $e");
+      print("Exception Plyalist $e");
     }
     return playlistState.playlistModelList;
   }

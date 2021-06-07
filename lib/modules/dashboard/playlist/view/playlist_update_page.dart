@@ -7,6 +7,7 @@ import 'package:vocal/modules/dashboard/playlist/util/playlist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/util/update_paylist_util.dart';
 import 'package:vocal/modules/dashboard/playlist/widget/update_select_image.dart';
 import 'package:vocal/modules/podcast/model/podcast_playlist_model.dart';
+import 'package:vocal/res/api_data.dart';
 import 'package:vocal/res/global_data.dart';
 
 class PlaylistUpdatePage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _PlaylistUpdatePageState extends State<PlaylistUpdatePage> {
                   height: 10,
                 ),
                 Center(
-                  child: UpdateSelectPlaylistImage("${widget.playlistModel.image}"),
+                  child: UpdateSelectPlaylistImage("${APIData.imageBaseUrl}${widget.playlistModel.image}"),
                 ),
                 new SizedBox(
                   height: 25,
@@ -122,7 +123,7 @@ class _PlaylistUpdatePageState extends State<PlaylistUpdatePage> {
                             style: TextStyle(color: colorScheme.onPrimary),
                           ),
                           onPressed: () {
-                            onPlaylistCreate(_context, context);
+                            onPlaylistUpdate(_context, context);
                             // _onSendOtpPressed(_context);
                           }),
                     )),
@@ -138,37 +139,28 @@ class _PlaylistUpdatePageState extends State<PlaylistUpdatePage> {
     );
   }
 
-  onPlaylistCreate(_context, context) async {
-    if(UpdatePlaylistUtil.file != null){
-      if (UpdatePlaylistUtil.playlistNameController.text.isNotEmpty && UpdatePlaylistUtil.playlistDescController.text.isNotEmpty) {
-        bool status = await UpdatePlaylistUtil.updatePlaylist(context, widget.playlistModel.id);
-        if (status) {
-          _btnController.success();
-          GlobalData.showSnackBar(
-              "Category created successfully!", _context, Colors.black);
-          await PlaylistUtil.fetchAllPlaylistModel(context);
-          Navigator.of(context).pop();
-          _btnController.reset();
-        } else {
-          _btnController.error();
-          GlobalData.showSnackBar(
-              "Failed to created category!", _context, Colors.red);
-          Timer(Duration(seconds: 2), () {
-            _btnController.reset();
-          });
-        }
-      }else{
+  onPlaylistUpdate(_context, context) async {
+    if (UpdatePlaylistUtil.playlistNameController.text.isNotEmpty && UpdatePlaylistUtil.playlistDescController.text.isNotEmpty) {
+      bool status = await UpdatePlaylistUtil.updatePlaylist(context, widget.playlistModel.id);
+      if (status) {
+        _btnController.success();
+        GlobalData.showSnackBar(
+            "Playlist updated successfully!", _context, Colors.black);
+        await PlaylistUtil.fetchAllPlaylistModel(context);
+        Navigator.of(context).pop();
+        _btnController.reset();
+      } else {
         _btnController.error();
         GlobalData.showSnackBar(
-            "All fields are mandatory!", _context, Colors.red);
+            "Failed to update playlist!", _context, Colors.red);
         Timer(Duration(seconds: 2), () {
           _btnController.reset();
         });
       }
-    } else {
+    }else{
       _btnController.error();
       GlobalData.showSnackBar(
-          "Please select playlist banner!", _context, Colors.red);
+          "All fields are mandatory!", _context, Colors.red);
       Timer(Duration(seconds: 2), () {
         _btnController.reset();
       });

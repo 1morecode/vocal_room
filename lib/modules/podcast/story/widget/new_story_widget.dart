@@ -38,8 +38,9 @@ class _NewStoryButtonState extends State<NewStoryButton> {
                 child: CircleAvatar(
                     radius: 32,
                     backgroundColor: colorScheme.onPrimary,
+                    foregroundColor: colorScheme.onSecondary,
                     backgroundImage: NetworkImage(
-                        "https://media.istockphoto.com/vectors/colorful-camera-symbol-in-gradient-color-on-dark-background-camera-vector-id1134816336?k=6&m=1134816336&s=612x612&w=0&h=kNLu88vbYiMbC2M1DExgdEcYgUkksK7-Q3MzqigJLDU=")),
+                        "https://support.meetpolaroid.com/hc/article_attachments/360001501028/snap-app.png",)),
               ),
               new SizedBox(
                 height: 5,

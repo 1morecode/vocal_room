@@ -70,7 +70,7 @@ class _NewEpisodePageState extends State<NewEpisodePage> {
                     child: CupertinoTextField(
                       controller: NewEpisodeUtil.episodeNameController,
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      placeholder: "Playlist Name",
+                      placeholder: "Episode Name",
                     ),
                   ),
                 ),
@@ -90,89 +90,6 @@ class _NewEpisodePageState extends State<NewEpisodePage> {
                 ),
                 new SizedBox(
                   height: 10,
-                ),
-                new Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
-                  child: new Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 55,
-                          child: CupertinoTextField(
-                            placeholder: "Enter New Tag",
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                            controller: NewEpisodeUtil.tagController,
-                            onChanged: (text) {
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                      new SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        height: 55,
-                        width: 55,
-                        child: new CupertinoButton(
-                            color: colorScheme.primary,
-                            padding: EdgeInsets.all(0),
-                            onPressed: NewEpisodeUtil
-                                    .tagController.text.isNotEmpty
-                                ? () {
-                                    setState(() {
-                                      NewEpisodeUtil.tags.add(
-                                          NewEpisodeUtil.tagController.text);
-                                    });
-                                    NewEpisodeUtil.tagController.clear();
-                                  }
-                                : null,
-                            child: Icon(
-                              Icons.add_circle_outline,
-                              color:
-                                  NewEpisodeUtil.tagController.text.isNotEmpty
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.secondaryVariant,
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-                new Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: NewEpisodeUtil.tags.length > 0
-                      ? new Wrap(
-                          alignment: WrapAlignment.start,
-                          children: List.generate(
-                              NewEpisodeUtil.tags.length,
-                              (index) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 0),
-                                    child: new Chip(
-                                      label: new Text(
-                                          "${NewEpisodeUtil.tags[index]}"),
-                                      backgroundColor: colorScheme.onPrimary,
-                                      labelStyle: TextStyle(color: colorScheme.primary),
-                                      deleteIcon: Icon(Icons.cancel_outlined, color: colorScheme.primary,),
-                                      onDeleted: (){
-                                        setState(() {
-                                          NewEpisodeUtil.tags.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  )),
-                        )
-                      : new Center(
-                          child: new Text(
-                            "No Tag Added",
-                            style: TextStyle(
-                                color: colorScheme.secondaryVariant,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14),
-                          ),
-                        ),
                 ),
                 Container(
                   alignment: Alignment.centerLeft,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChannelPage extends StatefulWidget {
+  const ChannelPage({Key key}) : super(key: key);
+
   @override
   _ChannelPageState createState() => _ChannelPageState();
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,8 @@ class FullPageViewState extends State<FullPageView> {
   Color storyStatusBarColor;
 
   nextPage(index) {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    print("INDEX $index");
     final podcastState = Provider.of<PodCastState>(context, listen: false);
     if (index == combinedList.length - 1) {
       Navigator.pop(context);
@@ -73,23 +76,34 @@ class FullPageViewState extends State<FullPageView> {
     setState(() {
       selectedIndex = index + 1;
     });
-    StoryUtil.updateStatusView(
-        context,
-        podcastState.storiesList[podcastState.selectedStoryIndex]
-            .status[selectedIndex].sId);
     _pageController.animateToPage(selectedIndex,
         duration: Duration(milliseconds: 100), curve: Curves.easeIn);
+print("${firebaseAuth.currentUser.uid}  ${podcastState.storiesList[podcastState.selectedStoryIndex].uid}");
+    if (firebaseAuth.currentUser.uid !=
+        storiesMapList[
+        getStoryIndex(listLengths, selectedIndex)].uId) {
+      StoryUtil.updateStatusView(
+          context,
+          podcastState.storiesList[podcastState.selectedStoryIndex]
+              .status[getStoryIndex(listLengths, selectedIndex)].assetsId);
+    }
   }
 
   initialViewsUpdate() {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     final podcastState = Provider.of<PodCastState>(context, listen: false);
-    StoryUtil.updateStatusView(
-        context,
-        podcastState
-            .storiesList[podcastState.selectedStoryIndex].status[0].sId);
+    if (firebaseAuth.currentUser.uid !=
+        storiesMapList[
+        getStoryIndex(listLengths, selectedIndex)].uId) {
+      StoryUtil.updateStatusView(
+          context,
+          podcastState.storiesList[podcastState.selectedStoryIndex]
+              .status[0].assetsId);
+    }
   }
 
   prevPage(index) {
+    print("INDEX $index");
     if (index == 0) return;
     setState(() {
       selectedIndex = index - 1;
@@ -118,17 +132,36 @@ class FullPageViewState extends State<FullPageView> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final podcastState = Provider.of<PodCastState>(context, listen: false);
     _pageController = PageController(initialPage: selectedIndex);
     return Scaffold(
       body: Stack(
         children: <Widget>[
           PageView(
             onPageChanged: (page) {
-              setState(() {
-                selectedIndex = page;
-              });
+              FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+              if (page > selectedIndex) {
+                print("Page $page");
+                setState(() {
+                  selectedIndex = page;
+                });
+                if (firebaseAuth.currentUser.uid !=
+                    storiesMapList[
+                    getStoryIndex(listLengths, selectedIndex)].uId) {
+                  StoryUtil.updateStatusView(
+                      context,
+                      podcastState.storiesList[podcastState.selectedStoryIndex]
+                          .status[getStoryIndex(listLengths, selectedIndex)].assetsId);
+                }
+              } else {
+                print("Page $page");
+                setState(() {
+                  selectedIndex = page;
+                });
+              }
             },
             controller: _pageController,
             scrollDirection: Axis.horizontal,

@@ -13,10 +13,10 @@ class EpisodeUtil {
     final episodeState = Provider.of<PodCastState>(context, listen: false);
 
     String token = await UserToken.getToken();
-print("id  $id");
+    print("id  $id");
     try {
       var headers = {'x-token': "$token"};
-
+print('${APIData.baseUrl}${APIData.fetchPlaylistEpisodeAPI}?playlist_id=$id');
       var request = http.Request(
           'GET', Uri.parse('${APIData.baseUrl}${APIData.fetchPlaylistEpisodeAPI}?playlist_id=$id'));
 

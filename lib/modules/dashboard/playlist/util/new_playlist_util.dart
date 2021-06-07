@@ -13,6 +13,8 @@ class NewPlaylistUtil {
   static TextEditingController categoryController = TextEditingController();
   static CategoryModel selectedCategory;
   static var newPlaylistBannerPicker = ImagePicker();
+  static TextEditingController tagController = TextEditingController();
+  static List<String> tags = [];
   static File file;
 
   static Future<bool> createNewPlaylist(context, title, desc) async {

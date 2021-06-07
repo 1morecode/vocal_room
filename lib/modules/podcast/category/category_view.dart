@@ -27,10 +27,10 @@ class _CategoryViewState extends State<CategoryView> {
     Size size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return FutureBuilder(
-      initialData: playlistState.categoriesList,
+      initialData: playlistState.categoriesList != null ? playlistState.categoriesList : [],
       future: categoryFuture,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && playlistState.categoriesList != null) {
           print("DSDSDSDSDSDSDSD");
           if (playlistState.categoriesList.length > 0) {
             return Container(
@@ -110,7 +110,51 @@ class _CategoryViewState extends State<CategoryView> {
             );
           }
         } else {
-          return new Container();
+          return Container(
+            height: 200,
+            width: size.width,
+            // color: colorScheme.primary,
+            child: new ListView.builder(
+              itemCount: 3,
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              scrollDirection: Axis.horizontal,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: false,
+              itemBuilder: (context, index) {
+                return new Column(
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: colorScheme.onPrimary,
+                      highlightColor: colorScheme.secondaryVariant.withOpacity(0.3),
+                      enabled: false,
+                      child: new Container(
+                        width: size.width * 0.4,
+                        height: 70,
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: colorScheme.onPrimary,
+                      highlightColor: colorScheme.secondaryVariant.withOpacity(0.3),
+                      enabled: false,
+                      child: new Container(
+                        width: size.width * 0.4,
+                        height: 70,
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },),
+          );
         }
       },
     );

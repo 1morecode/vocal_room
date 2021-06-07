@@ -1,56 +1,56 @@
 class StoryModel {
+  String uid;
+  List<Status> status;
   String picture;
   String name;
   String email;
-  List<Status> status;
 
-  StoryModel({this.picture, this.name, this.email, this.status});
+  StoryModel({this.uid, this.status, this.picture, this.name, this.email});
 
   StoryModel.fromJson(Map<String, dynamic> json) {
-    picture = json['picture'];
-    name = json['name'];
-    email = json['email'];
+    uid = json['uid'];
     if (json['status'] != null) {
       status = [];
       json['status'].forEach((v) {
         status.add(new Status.fromJson(v));
       });
     }
+    picture = json['picture'];
+    name = json['name'];
+    email = json['email'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['picture'] = this.picture;
-    data['name'] = this.name;
-    data['email'] = this.email;
+    data['uid'] = this.uid;
     if (this.status != null) {
       data['status'] = this.status.map((v) => v.toJson()).toList();
     }
+    data['picture'] = this.picture;
+    data['name'] = this.name;
+    data['email'] = this.email;
     return data;
   }
 }
 
 class Status {
-  String sId;
-  String assetsUrl;
-  String createdAt;
-  int views;
+  String assets;
+  String assetsId;
+  List<String> viewsId;
 
-  Status({this.sId, this.assetsUrl, this.createdAt, this.views});
+  Status({this.assets, this.assetsId, this.viewsId});
 
   Status.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    assetsUrl = json['assets_url'];
-    createdAt = json['createdAt'];
-    views = json['views'];
+    assets = json['assets'];
+    assetsId = json['assetsId'];
+    viewsId = json['viewsId'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['assets_url'] = this.assetsUrl;
-    data['createdAt'] = this.createdAt;
-    data['views'] = this.views;
+    data['assets'] = this.assets;
+    data['assetsId'] = this.assetsId;
+    data['viewsId'] = this.viewsId;
     return data;
   }
 }

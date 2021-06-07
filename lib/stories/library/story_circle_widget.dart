@@ -85,23 +85,25 @@ class StoryCircle extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         onPressed: () {
           podcastState.updateSelectedStatusIndex(selectedIndex);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FullPageView(
-                storiesMapList: story,
-                storyNumber: selectedIndex,
-                fullPagetitleStyle: fullPagetitleStyle,
-                displayProgress: displayProgress,
-                fullpageVisitedColor: fullpageVisitedColor,
-                fullpageUnvisitedColor: fullpageUnvisitedColor,
-                fullpageThumbnailSize: fullpageThumbnailSize,
-                showStoryNameOnFullPage: showStoryNameOnFullPage,
-                showThumbnailOnFullPage: showThumbnailOnFullPage,
-                storyStatusBarColor: storyStatusBarColor,
+          if(story.length > 0){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FullPageView(
+                  storiesMapList: story,
+                  storyNumber: selectedIndex,
+                  fullPagetitleStyle: fullPagetitleStyle,
+                  displayProgress: displayProgress,
+                  fullpageVisitedColor: fullpageVisitedColor,
+                  fullpageUnvisitedColor: fullpageUnvisitedColor,
+                  fullpageThumbnailSize: fullpageThumbnailSize,
+                  showStoryNameOnFullPage: showStoryNameOnFullPage,
+                  showThumbnailOnFullPage: showThumbnailOnFullPage,
+                  storyStatusBarColor: storyStatusBarColor,
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
         child: new Container(
           width: 80,

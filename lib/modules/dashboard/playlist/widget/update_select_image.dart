@@ -16,7 +16,7 @@ class _UpdateSelectPlaylistImageState extends State<UpdateSelectPlaylistImage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    UpdatePlaylistUtil.file = null;
     super.initState();
   }
 
