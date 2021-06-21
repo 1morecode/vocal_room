@@ -1,13 +1,19 @@
+import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:club_house/pages/lobby/widgets/room_card.dart';
-import 'package:club_house/pages/lobby/widgets/schedule_card.dart';
-import 'package:club_house/models/room.dart';
-import 'package:club_house/util/data.dart';
-import 'package:club_house/widgets/round_button.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/pages/lobby/widgets/lobby_bottom_sheet.dart';
-import 'package:club_house/pages/room/room_page.dart';
+
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:vocal/auth/util/auth_util.dart';
+import 'package:vocal/channel/models/room.dart';
+import 'package:vocal/channel/pages/lobby/util/lobby_util.dart';
+import 'package:vocal/channel/pages/lobby/widgets/lobby_bottom_sheet.dart';
+import 'package:vocal/channel/pages/lobby/widgets/room_card.dart';
+import 'package:vocal/channel/pages/lobby/widgets/schedule_card.dart';
+import 'package:vocal/channel/pages/room/call_screen.dart';
+import 'package:vocal/channel/pages/room/room_page.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
+import 'package:vocal/model/user.dart';
 
 class LobbyPage extends StatefulWidget {
   @override
@@ -30,6 +36,9 @@ class _LobbyPageState extends State<LobbyPage> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme
+        .of(context)
+        .colorScheme;
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -38,21 +47,38 @@ class _LobbyPageState extends State<LobbyPage> {
           controller: _refreshController,
           onRefresh: _onRefresh,
           onLoading: _onLoading,
-          child: ListView.builder(
-            padding: const EdgeInsets.only(
-              bottom: 80,
-              left: 20,
-              right: 20,
-            ),
-            itemBuilder: (lc, index) {
-              if (index == 0) {
-                return buildScheduleCard();
-              }
-
-              return buildRoomCard(rooms[index - 1]);
+          child: StreamBuilder<List<Room>>(
+            initialData: [],
+            stream: LobbyUtil.streamRooms(),
+            builder: (context, snapshot) {
+              return ListView.builder(
+                padding: const EdgeInsets.only(
+                  bottom: 80,
+                  left: 20,
+                  right: 20,
+                ),
+                itemBuilder: (lc, index) {
+                  return buildRoomCard(snapshot.data[index]);
+                },
+                itemCount: snapshot.data.length,
+              );
             },
-            itemCount: rooms.length + 1,
           ),
+          // child: ListView.builder(
+          //   padding: const EdgeInsets.only(
+          //     bottom: 80,
+          //     left: 20,
+          //     right: 20,
+          //   ),
+          //   itemBuilder: (lc, index) {
+          //     // if (index == 0) {
+          //     //   return buildScheduleCard();
+          //     // }
+          //
+          //     return buildRoomCard(rooms[index]);
+          //   },
+          //   itemCount: rooms.length,
+          // ),
         ),
         buildGradientContainer(),
         buildStartRoomButton(),
@@ -71,8 +97,29 @@ class _LobbyPageState extends State<LobbyPage> {
 
   Widget buildRoomCard(Room room) {
     return GestureDetector(
-      onTap: () {
-        enterRoom(room);
+      onTap: () async{
+        FirebaseUserModel firebaseUserModel = new FirebaseUserModel(
+            id: AuthUtil.firebaseAuth.currentUser.uid,
+            name: AuthUtil.firebaseAuth.currentUser.displayName,
+            username: AuthUtil.firebaseAuth.currentUser.email,
+            picture: AuthUtil.firebaseAuth.currentUser.photoURL);
+
+        var usr = room.users.where((i) => i['_id'] == AuthUtil.firebaseAuth.currentUser.uid).toList();
+        print("UNS $usr");
+        if (usr.length != 0) {
+          enterRoom(room, ClientRole.Broadcaster);
+        } else {
+          room.users.add(firebaseUserModel.toJson());
+          final DocumentReference messageDoc = FirebaseFirestore.instance
+              .collection('rooms')
+              .doc(room.roomId);
+          print("Users ${room.users}");
+          messageDoc.update({
+            'users': room.users,
+          }).then((value) {
+            enterRoom(room, ClientRole.Audience);
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.symmetric(
@@ -112,13 +159,16 @@ class _LobbyPageState extends State<LobbyPage> {
     );
   }
 
-  enterRoom(Room room) {
+  enterRoom(Room room, ClientRole role) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (rc) {
-        return RoomPage(
-          room: room,
+        return CallScreen(
+          channelName: room.title,
+          roomId: room.roomId,
+          userId: AuthUtil.firebaseAuth.currentUser.uid,
+          role: role,
         );
       },
     );
@@ -127,28 +177,23 @@ class _LobbyPageState extends State<LobbyPage> {
   showBottomSheet() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
           )),
       builder: (context) {
-        return Wrap(
-          children: [
-            LobbyBottomSheet(
-              onButtonTap: () {
-                Navigator.pop(context);
-
-                enterRoom(
-                  Room(
-                    title: '${myProfile.name}\'s Room',
-                    users: [myProfile],
-                    speakerCount: 1,
-                  ),
-                );
-              },
-            ),
-          ],
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery
+              .of(context)
+              .viewInsets
+              .bottom),
+          child: Wrap(
+            children: [
+              LobbyBottomSheet(enterRoom),
+            ],
+          ),
         );
       },
     );

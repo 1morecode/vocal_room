@@ -1,10 +1,11 @@
-import 'package:club_house/models/user.dart';
-import 'package:club_house/util/data.dart';
-import 'package:club_house/widgets/round_image.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/models/user.dart';
+import 'package:vocal/channel/util/data.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
 
 class ProfilePage extends StatelessWidget {
-  final User profile;
+  final UserModel profile;
 
   const ProfilePage({Key key, this.profile}) : super(key: key);
 

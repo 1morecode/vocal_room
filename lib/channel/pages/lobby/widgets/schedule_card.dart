@@ -1,6 +1,6 @@
-import 'package:club_house/util/data.dart';
-import 'package:club_house/util/style.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/util/data.dart';
+import 'package:vocal/channel/util/style.dart';
 
 class ScheduleCard extends StatelessWidget {
   @override

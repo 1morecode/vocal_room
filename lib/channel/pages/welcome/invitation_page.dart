@@ -1,9 +1,10 @@
-import 'package:club_house/util/history.dart';
-import 'package:club_house/widgets/round_button.dart';
-import 'package:club_house/widgets/round_image.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/pages/welcome/full_name_page.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/pages/welcome/full_name_page.dart';
+import 'package:vocal/channel/util/history.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
 
 class InvitationPage extends StatelessWidget {
   @override

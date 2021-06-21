@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:vocal/modules/podcast/model/user.dart';
+import 'package:vocal/model/user.dart';
 import 'package:vocal/res/api_data.dart';
 
 class UserToken{
@@ -60,7 +60,7 @@ class UserToken{
     }
   }
 
-  static Future<UserModel> getUserByUId(uid) async {
+  static Future<FirebaseUserModel> getUserByUId(uid) async {
     String token = await UserToken.getToken();
 
     try {
@@ -76,7 +76,7 @@ class UserToken{
       if (response.statusCode == 200) {
         var data = jsonDecode(await response.stream.bytesToString());
         print("User Data Res $data");
-        UserModel userModel = UserModel(id: "${data["resp"]["response"]["_id"]}", name: "${data["resp"]["response"]["name"]}", username: "${data["resp"]["response"]["user_id"]}", picture: "${data["resp"]["response"]["picture"]}");
+        FirebaseUserModel userModel = FirebaseUserModel(id: "${data["resp"]["response"]["_id"]}", name: "${data["resp"]["response"]["name"]}", username: "${data["resp"]["response"]["user_id"]}", picture: "${data["resp"]["response"]["picture"]}");
         return userModel;
       } else {
         print("ERROR ${await response.stream.bytesToString()}");

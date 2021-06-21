@@ -1,11 +1,14 @@
-import 'package:club_house/models/user.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/widgets/round_button.dart';
-import 'package:club_house/widgets/round_image.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/models/user.dart';
+
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
+
 
 class FollowerItem extends StatelessWidget {
-  final User user;
+  final UserModel user;
   final Function onProfileTap;
   final Function onRoomButtonTap;
 

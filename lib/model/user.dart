@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class UserModel {
+class FirebaseUserModel {
   String id;
   String name;
   String username;
   String picture;
   String chatId;
 
-  UserModel({
+  FirebaseUserModel({
     @required this.id,
     @required this.name,
     @required this.username,
@@ -15,7 +15,7 @@ class UserModel {
     this.chatId,
   });
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  FirebaseUserModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     name = json['name'];
     username = json['username'];
@@ -32,7 +32,7 @@ class UserModel {
     };
   }
 
-  UserModel.fromLocalDatabaseMap(Map<String, dynamic> json) {
+  FirebaseUserModel.fromLocalDatabaseMap(Map<String, dynamic> json) {
     id = json['_id'];
     name = json['name'];
     username = json['username'];

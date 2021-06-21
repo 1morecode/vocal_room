@@ -1,15 +1,22 @@
-import 'package:agora_audio_broadcast/Utils/utils.dart';
-import 'package:agora_audio_broadcast/Widgets/user_view.dart';
+
 import 'package:agora_rtm/agora_rtm.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:vocal/auth/util/auth_util.dart';
+import 'package:vocal/channel/pages/room/widgets/room_user.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
+import 'package:vocal/res/api_data.dart';
 
 class CallScreen extends StatefulWidget {
   final String channelName;
-  final String userName;
+  final String userId;
+  final String roomId;
   final ClientRole role;
 
-  CallScreen({this.channelName, this.userName, this.role});
+  CallScreen({this.channelName, this.userId, this.roomId, this.role});
 
   @override
   _CallScreenState createState() => _CallScreenState();
@@ -59,15 +66,7 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   Future<void> initialize() async {
-    if (appID.isEmpty) {
-      setState(() {
-        _infoStrings.add(
-          'APP_ID missing, please provide your APP_ID in settings.dart',
-        );
-        _infoStrings.add('Agora Engine is not starting');
-      });
-      return;
-    }
+
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
     // await _engine.enableWebSdkInteroperability(true);
@@ -76,7 +75,7 @@ class _CallScreenState extends State<CallScreen> {
 
   /// Create agora sdk instance and initialize
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(appID);
+    _engine = await RtcEngine.create(APIData.agoraAppId);
     await _engine.disableVideo();
     await _engine.enableAudio();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
@@ -97,7 +96,7 @@ class _CallScreenState extends State<CallScreen> {
           final info = 'onJoinChannel: $channel, uid: $uid';
           _infoStrings.add(info);
           localUid = uid;
-          _allUsers.putIfAbsent(uid, () => widget.userName);
+          _allUsers.putIfAbsent(uid, () => widget.userId);
         });
         if (widget.role == ClientRole.Broadcaster) {
           setState(() {
@@ -114,30 +113,34 @@ class _CallScreenState extends State<CallScreen> {
         await _channel.sendMessage(AgoraRtmMessage.fromText('$localUid:leave'));
       },
       userJoined: (uid, elapsed) {
+        print("User Joined $uid");
         setState(() {
           final info = 'userJoined: $uid';
           _infoStrings.add(info);
+          _allUsers.putIfAbsent(uid, () => "$uid");
           _users.add(uid);
         });
       },
       userOffline: (uid, reason) {
+        print("User Leave $uid");
         setState(() {
           final info = 'userOffline: $uid , reason: $reason';
           _infoStrings.add(info);
+          _allUsers.remove(uid);
           _users.remove(uid);
         });
       },
-      firstRemoteVideoFrame: (uid, width, height, elapsed) {
-        setState(() {
-          final info = 'firstRemoteVideoFrame: $uid';
-          _infoStrings.add(info);
-        });
-      },
+      // firstRemoteVideoFrame: (uid, width, height, elapsed) {
+      //   setState(() {
+      //     final info = 'firstRemoteVideoFrame: $uid';
+      //     _infoStrings.add(info);
+      //   });
+      // },
     ));
   }
 
   void _createClient() async {
-    _client = await AgoraRtmClient.createInstance(appID);
+    _client = await AgoraRtmClient.createInstance(APIData.agoraAppId);
     _client.onConnectionStateChanged = (int state, int reason) {
       if (state == 5) {
         _client.logout();
@@ -148,13 +151,13 @@ class _CallScreenState extends State<CallScreen> {
       }
     };
 
-    String userId = widget.userName;
+    String userId = widget.userId;
     await _client.login(null, userId);
     print('Login success: ' + userId);
     setState(() {
       _isLogin = true;
     });
-    String channelName = widget.channelName;
+    String channelName = widget.roomId;
     _channel = await _createChannel(channelName);
     await _channel.join();
     print('RTM Join channel success.');
@@ -162,43 +165,45 @@ class _CallScreenState extends State<CallScreen> {
       _isInChannel = true;
     });
     await _channel.sendMessage(AgoraRtmMessage.fromText('$localUid:join'));
-    _client.onMessageReceived = (AgoraRtmMessage message, String peerId) {
-      print("Peer msg: " + peerId + ", msg: " + message.text);
-
-      var userData = message.text.split(':');
-
-      if (userData[1] == 'leave') {
-        print('In here');
-        setState(() {
-          _allUsers.remove(int.parse(userData[0]));
-        });
-      } else {
-        setState(() {
-          _allUsers.putIfAbsent(int.parse(userData[0]), () => peerId);
-        });
-      }
-    };
-    _channel.onMessageReceived =
-        (AgoraRtmMessage message, AgoraRtmMember member) {
-      print(
-          'Outside channel message received : ${message.text} from ${member.userId}');
-
-      var userData = message.text.split(':');
-
-      if (userData[1] == 'leave') {
-        setState(() {
-          _allUsers.remove(int.parse(userData[0]));
-        });
-      } else {
-        print('Broadcasters list : $_users');
-        print('All users lists: ${_allUsers.values}');
-        setState(() {
-          _allUsers.putIfAbsent(int.parse(userData[0]), () => member.userId);
-        });
-      }
-    };
+    // _client.onMessageReceived = (AgoraRtmMessage message, String peerId) {
+    //   print("Peer msg: " + peerId + ", msg: " + message.text);
+    //
+    //   var userData = message.text.split(':');
+    //
+    //   if (userData[1] == 'leave') {
+    //     print('In here');
+    //     setState(() {
+    //       _allUsers.remove(int.parse(userData[0]));
+    //     });
+    //   } else {
+    //     setState(() {
+    //       _allUsers.putIfAbsent(int.parse(userData[0]), () => peerId);
+    //     });
+    //   }
+    // };
+    // _channel.onMessageReceived =
+    //     (AgoraRtmMessage message, AgoraRtmMember member) {
+    //   print(
+    //       'Outside channel message received : ${message.text} from ${member.userId}');
+    //
+    //   var userData = message.text.split(':');
+    //
+    //   if (userData[1] == 'leave') {
+    //     setState(() {
+    //       _allUsers.remove(int.parse(userData[0]));
+    //     });
+    //   } else {
+    //     print('Broadcasters list : $_users');
+    //     print('All users lists: ${_allUsers.values}');
+    //     setState(() {
+    //       _allUsers.putIfAbsent(int.parse(userData[0]), () => member.userId);
+    //     });
+    //   }
+    // };
 
     for (var i = 0; i < _users.length; i++) {
+      _broadcaster.clear();
+      _audience.clear();
       if (_allUsers.containsKey(_users[i])) {
         setState(() {
           _broadcaster.add(_allUsers[_users[i]]);
@@ -247,188 +252,15 @@ class _CallScreenState extends State<CallScreen> {
     return channel;
   }
 
-  /// Toolbar layout
-  Widget _toolbar() {
-    return widget.role == ClientRole.Audience
-        ? Container(
-      alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          RawMaterialButton(
-            onPressed: _onToggleMute,
-            child: Row(
-              children: [
-                Icon(
-                  muted ? Icons.mic_off : Icons.mic,
-                  color: muted ? Colors.white : Colors.blueAccent,
-                  size: 20.0,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                muted
-                    ? Text(
-                  'Unmute',
-                  style: buttonStyle,
-                )
-                    : Text(
-                  'Mute',
-                  style: buttonStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
-            elevation: 2.0,
-            fillColor: muted ? Colors.blueAccent : Colors.white,
-            padding: const EdgeInsets.all(15.0),
-          ),
-          RawMaterialButton(
-            onPressed: _onPressToggleRole,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.verified_user_outlined,
-                  color: muted ? Colors.white : Colors.blueAccent,
-                  size: 20.0,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  'Moderator',
-                  style: buttonStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
-            elevation: 2.0,
-            fillColor: muted ? Colors.blueAccent : Colors.white,
-            padding: const EdgeInsets.all(15.0),
-          ),
-          RawMaterialButton(
-            onPressed: () => _onCallEnd(context),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.call_end,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  'Disconnect',
-                  style: buttonStyle,
-                )
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
-            elevation: 2.0,
-            fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15.0),
-          ),
-        ],
-      ),
-    )
-        : Container(
-            alignment: Alignment.bottomCenter,
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                RawMaterialButton(
-                  onPressed: _onToggleMute,
-                  child: Row(
-                    children: [
-                      Icon(
-                        muted ? Icons.mic_off : Icons.mic,
-                        color: muted ? Colors.white : Colors.blueAccent,
-                        size: 20.0,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      muted
-                          ? Text(
-                              'Unmute',
-                              style: buttonStyle,
-                            )
-                          : Text(
-                              'Mute',
-                              style: buttonStyle.copyWith(color: Colors.black),
-                            )
-                    ],
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  elevation: 2.0,
-                  fillColor: muted ? Colors.blueAccent : Colors.white,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-                RawMaterialButton(
-                  onPressed: _onPressToggleRole,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.verified_user_outlined,
-                        color: muted ? Colors.white : Colors.blueAccent,
-                        size: 20.0,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Moderator',
-                        style: buttonStyle.copyWith(color: Colors.black),
-                      )
-                    ],
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  elevation: 2.0,
-                  fillColor: muted ? Colors.blueAccent : Colors.white,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-                RawMaterialButton(
-                  onPressed: () => _onCallEnd(context),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.call_end,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Disconnect',
-                        style: buttonStyle,
-                      )
-                    ],
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  elevation: 2.0,
-                  fillColor: Colors.redAccent,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-              ],
-            ),
-          );
-  }
-
   _onPressToggleRole() {
     this.setState(() {
-      role = role == ClientRole.Audience
-          ? ClientRole.Broadcaster
-          : ClientRole.Audience;
+      if(role == ClientRole.Audience){
+        role = ClientRole.Broadcaster;
+        _users.add(localUid);
+      }else{
+        _users.remove(localUid);
+        role =  ClientRole.Audience;
+      }
       _engine.setClientRole(role);
     });
   }
@@ -444,61 +276,271 @@ class _CallScreenState extends State<CallScreen> {
     _engine.muteLocalAudioStream(muted);
   }
 
+  Widget getMicButton(){
+    return widget.role == ClientRole.Audience
+        ? RoundButton(
+      onPressed: _onToggleMute,
+      color: Style.LightGrey,
+      isCircle: true,
+      child:Icon(
+        muted ? Icons.mic_off : Icons.mic,
+        color: Colors.blueAccent,
+        size: 15.0,
+      ),
+    ) : RoundButton(
+      onPressed: _onToggleMute,
+      color: Style.LightGrey,
+      isCircle: true,
+      child:Icon(
+        muted ? Icons.mic_off : Icons.mic,
+        color: Colors.blueAccent,
+        size: 15.0,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 120,
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            IconButton(
+              iconSize: 30,
+              icon: Icon(Icons.keyboard_arrow_down),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            Text(
+              '${widget.channelName}',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+            Spacer(),
+            GestureDetector(
+              onTap: () {
+                // History.pushPage(
+                //   context,
+                //   ProfilePage(
+                //     profile: myProfile,
+                //   ),
+                // );
+              },
+              child: RoundImage(
+                url: AuthUtil.firebaseAuth.currentUser.photoURL,
+                width: 40,
+                height: 40,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
-          child: Column(
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: 0,
+              right: 0,
+              bottom: 0,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30),
+                topLeft: Radius.circular(30),
+              ),
+            ),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    bottom: 80,
+                    top: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildTitle(widget.channelName),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(12),
+                      //   child: Text(
+                      //     'Broadcaster',
+                      //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      //   ),
+                      // ),
+                      buildBroadcaster(),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Text(
+                          'Others in the room',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                      buildAudience(),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: buildBottom(context),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget buildBroadcaster() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 150,
+      ),
+      itemCount: _users.length,
+      itemBuilder: (gc, index) {
+        return _allUsers.containsKey(_users[index])
+            ? UserView(
+          userName: _allUsers[_users[index]],
+          role: ClientRole.Broadcaster,
+          engine: _engine,
+        )
+            : Container();
+      },
+    );
+  }
+
+  Widget buildAudience() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 150,
+      ),
+      itemCount: (_allUsers.length - _users.length).abs(),
+      itemBuilder: (gc, index) {
+        return _users.contains(_allUsers.keys.toList()[index])
+            ? Container()
+            : UserView(
+          role: ClientRole.Audience,
+          userName: _allUsers.values.toList()[index],
+        );
+      },
+    );
+  }
+
+  Widget buildTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'Broadcaster',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+          Flexible(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  new Row(
+                    children: [
+                      new Icon(Icons.mic_external_on, size: 14,),
+                      // Text(
+                      //   " ${widget.room.users.where((element) => element['_id'] == widget.room.createdBy).first['name']}",
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.w400,
+                      //     fontSize: 12,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )
           ),
           Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: double.infinity,
-              child: ListView.builder(
-                itemCount: _users.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _allUsers.containsKey(_users[index])
-                      ? UserView(
-                          userName: _allUsers[_users[index]],
-                          role: ClientRole.Broadcaster,
-                    engine: _engine,
-                        )
-                      : Container();
-                },
-              )),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'Audience',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            child: IconButton(
+              onPressed: () {},
+              iconSize: 30,
+              icon: Icon(Icons.more_horiz),
             ),
           ),
-          Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: double.infinity,
-              child: ListView.builder(
-                itemCount: _allUsers.length - _users.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _users.contains(_allUsers.keys.toList()[index])
-                      ? Container()
-                      : UserView(
-                          role: ClientRole.Audience,
-                          userName: _allUsers.values.toList()[index],
-                        );
-                },
-              )),
-          _toolbar()
         ],
-      )),
+      ),
+    );
+  }
+
+  Widget buildBottom(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Colors.blue,
+              Colors.red,
+            ],
+          )
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          RoundButton(
+            onPressed: () => _onCallEnd(context),
+            color: Style.LightGrey,
+            child: Text(
+              '✌️ Leave quietly',
+              style: TextStyle(
+                color: Style.AccentRed,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          getMicButton(),
+          RoundButton(
+            onPressed: _onPressToggleRole,
+            color: Style.LightGrey,
+            isCircle: true,
+            child: Icon(
+              role == ClientRole.Broadcaster ? CupertinoIcons.minus: CupertinoIcons.add,
+              size: 15,
+              color: Colors.black,
+            ),
+          ),
+          RoundButton(
+            onPressed: () {},
+            color: Style.LightGrey,
+            isCircle: true,
+            child: Icon(
+              CupertinoIcons.hand_raised,
+              size: 15,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

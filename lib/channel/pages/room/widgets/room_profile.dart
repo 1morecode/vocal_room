@@ -1,22 +1,22 @@
-import 'package:club_house/models/user.dart';
-import 'package:club_house/pages/home/profile_page.dart';
-import 'package:club_house/util/history.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/widgets/round_image.dart';
+
+import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
 
 class RoomProfile extends StatelessWidget {
-  final User user;
+  final dynamic user;
   final double size;
   final bool isMute;
-  final bool isModerator;
+  final ClientRole clientRole;
+  final RtcEngine rtcEngine;
 
   const RoomProfile(
       {Key key,
         this.user,
         this.size,
         this.isMute = false,
-        this.isModerator = false})
+        this.clientRole = ClientRole.Audience, this.rtcEngine})
       : super(key: key);
 
   @override
@@ -27,20 +27,20 @@ class RoomProfile extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                History.pushPage(
-                  context,
-                  ProfilePage(
-                    profile: user,
-                  ),
-                );
+                // History.pushPage(
+                //   context,
+                //   ProfilePage(
+                //     profile: user,
+                //   ),
+                // );
               },
               child: RoundImage(
-                path: user.profileImage,
+                url: user['picture'],
                 width: size,
                 height: size,
               ),
             ),
-            buildNewBadge(user.isNewUser),
+            buildNewBadge(true),
             buildMuteBadge(isMute),
           ],
         ),
@@ -50,9 +50,9 @@ class RoomProfile extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildModeratorBadge(isModerator),
+            buildModeratorBadge(clientRole),
             Text(
-              user.name.split(' ')[0],
+              user['name'].split(' ')[0],
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -65,8 +65,8 @@ class RoomProfile extends StatelessWidget {
     );
   }
 
-  Widget buildModeratorBadge(bool isModerator) {
-    return isModerator
+  Widget buildModeratorBadge(ClientRole clientRole) {
+    return clientRole == ClientRole.Broadcaster
         ? Container(
       margin: const EdgeInsets.only(right: 5),
       decoration: BoxDecoration(

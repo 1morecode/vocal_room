@@ -1,39 +1,21 @@
-import 'package:camera/camera.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
-import 'package:vocal/mainDrawer/main_app.dart';
-import 'package:vocal/modules/dashboard/savedPlaylist/util/playlist_pref.dart';
-import 'package:vocal/modules/podcast/state/pod_cast_state.dart';
-import 'package:vocal/stories/newStory/camera_page.dart';
-import 'package:vocal/modules/dashboard/playlist/util/playlist_state.dart';
+import 'package:vocal/channel/pages/home/home_page.dart';
+import 'package:vocal/channel/util/style.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
-import 'intro_slider/app_intro.dart';
 
 bool isLoggedIn = false;
 
-///Initial theme settings
-bool intro = false;
-
 Future main() async {
-  timeDilation = 1.0;
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  try {
-    cameras = await availableCameras();
-    // qrCameras = await qr.availableCameras();
-  } on CameraException catch (e) {
-    print(e.code + '\n' + e.description);
-  }
 
   await Firebase.initializeApp();
   var firebaseAuth = FirebaseAuth.instance;
@@ -54,27 +36,11 @@ Future main() async {
     print("CURRENT USER EMPTY");
   }
 
-  final prefs = await SharedPreferences.getInstance();
-  if (prefs.containsKey("intro")) {
-    intro = prefs.getBool("intro");
-  } else {
-    intro = false;
-  }
-
   runApp(
     MultiProvider(
       providers: [
         ListenableProvider(
           create: (_) => ThemeState(),
-        ),
-        ListenableProvider(
-          create: (_) => PlaylistState(),
-        ),
-        ListenableProvider(
-          create: (_) => SavedPlaylistState(),
-        ),
-        ListenableProvider(
-          create: (_) => PodCastState(),
         ),
         // ChangeNotifierProvider(create: (_) => ChatsProvider()),
       ],
@@ -89,21 +55,28 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return Consumer<ThemeState>(
       builder: (context, themeState, child) => FeatureDiscovery(
           child: MaterialApp(
-              themeMode:
-                  themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
+              // themeMode:
+              //     themeState.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
               debugShowCheckedModeBanner: false,
               title: 'Vocal Cast',
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
+              // theme: AppTheme.lightTheme,
+              // darkTheme: AppTheme.darkTheme,
+              theme: ThemeData(
+                scaffoldBackgroundColor: Style.LightBrown,
+                appBarTheme: AppBarTheme(
+                  color: Style.LightBrown,
+                  elevation: 0.0,
+                  iconTheme: IconThemeData(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
               color: Colors.blue,
-              home: !intro
-                  ? SlideIntro()
-                  : isLoggedIn
-                      ? MainAppPage()
+              home: isLoggedIn
+                      ? HomePage()
                       : LoginPage())),
     );
   }

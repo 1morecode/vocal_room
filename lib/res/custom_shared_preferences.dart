@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vocal/modules/podcast/model/user.dart';
+import 'package:vocal/model/user.dart';
 
 class CustomSharedPreferences {
 
@@ -40,10 +40,10 @@ class CustomSharedPreferences {
     prefs.setBool(key, value);
   }
 
-  static Future<UserModel> getMyUser() async {
+  static Future<FirebaseUserModel> getMyUser() async {
     var firebaseAuth = FirebaseAuth.instance;
     User user = firebaseAuth.currentUser;
-    UserModel userModel = new UserModel(id: user.uid, name: user.displayName, username: user.uid);
+    FirebaseUserModel userModel = new FirebaseUserModel(id: user.uid, name: user.displayName, username: user.uid, picture: user.photoURL);
     return userModel;
   }
 

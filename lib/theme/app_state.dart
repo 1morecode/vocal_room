@@ -9,7 +9,7 @@ class ThemeState extends ChangeNotifier {
   bool get darkMode => isDarkModeOn;
 
   ThemeState() {
-    isDarkModeOn = true;
+    isDarkModeOn = false;
     _loadFromPreferences();
   }
 
@@ -25,7 +25,7 @@ class ThemeState extends ChangeNotifier {
 
   _loadFromPreferences() async {
     await _initialPreferences();
-    isDarkModeOn = _preferences.getBool(key) ?? true;
+    isDarkModeOn = _preferences.getBool(key) ?? false;
     notifyListeners();
   }
 

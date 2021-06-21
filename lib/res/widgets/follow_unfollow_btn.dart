@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vocal/modules/podcast/model/user.dart';
+import 'package:vocal/model/user.dart';
 import 'package:vocal/res/custom_shared_preferences.dart';
 import 'package:vocal/res/global_data.dart';
 import 'package:vocal/res/util/follow_unfollow_util.dart';
@@ -20,7 +20,7 @@ class FollowUnfollowButton extends StatefulWidget {
 class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
   bool followed = false;
   bool loading = false;
-  UserModel userModel;
+  FirebaseUserModel userModel;
 
   @override
   void initState() {

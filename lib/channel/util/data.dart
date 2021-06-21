@@ -1,6 +1,7 @@
 import 'dart:math';
-import 'package:club_house/models/room.dart';
-import 'package:club_house/models/user.dart';
+
+import 'package:vocal/channel/models/room.dart';
+import 'package:vocal/channel/models/user.dart';
 
 Random random = Random();
 
@@ -60,7 +61,7 @@ List roomData = List.generate(
   10,
   (index) => {
     'title': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit? ❤🏠🏠',
-    "users": List.generate(20, (index) => User.fromJson(userData[index]))
+    "users": List.generate(20, (index) => UserModel.fromJson(userData[index]))
       ..shuffle(),
     'speakerCount': 4,
   },
@@ -82,12 +83,12 @@ List lobbyBottomSheets = [
     'text': 'Social',
     'selectedMessage': 'Start a room with people I follow',
   },
-  {
-    'image': 'assets/images/closed.png',
-    'text': 'Closed',
-    'selectedMessage': 'Start a room for people I choose',
-  },
+  // {
+  //   'image': 'assets/images/closed.png',
+  //   'text': 'Closed',
+  //   'selectedMessage': 'Start a room for people I choose',
+  // },
 ];
 
-List<User> users = List.generate(20, (index) => User.fromJson(userData[index]));
-User myProfile = User.fromJson(profileData);
+List<UserModel> users = List.generate(20, (index) => UserModel.fromJson(userData[index]));
+UserModel myProfile = UserModel.fromJson(profileData);

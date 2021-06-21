@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocal/auth/login_page.dart';
+import 'package:vocal/model/user.dart';
 
 class AuthUtil {
   static var firebaseAuth = FirebaseAuth.instance;
@@ -148,4 +150,10 @@ class AuthUtil {
       ),
     );
   }
+
+  static User getCurrentUser() {
+    User user = firebaseAuth.currentUser;
+    return user;
+  }
+
 }

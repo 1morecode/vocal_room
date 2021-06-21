@@ -1,9 +1,9 @@
-import 'package:club_house/util/history.dart';
-import 'package:club_house/widgets/round_button.dart';
-import 'package:country_code_picker/country_code_picker.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/pages/welcome/invitation_page.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/pages/welcome/invitation_page.dart';
+import 'package:vocal/channel/util/history.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
 
 class PhoneNumberPage extends StatefulWidget {
   @override
@@ -58,15 +58,15 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
       ),
       child: Row(
         children: [
-          CountryCodePicker(
-            initialSelection: 'KR',
-            showCountryOnly: false,
-            alignLeft: false,
-            padding: const EdgeInsets.all(8),
-            textStyle: TextStyle(
-              fontSize: 20,
-            ),
-          ),
+          // CountryCodePicker(
+          //   initialSelection: 'KR',
+          //   showCountryOnly: false,
+          //   alignLeft: false,
+          //   padding: const EdgeInsets.all(8),
+          //   textStyle: TextStyle(
+          //     fontSize: 20,
+          //   ),
+          // ),
           Expanded(
             child: Form(
               key: _formKey,

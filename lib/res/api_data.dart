@@ -1,4 +1,6 @@
 class APIData {
+
+  static String agoraAppId = '4819bb2fe3b44b09a56934a6533ebe7d';
   // Base URL
   static final String serverUrl = 'http://101.53.153.152:7890';
   static String baseUrl = "http://101.53.153.152:7890/api";

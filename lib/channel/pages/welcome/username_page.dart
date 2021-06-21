@@ -1,8 +1,9 @@
-import 'package:club_house/util/history.dart';
-import 'package:club_house/widgets/round_button.dart';
-import 'package:club_house/util/style.dart';
-import 'package:club_house/pages/welcome/pick_photo_page.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/pages/welcome/pick_photo_page.dart';
+import 'package:vocal/channel/util/history.dart';
+import 'package:vocal/channel/util/style.dart';
+import 'package:vocal/channel/widgets/round_button.dart';
 
 class UsernamePage extends StatefulWidget {
   @override

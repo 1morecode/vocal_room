@@ -1,4 +1,4 @@
-class User {
+class UserModel {
   final String name;
   final String username;
   final String profileImage;
@@ -7,7 +7,7 @@ class User {
   final String following;
   final bool isNewUser;
 
-  User({
+  UserModel({
     this.name,
     this.username,
     this.profileImage,
@@ -17,8 +17,8 @@ class User {
     this.isNewUser,
   });
 
-  factory User.fromJson(json) {
-    return User(
+  factory UserModel.fromJson(json) {
+    return UserModel(
       name: json['name'],
       username: json['username'],
       profileImage: json['profileImage'],
@@ -28,4 +28,5 @@ class User {
       isNewUser: json['isNewUser'],
     );
   }
+
 }

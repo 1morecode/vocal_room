@@ -1,6 +1,7 @@
-import 'package:club_house/models/room.dart';
-import 'package:club_house/widgets/round_image.dart';
+
 import 'package:flutter/material.dart';
+import 'package:vocal/channel/models/room.dart';
+import 'package:vocal/channel/widgets/round_image.dart';
 
 class RoomCard extends StatelessWidget {
   final Room room;
@@ -25,12 +26,13 @@ class RoomCard extends StatelessWidget {
           ]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             room.title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 18,
             ),
           ),
           SizedBox(
@@ -42,16 +44,16 @@ class RoomCard extends StatelessWidget {
               SizedBox(
                 width: 10,
               ),
-              Column(
+              Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildUserList(),
                   SizedBox(
                     height: 5,
                   ),
-                  buildRoomInfo(),
+                  buildRoomInfo(context),
                 ],
-              ),
+              )),
             ],
           )
         ],
@@ -64,17 +66,20 @@ class RoomCard extends StatelessWidget {
       children: [
         RoundImage(
           margin: const EdgeInsets.only(top: 15, left: 25),
-          path: room.users[1].profileImage,
+          url: room.users[0]['picture'],
+          borderRadius: 15,
+          height: 30,
+          width: 30,
         ),
-        RoundImage(
-          path: room.users[0].profileImage,
-        ),
+        // RoundImage(
+        //   path: room.users[0].profileImage,
+        // ),
       ],
     );
   }
 
   Widget buildUserList() {
-    var len = room.users.length > 4 ? 4 : room.users.length;
+    var len = room.users.length > 3 ? 3 : room.users.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,10 +89,10 @@ class RoomCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  room.users[i].name,
+                  room.users[i]["name"],
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 SizedBox(
@@ -105,39 +110,55 @@ class RoomCard extends StatelessWidget {
     );
   }
 
-  Widget buildRoomInfo() {
-    return Row(
-      children: [
-        Text(
-          '${room.users.length}',
-          style: TextStyle(
-            color: Colors.grey,
+  Widget buildRoomInfo(context) {
+    return new Container(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: [
+          Text(
+            '${room.users.length}',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
           ),
-        ),
-        Icon(
-          Icons.supervisor_account,
-          color: Colors.grey,
-          size: 14,
-        ),
-        Text(
-          '  /  ',
-          style: TextStyle(
+          Icon(
+            Icons.supervisor_account,
             color: Colors.grey,
-            fontSize: 10,
+            size: 14,
           ),
-        ),
-        Text(
-          '${room.speakerCount}',
-          style: TextStyle(
+          Text(
+            '  /  ',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 10,
+            ),
+          ),
+          Text(
+            '${room.speakerCount}',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          Icon(
+            Icons.chat_bubble_rounded,
             color: Colors.grey,
+            size: 14,
           ),
-        ),
-        Icon(
-          Icons.chat_bubble_rounded,
-          color: Colors.grey,
-          size: 14,
-        ),
-      ],
+          Spacer(),
+          new Row(
+            children: [
+              new Icon(Icons.mic_external_on, size: 14,),
+              Text(
+                " ${room.users.where((element) => element['_id'] == room.createdBy).first['name']}",
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
