@@ -90,7 +90,6 @@ print("User Not Available");
     role = widget.clientRole;
     initialize();
     _createClient();
-
   }
 
   Future<void> initialize() async {
@@ -98,6 +97,7 @@ print("User Not Available");
     _addAgoraEventHandlers();
     // await _engine.enableWebSdkInteroperability(true);
     await _engine.joinChannel(null, widget.room.roomId, null, 0);
+    _engine.joinChannelWithUserAccount(null, widget.room.roomId, AuthUtil.firebaseAuth.currentUser.uid);
   }
 
 
@@ -239,17 +239,17 @@ print("User Not Available");
       }
     };
 
-    for (var i = 0; i < _users.length; i++) {
-      if (_allUsers.containsKey(_users[i])) {
-        setState(() {
-          _broadcaster.add(_allUsers[_users[i]]);
-        });
-      } else {
-        setState(() {
-          _audience.add('${_allUsers.values}');
-        });
-      }
-    }
+    // for (var i = 0; i < _users.length; i++) {
+    //   if (_allUsers.containsKey(_users[i])) {
+    //     setState(() {
+    //       _broadcaster.add(_allUsers[_users[i]]);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       _audience.add('${_allUsers.values}');
+    //     });
+    //   }
+    // }
   }
 
   Future<AgoraRtmChannel> _createChannel(String name) async {

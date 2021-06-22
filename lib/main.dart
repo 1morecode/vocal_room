@@ -7,6 +7,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/auth/login_page.dart';
 import 'package:vocal/channel/pages/home/home_page.dart';
+import 'package:vocal/channel/pages/room/util/room_state.dart';
 import 'package:vocal/channel/util/style.dart';
 import 'package:vocal/theme/app_state.dart';
 import 'package:vocal/theme/app_theme.dart';
@@ -41,8 +42,10 @@ Future main() async {
       providers: [
         ListenableProvider(
           create: (_) => ThemeState(),
+        ),ListenableProvider(
+          create: (_) => RoomState(),
         ),
-        // ChangeNotifierProvider(create: (_) => ChatsProvider()),
+        // ChangeNotifierProvider(create: (_) => RoomState()),
       ],
       child: OverlaySupport.global(child: MyApp(),),
     ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,8 +31,9 @@ class _CallScreenState extends State<CallScreen> {
   bool _isInChannel = false;
   final _broadcaster = <String>[];
   final _audience = <String>[];
-  final Map<int, String> _allUsers = {};
+  final Map<String, String> _allUsers = {};
   ClientRole role = ClientRole.Audience;
+  List<AgoraRtmMember> memberList = [];
 
   AgoraRtmClient _client;
   AgoraRtmChannel _channel;
@@ -61,16 +63,32 @@ class _CallScreenState extends State<CallScreen> {
     // initialize agora sdk
     role = widget.role;
     initialize();
+    getAllMembersEverySeconds();
     _createClient();
-
   }
 
   Future<void> initialize() async {
-
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
     // await _engine.enableWebSdkInteroperability(true);
-    await _engine.joinChannel(null, widget.channelName, null, 0);
+    // await _engine.joinChannel(null, widget.channelName, null, 0);
+    await _engine.joinChannelWithUserAccount(
+        null, widget.roomId, AuthUtil.firebaseAuth.currentUser.uid);
+  }
+
+  getAllMembersEverySeconds() {
+    Timer.periodic(Duration(seconds: 3), (timer) async {
+      var lis = await _channel.getMembers();
+      memberList = await _channel.getMembers();
+      print("GET MEmBER $_allUsers");
+      print("GET MEmBER $lis");
+      _allUsers.clear();
+      for (var u in lis){
+        setState(() {
+          _allUsers.putIfAbsent(u.userId, () => u.userId);
+        });
+      }
+    });
   }
 
   /// Create agora sdk instance and initialize
@@ -96,7 +114,7 @@ class _CallScreenState extends State<CallScreen> {
           final info = 'onJoinChannel: $channel, uid: $uid';
           _infoStrings.add(info);
           localUid = uid;
-          _allUsers.putIfAbsent(uid, () => widget.userId);
+          // _allUsers.putIfAbsent(uid, () => widget.userId);
         });
         if (widget.role == ClientRole.Broadcaster) {
           setState(() {
@@ -108,7 +126,7 @@ class _CallScreenState extends State<CallScreen> {
         setState(() {
           _infoStrings.add('onLeaveChannel');
           _users.clear();
-          _allUsers.remove(localUid);
+          // _allUsers.remove(localUid);
         });
         await _channel.sendMessage(AgoraRtmMessage.fromText('$localUid:leave'));
       },
@@ -117,7 +135,7 @@ class _CallScreenState extends State<CallScreen> {
         setState(() {
           final info = 'userJoined: $uid';
           _infoStrings.add(info);
-          _allUsers.putIfAbsent(uid, () => "$uid");
+          // _allUsers.putIfAbsent(uid, () => "$uid");
           _users.add(uid);
         });
       },
@@ -126,7 +144,7 @@ class _CallScreenState extends State<CallScreen> {
         setState(() {
           final info = 'userOffline: $uid , reason: $reason';
           _infoStrings.add(info);
-          _allUsers.remove(uid);
+          // _allUsers.remove(uid);
           _users.remove(uid);
         });
       },
@@ -202,15 +220,16 @@ class _CallScreenState extends State<CallScreen> {
     // };
 
     for (var i = 0; i < _users.length; i++) {
-      _broadcaster.clear();
-      _audience.clear();
+      // _broadcaster.clear();
+      // _audience.clear();
+
       if (_allUsers.containsKey(_users[i])) {
         setState(() {
-          _broadcaster.add(_allUsers[_users[i]]);
+          // _broadcaster.add(_allUsers[_users[i]]);
         });
       } else {
         setState(() {
-          _audience.add('${_allUsers.values}');
+          // _audience.add('${_allUsers.values}');
         });
       }
     }
@@ -221,8 +240,9 @@ class _CallScreenState extends State<CallScreen> {
     channel.onMemberJoined = (AgoraRtmMember member) async {
       print('Member joined : ${member.userId}');
       // setState(() {
-
+      // _allUsers.putIfAbsent(member.userId, () => "${member.userId}");
       // });
+      print("GET MEmBER ${_channel.getMembers()}");
       await _client.sendMessageToPeer(
           member.userId, AgoraRtmMessage.fromText('$localUid:join'));
     };
@@ -232,8 +252,9 @@ class _CallScreenState extends State<CallScreen> {
       print('Member left : ${reversedMap[member.userId]}:leave');
 
       setState(() {
-        _allUsers.remove(reversedMap[member.userId]);
+        // _allUsers.remove(reversedMap[member.userId]);
       });
+
       await channel.sendMessage(
           AgoraRtmMessage.fromText('${reversedMap[member.userId]}:leave'));
     };
@@ -244,9 +265,9 @@ class _CallScreenState extends State<CallScreen> {
       var userData = message.text.split(':');
 
       if (userData[1] == 'leave') {
-        _allUsers.remove(int.parse(userData[0]));
+        // _allUsers.remove(int.parse(userData[0]));
       } else {
-        _allUsers.putIfAbsent(int.parse(userData[0]), () => member.userId);
+        // _allUsers.putIfAbsent(userData[0], () => member.userId);
       }
     };
     return channel;
@@ -254,12 +275,12 @@ class _CallScreenState extends State<CallScreen> {
 
   _onPressToggleRole() {
     this.setState(() {
-      if(role == ClientRole.Audience){
+      if (role == ClientRole.Audience) {
         role = ClientRole.Broadcaster;
         _users.add(localUid);
-      }else{
+      } else {
         _users.remove(localUid);
-        role =  ClientRole.Audience;
+        role = ClientRole.Audience;
       }
       _engine.setClientRole(role);
     });
@@ -276,27 +297,28 @@ class _CallScreenState extends State<CallScreen> {
     _engine.muteLocalAudioStream(muted);
   }
 
-  Widget getMicButton(){
+  Widget getMicButton() {
     return widget.role == ClientRole.Audience
         ? RoundButton(
-      onPressed: _onToggleMute,
-      color: Style.LightGrey,
-      isCircle: true,
-      child:Icon(
-        muted ? Icons.mic_off : Icons.mic,
-        color: Colors.blueAccent,
-        size: 15.0,
-      ),
-    ) : RoundButton(
-      onPressed: _onToggleMute,
-      color: Style.LightGrey,
-      isCircle: true,
-      child:Icon(
-        muted ? Icons.mic_off : Icons.mic,
-        color: Colors.blueAccent,
-        size: 15.0,
-      ),
-    );
+            onPressed: _onToggleMute,
+            color: Style.LightGrey,
+            isCircle: true,
+            child: Icon(
+              muted ? Icons.mic_off : Icons.mic,
+              color: Colors.blueAccent,
+              size: 15.0,
+            ),
+          )
+        : RoundButton(
+            onPressed: _onToggleMute,
+            color: Style.LightGrey,
+            isCircle: true,
+            child: Icon(
+              muted ? Icons.mic_off : Icons.mic,
+              color: Colors.blueAccent,
+              size: 15.0,
+            ),
+          );
   }
 
   @override
@@ -342,65 +364,65 @@ class _CallScreenState extends State<CallScreen> {
       ),
       body: SafeArea(
           child: Container(
-            padding: const EdgeInsets.only(
-              left: 0,
-              right: 0,
-              bottom: 0,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(30),
-                topLeft: Radius.circular(30),
+        padding: const EdgeInsets.only(
+          left: 0,
+          right: 0,
+          bottom: 0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(30),
+            topLeft: Radius.circular(30),
+          ),
+        ),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                bottom: 80,
+                top: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildTitle(widget.channelName),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(12),
+                  //   child: Text(
+                  //     'Broadcaster',
+                  //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
+                  buildBroadcaster(),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      'Others in the room',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.grey.withOpacity(0.6),
+                      ),
+                    ),
+                  ),
+                  buildAudience(),
+                ],
               ),
             ),
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: const EdgeInsets.only(
-                    bottom: 80,
-                    top: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildTitle(widget.channelName),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(12),
-                      //   child: Text(
-                      //     'Broadcaster',
-                      //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      //   ),
-                      // ),
-                      buildBroadcaster(),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Text(
-                          'Others in the room',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.grey.withOpacity(0.6),
-                          ),
-                        ),
-                      ),
-                      buildAudience(),
-                    ],
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: buildBottom(context),
-                ),
-              ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: buildBottom(context),
             ),
-          )),
+          ],
+        ),
+      )),
     );
   }
 
@@ -416,10 +438,9 @@ class _CallScreenState extends State<CallScreen> {
       itemBuilder: (gc, index) {
         return _allUsers.containsKey(_users[index])
             ? UserView(
-          userName: _allUsers[_users[index]],
-          role: ClientRole.Broadcaster,
-          engine: _engine,
-        )
+                userName: _allUsers[_users[index]],
+                role: ClientRole.Broadcaster,
+              )
             : Container();
       },
     );
@@ -438,9 +459,9 @@ class _CallScreenState extends State<CallScreen> {
         return _users.contains(_allUsers.keys.toList()[index])
             ? Container()
             : UserView(
-          role: ClientRole.Audience,
-          userName: _allUsers.values.toList()[index],
-        );
+                role: ClientRole.Audience,
+                userName: _allUsers.values.toList()[index],
+              );
       },
     );
   }
@@ -454,30 +475,32 @@ class _CallScreenState extends State<CallScreen> {
         children: [
           Flexible(
               child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              new Row(
                 children: [
-                  new Row(
-                    children: [
-                      new Icon(Icons.mic_external_on, size: 14,),
-                      // Text(
-                      //   " ${widget.room.users.where((element) => element['_id'] == widget.room.createdBy).first['name']}",
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.w400,
-                      //     fontSize: 12,
-                      //   ),
-                      // ),
-                    ],
+                  new Icon(
+                    Icons.mic_external_on,
+                    size: 14,
                   ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  // Text(
+                  //   " ${widget.room.users.where((element) => element['_id'] == widget.room.createdBy).first['name']}",
+                  //   style: TextStyle(
+                  //     fontWeight: FontWeight.w400,
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
                 ],
-              )
-          ),
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          )),
           Container(
             child: IconButton(
               onPressed: () {},
@@ -495,14 +518,13 @@ class _CallScreenState extends State<CallScreen> {
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Colors.blue,
-              Colors.red,
-            ],
-          )
-      ),
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+        colors: [
+          Colors.blue,
+          Colors.red,
+        ],
+      )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -524,7 +546,9 @@ class _CallScreenState extends State<CallScreen> {
             color: Style.LightGrey,
             isCircle: true,
             child: Icon(
-              role == ClientRole.Broadcaster ? CupertinoIcons.minus: CupertinoIcons.add,
+              role == ClientRole.Broadcaster
+                  ? CupertinoIcons.minus
+                  : CupertinoIcons.add,
               size: 15,
               color: Colors.black,
             ),
