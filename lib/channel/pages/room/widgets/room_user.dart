@@ -1,6 +1,9 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vocal/auth/util/auth_util.dart';
+import 'package:vocal/channel/pages/room/util/room_state.dart';
 import 'package:vocal/channel/widgets/round_image.dart';
 import 'package:vocal/model/user.dart';
 import 'package:vocal/res/user_token.dart';
@@ -27,93 +30,134 @@ class _UserViewState extends State<UserView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FirebaseUserModel>(
-      future: UserToken.getUserByUId(widget.userName),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return Column(
+    return Consumer<RoomState>(
+      builder: (context, value, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
             children: [
-              Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      // History.pushPage(
-                      //   context,
-                      //   ProfilePage(
-                      //     profile: user,
-                      //   ),
-                      // );
-                    },
-                    child: RoundImage(
-                      url: snapshot.data.picture,
-                      width: 75,
-                      height: 75,
-                    ),
-                  ),
-                  // buildNewBadge(true),
-                  // buildMuteBadge(isMute),
-                ],
+              GestureDetector(
+                onTap: () {
+                  // History.pushPage(
+                  //   context,
+                  //   ProfilePage(
+                  //     profile: user,
+                  //   ),
+                  // );
+                },
+                child: RoundImage(
+                  url:
+                      "${value.room.users.where((element) => element["_id"] == widget.userName).first["picture"]}",
+                  width: 75,
+                  height: 75,
+                ),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // buildModeratorBadge(clientRole),
-                  Text(
-                    snapshot.data.name.split(' ')[0],
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              // buildNewBadge(true),
+              widget.role == ClientRole.Broadcaster
+                  ? buildMuteBadge(true)
+                  : buildRaiseHand(true),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildNewBadge(),
+              Text(
+                "${value.room.users.where((element) => element["_id"] == widget.userName).first["name"].split(' ')[0]}",
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
-          );
-        } else {
-          return new Container(
-            height: 50,
-          );
-        }
-      },
+          ),
+        ],
+      ),
     );
+  }
 
-    //   Column(
-    //   children: [
-    //     Container(
-    //       width: MediaQuery.of(context).size.width * 0.2,
-    //       decoration: BoxDecoration(
-    //         color: widget.role == ClientRole.Audience ?  Colors.blueAccent : Colors.deepPurpleAccent,
-    //         shape: BoxShape.circle,
-    //         border: Border.all(
-    //             color: Colors.green,
-    //             width: 2
-    //         ),
-    //       ),
-    //       child: Center(
-    //         child: Padding(
-    //           padding: const EdgeInsets.all(10),
-    //           child: widget.role == ClientRole.Audience ?
-    //           Icon(
-    //               Icons.people,
-    //               color: Colors.white
-    //           )
-    //               :
-    //           Icon(
-    //               Icons.person,
-    //               color: Colors.white
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //     SizedBox(
-    //       height: 10,
-    //     ),
-    //     Text(widget.userName)
-    //   ],
-    // );
+  Widget buildMuteBadge(bool isMute) {
+    return Positioned(
+      right: 0,
+      bottom: 0,
+      child: Consumer<RoomState>(
+        builder: (context, roomState, child) => Container(
+          width: 25,
+          height: 25,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                offset: Offset(0, 1),
+              )
+            ],
+          ),
+          child: Icon(widget.userName == AuthUtil.firebaseAuth.currentUser.uid
+              ? roomState.isMuted
+                  ? Icons.mic_off
+                  : Icons.mic
+              : roomState.allUsers
+                      .firstWhere((element) => element.id == widget.userName)
+                      .muted
+                  ? Icons.mic_off
+                  : Icons.mic, size: 20,),
+        ),
+      ),
+    );
+  }
+
+  Widget buildRaiseHand(bool isHandRaise) {
+    return Positioned(
+      right: 0,
+      bottom: 0,
+      child: Consumer<RoomState>(
+        builder: (context, roomState, child) => Container(
+          width: 25,
+          height: 25,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                offset: Offset(0, 1),
+              )
+            ],
+          ),
+          child: Icon(widget.userName == AuthUtil.firebaseAuth.currentUser.uid
+              ? roomState.isHandRaise
+                  ? CupertinoIcons.hand_raised_fill
+                  : CupertinoIcons.hand_raised
+              : roomState.allUsers
+                      .where((element) => element.id == widget.userName)
+                      .first
+                      .isHandRaise
+                  ? CupertinoIcons.hand_raised_fill
+                  : CupertinoIcons.hand_raised, size: 20,),
+        ),
+      ),
+    );
+  }
+
+  Widget buildNewBadge() {
+    return Consumer<RoomState>(
+      builder: (context, roomState, child) => Text(
+        roomState.room.createdBy == widget.userName
+            ? '👑'
+            : widget.role == ClientRole.Broadcaster
+                ? '🤝'
+                : '🎉',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 18,
+        ),
+      ),
+    );
   }
 }

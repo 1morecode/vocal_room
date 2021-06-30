@@ -24,27 +24,27 @@ class HomeAppBar extends StatelessWidget {
         Spacer(),
         Row(
           children: [
-            IconButton(
-              onPressed: () {},
-              iconSize: 30,
-              icon: Icon(Icons.mail),
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   iconSize: 30,
+            //   icon: Icon(Icons.mail),
+            // ),
             SizedBox(
               width: 10,
             ),
-            IconButton(
-              onPressed: () {},
-              iconSize: 30,
-              icon: Icon(Icons.calendar_today),
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   iconSize: 30,
+            //   icon: Icon(Icons.calendar_today),
+            // ),
             SizedBox(
               width: 10,
             ),
-            IconButton(
-              onPressed: () {},
-              iconSize: 30,
-              icon: Icon(Icons.notifications_active_outlined),
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   iconSize: 30,
+            //   icon: Icon(Icons.notifications_active_outlined),
+            // ),
             SizedBox(
               width: 10,
             ),

@@ -62,19 +62,15 @@ class RoomCard extends StatelessWidget {
   }
 
   Widget buildProfileImages() {
+    var len = room.users.length > 3 ? 3 : room.users.length;
     return Stack(
-      children: [
-        RoundImage(
-          margin: const EdgeInsets.only(top: 15, left: 25),
-          url: room.users[0]['picture'],
-          borderRadius: 15,
-          height: 30,
-          width: 30,
-        ),
-        // RoundImage(
-        //   path: room.users[0].profileImage,
-        // ),
-      ],
+      children: List.generate(len, (index) => RoundImage(
+        margin:  EdgeInsets.only(top: 15 * index + .0, left: 25),
+        url: room.users.reversed.toList()[index]['picture'],
+        borderRadius: 15,
+        height: 30,
+        width: 30,
+      )),
     );
   }
 
@@ -89,7 +85,7 @@ class RoomCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  room.users[i]["name"],
+                  room.users.reversed.toList()[i]["name"],
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -98,11 +94,11 @@ class RoomCard extends StatelessWidget {
                 SizedBox(
                   width: 5,
                 ),
-                Icon(
-                  Icons.chat,
-                  color: Colors.grey,
-                  size: 14,
-                ),
+                // Icon(
+                //   Icons.chat,
+                //   color: Colors.grey,
+                //   size: 14,
+                // ),
               ],
             ),
           )
@@ -116,7 +112,7 @@ class RoomCard extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            '${room.users.length}',
+            '${room.speakerCount}',
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -126,24 +122,24 @@ class RoomCard extends StatelessWidget {
             color: Colors.grey,
             size: 14,
           ),
-          Text(
-            '  /  ',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 10,
-            ),
-          ),
-          Text(
-            '${room.speakerCount}',
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          Icon(
-            Icons.chat_bubble_rounded,
-            color: Colors.grey,
-            size: 14,
-          ),
+          // Text(
+          //   '  /  ',
+          //   style: TextStyle(
+          //     color: Colors.grey,
+          //     fontSize: 10,
+          //   ),
+          // ),
+          // Text(
+          //   '${room.speakerCount}',
+          //   style: TextStyle(
+          //     color: Colors.grey,
+          //   ),
+          // ),
+          // Icon(
+          //   Icons.chat_bubble_rounded,
+          //   color: Colors.grey,
+          //   size: 14,
+          // ),
           Spacer(),
           new Row(
             children: [

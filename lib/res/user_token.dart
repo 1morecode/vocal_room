@@ -7,18 +7,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vocal/model/user.dart';
 import 'package:vocal/res/api_data.dart';
 
-class UserToken{
-
+class UserToken {
   static Future<void> saveTokenToDatabase(String token) async {
     // Assume user is logged in for this example
     var firebaseAuth = FirebaseAuth.instance;
     IdTokenResult ss = await firebaseAuth.currentUser.getIdTokenResult(true);
     print("TT $token");
     String userId = FirebaseAuth.instance.currentUser.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .set({
+    await FirebaseFirestore.instance.collection('users').doc(userId).set({
       'tokens': FieldValue.arrayUnion([token]),
       'x-token': FieldValue.arrayUnion([ss.token]),
     });
@@ -76,7 +72,11 @@ class UserToken{
       if (response.statusCode == 200) {
         var data = jsonDecode(await response.stream.bytesToString());
         print("User Data Res $data");
-        FirebaseUserModel userModel = FirebaseUserModel(id: "${data["resp"]["response"]["_id"]}", name: "${data["resp"]["response"]["name"]}", username: "${data["resp"]["response"]["user_id"]}", picture: "${data["resp"]["response"]["picture"]}");
+        FirebaseUserModel userModel = FirebaseUserModel(
+            id: "${data["resp"]["response"]["_id"]}",
+            name: "${data["resp"]["response"]["name"]}",
+            username: "${data["resp"]["response"]["user_id"]}",
+            picture: "${data["resp"]["response"]["picture"]}");
         return userModel;
       } else {
         print("ERROR ${await response.stream.bytesToString()}");
@@ -88,4 +88,37 @@ class UserToken{
     }
   }
 
+  static Future<List<String>> getUserFollowersByUId(uid) async {
+    String token = await UserToken.getToken();
+
+    try {
+      var header = {'x-token': "$token"};
+
+      var request = http.Request(
+          'GET', Uri.parse('${APIData.baseUrl}${APIData.getUserByUIdAPI}$uid'));
+
+      request.headers.addAll(header);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(await response.stream.bytesToString());
+
+        print("User Data Res ${data["resp"]["response"]["followers"]}");
+        // FirebaseUserModel userModel = FirebaseUserModel(id: "${data["resp"]["response"]["_id"]}", name: "${data["resp"]["response"]["name"]}", username: "${data["resp"]["response"]["user_id"]}", picture: "${data["resp"]["response"]["picture"]}");
+        if (data["resp"]["response"]["followers"] == null) {
+          return [];
+        } else {
+          return (data["resp"]["response"]["followers"] as List<dynamic>)
+              .cast<String>();
+        }
+      } else {
+        print("ERROR ${await response.stream.bytesToString()}");
+        return [];
+      }
+    } catch (e) {
+      print("Exception ____ $e");
+      return [];
+    }
+  }
 }

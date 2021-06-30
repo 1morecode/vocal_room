@@ -7,6 +7,7 @@ import 'package:vocal/channel/pages/lobby/lobby_page.dart';
 import 'package:vocal/channel/util/history.dart';
 
 class HomePage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
