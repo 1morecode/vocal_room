@@ -10,8 +10,9 @@ class FollowUnfollowButton extends StatefulWidget {
   final String uid;
   final Color btnColor;
   final TextStyle textStyle;
+  final VoidCallback callback;
 
-  FollowUnfollowButton({this.uid, this.btnColor, this.textStyle});
+  FollowUnfollowButton({this.uid, this.btnColor, this.textStyle,  this.callback});
 
   @override
   _FollowUnfollowButtonState createState() => _FollowUnfollowButtonState();
@@ -82,11 +83,17 @@ class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
                   followed = !followed;
                 });
                 await FollowUnFollowUtil.unfollowUser(context, widget.uid);
+                if(widget.callback !=null){
+                  widget.callback();
+                }
               } else {
                 setState(() {
                   followed = !followed;
                 });
                 await FollowUnFollowUtil.followUser(context, widget.uid);
+                if(widget.callback !=null){
+                  widget.callback();
+                }
               }
               setState(() {
                 loading = false;

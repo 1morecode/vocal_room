@@ -211,7 +211,8 @@ class _LobbyBottomSheetState extends State<LobbyBottomSheet> {
           'desc': "",
           'createdAt': DateTime.now().millisecondsSinceEpoch,
           'roomId': roomId,
-          'users': [FirebaseUserModel(id: user.uid, name: user.displayName, username: user.email, picture: user.photoURL).toJson()],
+          'users': [FirebaseUserModel(id: user.uid, name: user.displayName, username: user.email, picture: user.photoURL,
+          isBlocked: false, isOnline: true, isMuted: true, isModerator: true, isHandRaised: false, micOrHand: true).toJson()],
           'createdBy': user.uid,
           'speakerCount': 1
         },
@@ -222,7 +223,8 @@ class _LobbyBottomSheetState extends State<LobbyBottomSheet> {
         'desc': "",
         'createdAt': DateTime.now().millisecondsSinceEpoch,
         'roomId': roomId,
-        'users': [FirebaseUserModel(id: user.uid, name: user.displayName, username: user.email, picture: user.photoURL).toJson()],
+        'users': [FirebaseUserModel(id: user.uid, name: user.displayName, username: user.email, picture: user.photoURL,
+            isBlocked: false, isOnline: true, isMuted: true, isModerator: true, isHandRaised: false, micOrHand: true).toJson()],
         'createdBy': user.uid,
         'speakerCount': 1
       };

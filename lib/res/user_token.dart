@@ -121,4 +121,37 @@ class UserToken {
       return [];
     }
   }
+
+  static Future<dynamic> getUserProfileByUId(uid) async {
+    String token = await UserToken.getToken();
+
+    try {
+      var header = {'x-token': "$token"};
+
+      var request = http.Request(
+          'GET', Uri.parse('${APIData.baseUrl}${APIData.getUserByUIdAPI}$uid'));
+
+      request.headers.addAll(header);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(await response.stream.bytesToString());
+
+        print("User Data Res ${data["resp"]["response"]}");
+        // FirebaseUserModel userModel = FirebaseUserModel(id: "${data["resp"]["response"]["_id"]}", name: "${data["resp"]["response"]["name"]}", username: "${data["resp"]["response"]["user_id"]}", picture: "${data["resp"]["response"]["picture"]}");
+        if (data["resp"]["response"] == null) {
+          return [];
+        } else {
+          return data["resp"]["response"];
+        }
+      } else {
+        print("ERROR ${await response.stream.bytesToString()}");
+        return [];
+      }
+    } catch (e) {
+      print("Exception ____ $e");
+      return [];
+    }
+  }
 }

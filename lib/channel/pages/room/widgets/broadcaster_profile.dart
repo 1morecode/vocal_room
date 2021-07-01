@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocal/auth/util/auth_util.dart';
 import 'package:vocal/channel/models/agora_user_model.dart';
+import 'package:vocal/channel/pages/room/profile/user_profile_model_sheet.dart';
 import 'package:vocal/channel/pages/room/util/room_state.dart';
 import 'package:vocal/channel/util/style.dart';
 import 'package:vocal/channel/widgets/round_image.dart';
+import 'package:vocal/model/user.dart';
 
 class BroadCasterProfile extends StatefulWidget {
   final String userName;
-  final ClientRole role;
+  final FirebaseUserModel firebaseUserModel;
 
-  const BroadCasterProfile({Key key, this.userName, this.role})
+  const BroadCasterProfile({Key key, this.userName, this.firebaseUserModel})
       : super(key: key);
 
   @override
@@ -20,11 +22,9 @@ class BroadCasterProfile extends StatefulWidget {
 }
 
 class _BroadCasterProfileState extends State<BroadCasterProfile> {
-  ClientRole role;
 
   @override
   void initState() {
-    role = widget.role;
     // TODO: implement initState
     super.initState();
   }
@@ -57,29 +57,31 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
                   children: [
                     Stack(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            // History.pushPage(
-                            //   context,
-                            //   ProfilePage(
-                            //     profile: user,
-                            //   ),
-                            // );
-                          },
+                        CupertinoButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: widget.userName != AuthUtil.firebaseAuth.currentUser.uid ?  () {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15))
+                                ),
+                                context: context,
+                                builder: (rc) {
+                                  return UserProfileModelSheet(
+                                    firebaseUserModel: widget.firebaseUserModel,
+                                    userName: widget.userName,
+                                  );
+                                });
+                          } : null,
                           child: RoundImage(
                             url:
-                            "${roomState.room.users
-                                .where((element) =>
-                            element["_id"] == widget.userName)
-                                .first["picture"]}",
+                            "${widget.firebaseUserModel.picture}",
                             width: 75,
                             height: 75,
                           ),
                         ),
                         // buildNewBadge(true),
-                        widget.role == ClientRole.Broadcaster
-                            ? buildMuteBadge(true)
-                            : new Container(),
+                        buildMuteBadge()
                       ],
                     ),
                     SizedBox(
@@ -90,10 +92,7 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
                       children: [
                         buildNewBadge(),
                         Text(
-                          "  ${roomState.room.users
-                              .where((element) =>
-                          element["_id"] == widget.userName)
-                              .first["name"].split(' ')[0]}",
+                          "  ${widget.firebaseUserModel.name.split(' ')[0]}",
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -114,9 +113,6 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
   getOnlineOffline() {
     return Consumer<RoomState>(
       builder: (context, roomState, child) {
-        AgoraUserModel agoraUserModel = roomState.allUsers.firstWhere(
-                (element) => element.id == roomState.room.createdBy,
-            orElse: () => null);
         return new Container(
           alignment: Alignment.bottomCenter,
           child: new Container(
@@ -125,14 +121,15 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color:
-                agoraUserModel == null
+                !widget.firebaseUserModel.isOnline
                     ? Colors.red
                     : Colors.green,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5),
                     topRight: Radius.circular(5))),
             child: new Text(
-              agoraUserModel == null ? "OFFLINE" : "ONLINE",
+              !roomState.memberList.contains(widget.userName) ? "OFFLINE" :
+              widget.firebaseUserModel.isOnline ? "ONLINE" : "OFFLINE",
               style: TextStyle(
                   fontSize: 10, color: Colors.white, fontWeight: FontWeight.w600),
             ),
@@ -142,15 +139,12 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
     );
   }
 
-  Widget buildMuteBadge(bool isMute) {
+  Widget buildMuteBadge() {
     return Positioned(
       right: 0,
       bottom: 0,
       child: Consumer<RoomState>(
         builder: (context, roomState, child) {
-          AgoraUserModel agoraUserModel = roomState.allUsers.firstWhere(
-                  (element) => element.id == roomState.room.createdBy,
-              orElse: () => null);
           return Container(
             width: 25,
             height: 25,
@@ -164,16 +158,10 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
                 )
               ],
             ),
-            child: agoraUserModel == null ?
-            Icon(Icons.mic_off, size: 20,)
-            : Icon(widget.userName == AuthUtil.firebaseAuth.currentUser.uid
-                ? roomState.isMuted
-                ? Icons.mic_off
-                : Icons.mic
-                : roomState.allUsers
-                .firstWhere((element) => element.id == widget.userName)
-                .muted
-                ? Icons.mic_off
+            child: !roomState.memberList.contains(widget.userName) ?
+            Icon(Icons.mic_off_outlined, size: 20,)
+            : Icon(widget.firebaseUserModel.isMuted
+                ? Icons.mic_off_outlined
                 : Icons.mic, size: 20,),
           );
         }
@@ -185,11 +173,7 @@ class _BroadCasterProfileState extends State<BroadCasterProfile> {
     return Consumer<RoomState>(
       builder: (context, roomState, child) =>
           Text(
-            roomState.room.createdBy == widget.userName
-                ? '👑'
-                : widget.role == ClientRole.Broadcaster
-                ? '🤝'
-                : '🎉',
+            '👑',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,

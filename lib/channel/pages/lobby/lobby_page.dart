@@ -74,8 +74,8 @@ class _LobbyPageState extends State<LobbyPage> {
               return ListView.builder(
                 padding: const EdgeInsets.only(
                   bottom: 80,
-                  left: 20,
-                  right: 20,
+                  left: 10,
+                  right: 10,
                 ),
                 itemBuilder: (lc, index) {
                   return buildRoomCard(snapshot.data[index]);
@@ -109,64 +109,19 @@ class _LobbyPageState extends State<LobbyPage> {
   Widget buildScheduleCard() {
     return Container(
       margin: const EdgeInsets.symmetric(
-        vertical: 10,
+        vertical: 5,
       ),
       child: ScheduleCard(),
     );
   }
 
   Widget buildRoomCard(Room room) {
-    return GestureDetector(
-      onTap: () async {
-        FirebaseUserModel firebaseUserModel = new FirebaseUserModel(
-            id: AuthUtil.firebaseAuth.currentUser.uid,
-            name: AuthUtil.firebaseAuth.currentUser.displayName,
-            username: AuthUtil.firebaseAuth.currentUser.email,
-            picture: AuthUtil.firebaseAuth.currentUser.photoURL);
-
-        List<String> followersList = await UserToken.getUserFollowersByUId(
-            room.createdBy);
-        print("Foloowss $followersList");
-        print("Foloowss ${followersList.contains(
-            AuthUtil.firebaseAuth.currentUser.uid)}");
-
-        bool isCreator = room.createdBy ==
-            AuthUtil.firebaseAuth.currentUser.uid;
-
-        if (isCreator) {
-          enterRoom(room, ClientRole.Broadcaster);
-        } else {
-          if (followersList.contains(AuthUtil.firebaseAuth.currentUser.uid)) {
-            enterRoom(room, ClientRole.Broadcaster);
-          } else {
-            for (var i = 0; i < room.users.length; i++) {
-              if (room.users[i]["_id"] ==
-                  AuthUtil.firebaseAuth.currentUser.uid) {
-                enterRoom(room, ClientRole.Audience);
-                break;
-              } else if (room.users.length == i + 1) {
-                room.users.add(firebaseUserModel.toJson());
-                final DocumentReference messageDoc = FirebaseFirestore.instance
-                    .collection('rooms')
-                    .doc(room.roomId);
-                print("Users ${room.users}");
-                messageDoc.update({
-                  'users': room.users,
-                }).then((value) {
-                  enterRoom(room, ClientRole.Audience);
-                });
-              }
-            }
-          }
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(
-          vertical: 10,
-        ),
-        child: RoomCard(
-          room: room,
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        vertical: 10,
+      ),
+      child: RoomCard(
+        room: room,
       ),
     );
   }
@@ -237,4 +192,94 @@ class _LobbyPageState extends State<LobbyPage> {
       },
     );
   }
+
+  // onTapPressed(Room rooms) async{
+  //   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  //   DocumentSnapshot documentSnapshot =
+  //   await firebaseFirestore.collection('rooms').doc(rooms.roomId).get();
+  //   Room room = Room.fromJson(documentSnapshot.data());
+  //   bool isCreator = room.createdBy ==
+  //       AuthUtil.firebaseAuth.currentUser.uid;
+  //   if (isCreator) {
+  //     int ind = room.users.indexWhere((element) => element["_id"] == rooms.createdBy);
+  //     room.users[ind]["isMuted"] = true;
+  //     room.users[ind]["isHandRaised"] = false;
+  //     room.users[ind]["micOrHand"] = true;
+  //     room.users[ind]["isOnline"] = true;
+  //     final DocumentReference messageDoc = FirebaseFirestore.instance
+  //         .collection('rooms')
+  //         .doc(room.roomId);
+  //     print("Users ${room.users}");
+  //     messageDoc.update({
+  //       'users': room.users,
+  //     }).then((value) {
+  //       enterRoom(room, ClientRole.Broadcaster);
+  //     });
+  //   } else {
+  //     List<String> followersList = await UserToken.getUserFollowersByUId(
+  //         room.createdBy);
+  //     print("Foloowss $followersList");
+  //     for (var i = 0; i < room.users.length; i++) {
+  //       if (room.users[i]["_id"] ==
+  //           AuthUtil.firebaseAuth.currentUser.uid) {
+  //         if(followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) && room.users[i]["isModerator"]){
+  //           enterRoom(room, ClientRole.Broadcaster);
+  //         } else if(followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) && !room.users[i]["isModerator"]){
+  //           room.users[i]["isModerator"] = true;
+  //           room.users[i]["micOrHand"] = true;
+  //           room.users[i]["isMuted"] = true;
+  //           room.users[i]["isHandRaised"] = false;
+  //           final DocumentReference messageDoc = FirebaseFirestore.instance
+  //               .collection('rooms')
+  //               .doc(room.roomId);
+  //           print("Users ${room.users}");
+  //           messageDoc.update({
+  //             'users': room.users,
+  //           }).then((value) {
+  //             enterRoom(room, ClientRole.Broadcaster);
+  //           });
+  //         }else{
+  //           room.users[i]["isModerator"] = false;
+  //           room.users[i]["micOrHand"] = false;
+  //           room.users[i]["isMuted"] = true;
+  //           room.users[i]["isHandRaised"] = false;
+  //           final DocumentReference messageDoc = FirebaseFirestore.instance
+  //               .collection('rooms')
+  //               .doc(room.roomId);
+  //           print("Users ${room.users}");
+  //           messageDoc.update({
+  //             'users': room.users,
+  //           }).then((value) {
+  //             enterRoom(room, ClientRole.Broadcaster);
+  //           });
+  //         }
+  //         break;
+  //       } else if (room.users.length == i + 1) {
+  //         FirebaseUserModel firebaseUserModel = new FirebaseUserModel(
+  //             id: AuthUtil.firebaseAuth.currentUser.uid,
+  //             name: AuthUtil.firebaseAuth.currentUser.displayName,
+  //             username: AuthUtil.firebaseAuth.currentUser.email,
+  //             picture: AuthUtil.firebaseAuth.currentUser.photoURL,
+  //             isHandRaised: false,
+  //             isModerator: followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) ? true : false,
+  //             isMuted: true,
+  //             isOnline: true,
+  //             isBlocked: false,
+  //           micOrHand: followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) ? true : false
+  //         );
+  //
+  //         room.users.add(firebaseUserModel.toJson());
+  //         final DocumentReference messageDoc = FirebaseFirestore.instance
+  //             .collection('rooms')
+  //             .doc(room.roomId);
+  //         print("Users ${room.users}");
+  //         messageDoc.update({
+  //           'users': room.users,
+  //         }).then((value) {
+  //           enterRoom(room, followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) ? ClientRole.Broadcaster : ClientRole.Audience);
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 }
