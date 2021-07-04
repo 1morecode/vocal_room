@@ -45,7 +45,7 @@ class _FacebookLoginButtonState extends State<FacebookLoginButton> {
           if (ii == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => HomePage(null)),
             );
           } else {
             GlobalData.showSnackBar(

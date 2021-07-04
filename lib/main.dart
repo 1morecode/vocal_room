@@ -3,6 +3,7 @@
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -12,8 +13,11 @@ import 'package:vocal/channel/pages/home/home_page.dart';
 import 'package:vocal/channel/pages/room/util/room_state.dart';
 import 'package:vocal/channel/util/style.dart';
 import 'package:vocal/theme/app_state.dart';
+import 'package:vocal/unilinks/my_unilinks.dart';
+import 'package:vocal/unilinks/util.dart';
 
 bool isLoggedIn = false;
+final FirebaseDynamicLinks _firebaseDynamicLinks = FirebaseDynamicLinks.instance;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,18 +27,12 @@ Future main() async {
 
   if (firebaseAuth.currentUser != null) {
     isLoggedIn = true;
-    // IdTokenResult ss = await firebaseAuth.currentUser.getIdTokenResult(true);
-    // print("Token ${ss.token}");
-    // final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
-    // pattern.allMatches("CURRENT ${await firebaseAuth.currentUser.getIdTokenResult(true)}").forEach((match) async{
-    //   print(match.group(0));
-    //   await AuthUtil.updateToken();
-    // });
-    //x-auth-token
   } else {
     isLoggedIn = false;
     print("CURRENT USER EMPTY");
   }
+
+  initUniLinks();
 
   runApp(
     MultiProvider(
@@ -53,6 +51,27 @@ Future main() async {
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
+
+Future<Null> initUniLinks() async {
+  UniLinkUtil.uniLinkResp = null;
+  try {
+    PendingDynamicLinkData initialLink = await _firebaseDynamicLinks.getInitialLink();
+    if(initialLink != null){
+      Uri parseUri = initialLink.link;
+      var referralRoute = parseUri.path.substring(1);
+      if (referralRoute.isNotEmpty || referralRoute.length != 0) {
+        // GlobalData.deepLinkReferralId = referralRoute;
+        print("Success Deep Link_______________$referralRoute}");
+        UniLinkUtil.uniLinkResp = referralRoute;
+      }else{
+        print("Failed Main_______________${initialLink.link}");
+      }
+    }
+  } on PlatformException {
+    print("Exception Main_______________");
+  }
+}
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -78,7 +97,7 @@ class MyApp extends StatelessWidget {
               ),
               color: Colors.blue,
               home: isLoggedIn
-                      ? HomePage()
+                      ? UniLinkUtil.uniLinkResp != null ? MyUniLinkPage() : HomePage(null)
                       : LoginPage())),
     );
   }

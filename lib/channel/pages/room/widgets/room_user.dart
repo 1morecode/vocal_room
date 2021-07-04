@@ -51,10 +51,18 @@ class _UserViewState extends State<UserView> {
                         );
                       });
                 } : null,
-                child: RoundImage(
-                  url: "${widget.firebaseUserModel.picture}",
-                  width: 75,
-                  height: 75,
+                child: new Container(
+                  child: RoundImage(
+                    url:
+                    "${widget.firebaseUserModel.picture}",
+                    width: 70,
+                    height: 70,
+                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(200),
+                      border: Border.all(color: value.speakersList.contains(widget.userName) ? Colors.grey.withOpacity(0.2) : Colors.transparent, width: 5)
+                  ),
+                  padding: EdgeInsets.all(1),
                 ),
               ),
               widget.firebaseUserModel.micOrHand
@@ -116,7 +124,7 @@ class _UserViewState extends State<UserView> {
                     widget.firebaseUserModel.isMuted
                         ? Icons.mic_off_outlined
                         : Icons.mic,
-                    size: 20,
+                    size: 20, color: Colors.black87
                   ),
                 ),
               )),

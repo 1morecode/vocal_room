@@ -118,7 +118,7 @@ class _LobbyPageState extends State<LobbyPage> {
   Widget buildRoomCard(Room room) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        vertical: 10,
+        vertical: 5,
       ),
       child: RoomCard(
         room: room,

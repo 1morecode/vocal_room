@@ -29,6 +29,19 @@
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
+
+            <!-- App Links -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with https://YOUR_HOST -->
+                <data
+                    android:scheme="https"
+                    android:host="vocalcast.page.link"
+                    android:pathPattern="/.*" />
+            </intent-filter>
+
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
@@ -53,7 +66,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-       <service android:name="com.ryanheise.audioservice.AudioService">
+       <service android:name="com.ryanheise.audioservice.AudioService"
+           android:exported="false">
            <intent-filter>
                <action android:name="android.media.browse.MediaBrowserService" />
            </intent-filter>
@@ -76,6 +90,8 @@
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_channel_id"
            android:value="@string/default_notification_channel_id" />
+
+
 
        <activity
            android:name="com.facebook.CustomTabActivity"

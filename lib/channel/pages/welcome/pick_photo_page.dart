@@ -45,7 +45,7 @@ class PickPhotoPage extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: () {
-          History.pushPageReplacement(context, HomePage());
+          History.pushPageReplacement(context, HomePage(null));
         },
         child: Text(
           'Skip',

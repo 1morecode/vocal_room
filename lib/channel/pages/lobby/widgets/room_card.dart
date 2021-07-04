@@ -40,11 +40,11 @@ class _RoomCardState extends State<RoomCard> {
         child: Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
-        vertical: 20,
+        vertical: 10,
       ),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -115,6 +115,8 @@ class _RoomCardState extends State<RoomCard> {
               children: [
                 Text(
                   "${widget.room.users.reversed.toList()[i]["name"]}",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -148,9 +150,9 @@ class _RoomCardState extends State<RoomCard> {
             ),
           ),
           Icon(
-            Icons.supervisor_account,
+            CupertinoIcons.person_2_square_stack,
             color: Colors.grey,
-            size: 14,
+            size: 18,
           ),
           // Text(
           //   '  /  ',
@@ -173,12 +175,13 @@ class _RoomCardState extends State<RoomCard> {
           Spacer(),
           new Row(
             children: [
-              new Icon(Icons.mic_external_on, size: 14,),
+              new Icon(Icons.mic_external_on, size: 14, color: Colors.green,),
               Text(
                 " ${widget.room.users.where((element) => element['_id'] == widget.room.createdBy).first['name']}",
                 style: TextStyle(
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                   fontSize: 12,
+                  color: Colors.black87
                 ),
               ),
             ],
@@ -207,17 +210,14 @@ class _RoomCardState extends State<RoomCard> {
       print("Users ${room.users}");
       messageDoc.update({
         'users': room.users,
-      }).then((value) {
-        enterRoom(room, ClientRole.Broadcaster, context);
       });
+      enterRoom(room, ClientRole.Broadcaster, context);
     } else {
       print("Foloowss $followersList");
       for (var i = 0; i < room.users.length; i++) {
         if (room.users[i]["_id"] ==
             AuthUtil.firebaseAuth.currentUser.uid) {
-          if(followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) && room.users[i]["isModerator"]){
-            enterRoom(room, ClientRole.Broadcaster, context);
-          } else if(followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) && !room.users[i]["isModerator"]){
+          if(followersList.contains(AuthUtil.firebaseAuth.currentUser.uid)){
             room.users[i]["isModerator"] = true;
             room.users[i]["micOrHand"] = true;
             room.users[i]["isMuted"] = true;
@@ -228,9 +228,8 @@ class _RoomCardState extends State<RoomCard> {
             print("Users ${room.users}");
             messageDoc.update({
               'users': room.users,
-            }).then((value) {
-              enterRoom(room, ClientRole.Broadcaster, context);
             });
+            enterRoom(room, ClientRole.Broadcaster, context);
           }else{
             room.users[i]["isModerator"] = false;
             room.users[i]["micOrHand"] = false;
@@ -242,9 +241,8 @@ class _RoomCardState extends State<RoomCard> {
             print("Users ${room.users}");
             messageDoc.update({
               'users': room.users,
-            }).then((value) {
-              enterRoom(room, ClientRole.Broadcaster, context);
             });
+            enterRoom(room, ClientRole.Broadcaster, context);
           }
           break;
         } else if (room.users.length == i + 1) {
@@ -268,9 +266,8 @@ class _RoomCardState extends State<RoomCard> {
           print("Users ${room.users}");
           messageDoc.update({
             'users': room.users,
-          }).then((value) {
-            enterRoom(room, followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) ? ClientRole.Broadcaster : ClientRole.Broadcaster, context);
           });
+          enterRoom(room, followersList.contains(AuthUtil.firebaseAuth.currentUser.uid) ? ClientRole.Broadcaster : ClientRole.Broadcaster, context);
         }
       }
     }
@@ -286,6 +283,7 @@ class _RoomCardState extends State<RoomCard> {
           roomId: room.roomId,
           userId: AuthUtil.firebaseAuth.currentUser.uid,
           role: role,
+          room: room,
         );
       },
     );

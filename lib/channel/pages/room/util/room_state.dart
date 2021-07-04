@@ -20,7 +20,7 @@ class RoomState extends ChangeNotifier {
     DocumentSnapshot documentSnapshot =
     await firebaseFirestore.collection('rooms').doc(roomId).get();
     this.room = Room.fromJson(documentSnapshot.data());
-    notifyListeners();
+    // notifyListeners();
   }
 
   updateRoom(Room room) {
@@ -233,6 +233,8 @@ class RoomState extends ChangeNotifier {
 
   var _infoStrings = <String>[];
 
+  List<String> speakersList = [];
+
   /// Add agora event handlers
   void addAgoraEventHandlers() {
     this.rtcEngine.setEventHandler(RtcEngineEventHandler(
@@ -257,6 +259,24 @@ class RoomState extends ChangeNotifier {
       },
       activeSpeaker: (uid) {
 
+      },
+      audioVolumeIndication: (List<AudioVolumeInfo> speakers, totalVolume) async{
+        print("Speakers ${speakers.length}, Total Val $totalVolume");
+        speakersList.clear();
+        for(var i in speakers) {
+          if(i.uid == 0){
+            if(i.volume > 5){
+              speakersList.add(AuthUtil.firebaseAuth.currentUser.uid);
+            }
+          }else{
+            if(i.volume > 5){
+              UserInfo userInfo = await rtcEngine.getUserInfoByUid(i.uid);
+              speakersList.add(userInfo.userAccount);
+            }
+          }
+        }
+        notifyListeners();
+        print("Speakers List $speakersList");
       },
     ));
   }

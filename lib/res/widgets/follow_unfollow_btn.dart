@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vocal/auth/util/auth_util.dart';
 import 'package:vocal/model/user.dart';
 import 'package:vocal/res/custom_shared_preferences.dart';
 import 'package:vocal/res/global_data.dart';
@@ -21,7 +22,6 @@ class FollowUnfollowButton extends StatefulWidget {
 class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
   bool followed = false;
   bool loading = false;
-  FirebaseUserModel userModel;
 
   @override
   void initState() {
@@ -32,8 +32,7 @@ class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
 
 
   checkFollowStatus() async {
-    userModel = await CustomSharedPreferences.getMyUser();
-    if(userModel.id != widget.uid){
+    if(AuthUtil.firebaseAuth.currentUser.uid != widget.uid){
       bool status = await FollowUnFollowUtil.getFollowStatus(context, widget.uid);
       setState(() {
         followed = status;
@@ -61,7 +60,7 @@ class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
                   fontWeight: FontWeight.w400),
         ),
         onPressed: () async {
-          if(userModel.id != widget.uid){
+          if(AuthUtil.firebaseAuth.currentUser.uid != widget.uid){
             BottomLoader bl = new BottomLoader(context,
                 showLogs: true,
                 isDismissible: false,

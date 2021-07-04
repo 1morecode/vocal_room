@@ -100,69 +100,73 @@ class _UserProfileModelSheetState extends State<UserProfileModelSheet> {
         SizedBox(
           height: 15,
         ),
-        new Container(
-          height: 25,
-          child: FutureBuilder(builder: (context, snapshot) {
-            if(snapshot.hasData){
-              print("SNAP ${snapshot.data}");
-              // List<String> followers = [];
-              // // if(snapshot.data["followers"] != null)
-              // followers = (snapshot.data["followers"] as List<dynamic>).cast<String>();
-              return Row(
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: snapshot.data["followers"] == null ? "0" : "${snapshot.data["followers"].length}",
+        new Row(
+          children: [
+            new Expanded(child: new Container(
+              height: 25,
+              child: FutureBuilder(builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  print("SNAP ${snapshot.data}");
+                  // List<String> followers = [];
+                  // // if(snapshot.data["followers"] != null)
+                  // followers = (snapshot.data["followers"] as List<dynamic>).cast<String>();
+                  return Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: snapshot.data["followers"] == null ? "0" : "${snapshot.data["followers"].length}",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(text: ' Followers', style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),),
+                          ],
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
                           ),
                         ),
-                        TextSpan(text: ' Followers', style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),),
-                      ],
-                      style: TextStyle(
-                        color: Colors.black,
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: snapshot.data["following"] == null ? "0" : "${snapshot.data["following"].length}", style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        ),
-                        TextSpan(text: ' Following', style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),),
-                      ],
-                      style: TextStyle(
-                        color: Colors.black,
+                      SizedBox(
+                        width: 50,
                       ),
-                    ),
-                  ),
-                  Spacer(),
-                  FollowUnfollowButton(uid: widget.userName, btnColor: Colors.blue, textStyle: TextStyle(color: Colors.white), callback: refreshUserProfile,)
-                ],
-              );
-            }else{
-              return new Container(
-              );
-            }
-          },
-            future: followFuture,
-          ),
+                      RichText(
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: snapshot.data["following"] == null ? "0" : "${snapshot.data["following"].length}", style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            ),
+                            TextSpan(text: ' Following', style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),),
+                          ],
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                    ],
+                  );
+                }else{
+                  return new Container(
+                  );
+                }
+              },
+                future: followFuture,
+              ),
+            )),
+            FollowUnfollowButton(uid: widget.userName, btnColor: Colors.blue, textStyle: TextStyle(color: Colors.white), callback: refreshUserProfile,)
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),

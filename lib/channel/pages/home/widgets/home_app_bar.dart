@@ -15,11 +15,7 @@ class HomeAppBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          child: IconButton(
-            onPressed: () {},
-            iconSize: 30,
-            icon: Icon(Icons.search),
-          ),
+          child: new Text("Chat Rooms", style: TextStyle(color: Colors.red),),
         ),
         Spacer(),
         Row(

@@ -12,6 +12,7 @@ import 'package:vocal/channel/models/room.dart';
 import 'package:vocal/channel/pages/home/profile_page.dart';
 import 'package:vocal/channel/pages/room/util/room_state.dart';
 import 'package:vocal/channel/pages/room/widgets/broadcaster_profile.dart';
+import 'package:vocal/channel/pages/room/widgets/room_share_button.dart';
 import 'package:vocal/channel/pages/room/widgets/room_user.dart';
 import 'package:vocal/channel/util/style.dart';
 import 'package:vocal/channel/widgets/round_button.dart';
@@ -24,8 +25,9 @@ class CallScreen extends StatefulWidget {
   final String userId;
   final String roomId;
   final ClientRole role;
+  final Room room;
 
-  CallScreen({this.channelName, this.userId, this.roomId, this.role});
+  CallScreen({this.channelName, this.userId, this.roomId, this.role, this.room});
 
   @override
   _CallScreenState createState() => _CallScreenState();
@@ -54,6 +56,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<bool> initialize() async {
     print("Role ${widget.role}");
     var roomState = Provider.of<RoomState>(context, listen: false);
+    roomState.updateRoom(widget.room);
     try {
       await roomState.getRoomDetails(widget.roomId);
       var rtcEngine = await RtcEngine.create(APIData.agoraAppId);
@@ -114,17 +117,24 @@ class _CallScreenState extends State<CallScreen> {
               iconSize: 30,
               icon: Icon(Icons.keyboard_arrow_down),
               onPressed: () {
+                var roomState = Provider.of<RoomState>(context, listen: false);
+                roomState.rtcEngine.leaveChannel();
+                roomState.rtcEngine.destroy();
+                roomState.agoraChannel.leave();
+                roomState.room = null;
                 Navigator.pop(context);
               },
             ),
-            Text(
+            Expanded(child: Text(
               '${widget.channelName}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
               ),
-            ),
-            Spacer(),
+            )),
+           Consumer<RoomState>(builder: (context, roomState, child) =>  RoomShareButton(room: roomState.room,),),
             GestureDetector(
               onTap: () {
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
@@ -241,36 +251,32 @@ class _CallScreenState extends State<CallScreen> {
   // }
 
   Widget buildBroadcaster() {
-    return Consumer<RoomState>(
-      builder: (_, roomState, child) {
-        return StreamBuilder(
-          stream: firebaseFirestore.collection('rooms').doc(roomState.room.roomId).snapshots(),
-          builder: (context, snapshot) {
-            print("Working");
-            // if(snapshot.hasData){
-              roomState.updateRoom(Room.fromJson(snapshot.data));
-              FirebaseUserModel firebaseUserModel  = FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == roomState.room.createdBy).first);
-              print("Mutted ${firebaseUserModel.isMuted}");
-              return BroadCasterProfile(
-                userName: roomState.room.createdBy,
-                firebaseUserModel: FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == roomState.room.createdBy).first),
-              );
-            // }else{
-            //   return new Container();
-            // }
-          },);
-      },
-    );
+    var roomState = Provider.of<RoomState>(context, listen: false);
+    return StreamBuilder(
+      stream: firebaseFirestore.collection('rooms').doc(roomState.room.roomId).snapshots(),
+      builder: (context, snapshot) {
+        print("Working");
+        if(snapshot.hasData){
+          roomState.updateRoom(Room.fromJson(snapshot.data));
+          FirebaseUserModel firebaseUserModel  = FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == roomState.room.createdBy).first);
+          print("Mutted ${firebaseUserModel.isMuted}");
+          return BroadCasterProfile(
+            userName: roomState.room.createdBy,
+            firebaseUserModel: FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == roomState.room.createdBy).first),
+          );
+        }else{
+          return new Container();
+        }
+      },);
   }
 
   Widget buildAudience() {
-    return Consumer<RoomState>(
-      builder: (_, roomState, child) {
-        print("Member Length ${roomState.memberList}");
-        return StreamBuilder(
-          stream: firebaseFirestore.collection('rooms').doc(roomState.room.roomId).snapshots(),
-          builder: (context, snapshot) {
-            roomState.room = Room.fromJson(snapshot.data);
+    var roomState = Provider.of<RoomState>(context, listen: false);
+    return StreamBuilder(
+      stream: firebaseFirestore.collection('rooms').doc(roomState.room.roomId).snapshots(),
+      builder: (context, snapshot) {
+        if(snapshot.hasData){
+          roomState.room = Room.fromJson(snapshot.data);
           return GridView.builder(
             shrinkWrap: true,
             physics: ScrollPhysics(),
@@ -289,9 +295,12 @@ class _CallScreenState extends State<CallScreen> {
               );
             },
           );
-        },);
-      },
-    );
+        }else{
+          return new Container();
+        }
+
+
+      },);
   }
 
   Widget buildTitle(String title) {
@@ -344,74 +353,79 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   Widget buildBottom(BuildContext context) {
-    return Consumer<RoomState>(builder: (context, roomState, child) => StreamBuilder(
+    var roomState = Provider.of<RoomState>(context, listen: false);
+    return StreamBuilder(
       stream: firebaseFirestore.collection('rooms').doc(roomState.room.roomId).snapshots(),
       builder: (context, snapshot) {
-        print("Working");
-        roomState.updateRoom(Room.fromJson(snapshot.data));
-        FirebaseUserModel firebaseUserModel  = FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == AuthUtil.firebaseAuth.currentUser.uid).first);
-        print("Hand ${firebaseUserModel.micOrHand}");
-        return Container(
-          height: 60,
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
-              color: Style.LightBrown,
-              borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15))
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RoundButton(
-                onPressed: () => _onCallEnd(context),
-                color: Style.LightGrey,
-                child: Text(
-                  '✌️ Leave quietly',
-                  style: TextStyle(
-                    color: Style.AccentRed,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+        print("Bottom");
+        if(snapshot.hasData){
+          roomState.updateRoom(Room.fromJson(snapshot.data));
+          FirebaseUserModel firebaseUserModel  = FirebaseUserModel.fromJson(roomState.room.users.where((element) => element["_id"] == AuthUtil.firebaseAuth.currentUser.uid).first);
+          print("Hand ${firebaseUserModel.micOrHand}");
+          return Container(
+            height: 60,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+                color: Style.LightBrown,
+                borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15))
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RoundButton(
+                  onPressed: () => _onCallEnd(context),
+                  color: Style.LightGrey,
+                  child: Text(
+                    '✌️ Leave quietly',
+                    style: TextStyle(
+                      color: Style.AccentRed,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-              firebaseUserModel.micOrHand ? RoundButton(
-                onPressed: () => roomState.toggleMute(),
-                color: Style.LightGrey,
-                isCircle: true,
-                child: Icon(
-                  firebaseUserModel.isMuted ? Icons.mic_off : Icons.mic,
-                  color: Colors.blueAccent,
-                  size: 18.0,
+                firebaseUserModel.micOrHand ? RoundButton(
+                  onPressed: () => roomState.toggleMute(),
+                  color: Style.LightGrey,
+                  isCircle: true,
+                  child: Icon(
+                    firebaseUserModel.isMuted ? Icons.mic_off : Icons.mic,
+                    color: Colors.blueAccent,
+                    size: 18.0,
+                  ),
+                ) : RoundButton(
+                  onPressed: () => roomState.toggleHandRaise(),
+                  color: Style.LightGrey,
+                  isCircle: true,
+                  child: Icon(
+                    firebaseUserModel.isHandRaised ? CupertinoIcons.hand_raised_fill : CupertinoIcons.hand_raised,
+                    size: 15,
+                    color: Colors.black,
+                  ),
                 ),
-              ) : RoundButton(
-                onPressed: () => roomState.toggleHandRaise(),
-                color: Style.LightGrey,
-                isCircle: true,
-                child: Icon(
-                  firebaseUserModel.isHandRaised ? CupertinoIcons.hand_raised_fill : CupertinoIcons.hand_raised,
-                  size: 15,
-                  color: Colors.black,
-                ),
-              ),
-              // Consumer<RoomState>(
-              //   builder: (_, roomState, child) {
-              //     return RoundButton(
-              //       onPressed: toggleRole,
-              //       color: Style.LightGrey,
-              //       isCircle: true,
-              //       child: Icon(
-              //         roomState.clientRole == ClientRole.Broadcaster
-              //             ? CupertinoIcons.minus
-              //             : CupertinoIcons.add,
-              //         size: 15,
-              //         color: Colors.black,
-              //       ),
-              //     );
-              //   },
-              // ),
-            ],
-          ),
-        );
-      },),);
+                // Consumer<RoomState>(
+                //   builder: (_, roomState, child) {
+                //     return RoundButton(
+                //       onPressed: toggleRole,
+                //       color: Style.LightGrey,
+                //       isCircle: true,
+                //       child: Icon(
+                //         roomState.clientRole == ClientRole.Broadcaster
+                //             ? CupertinoIcons.minus
+                //             : CupertinoIcons.add,
+                //         size: 15,
+                //         color: Colors.black,
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          );
+        }else{
+          return new Container();
+        }
+      },);
   }
 }
